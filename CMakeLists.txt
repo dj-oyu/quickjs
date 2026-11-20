@@ -268,6 +268,7 @@ set(qjs_sources
     libregexp.c
     libunicode.c
     quickjs.c
+    quickjs-vm.c
 )
 
 if(QJS_BUILD_LIBC)
