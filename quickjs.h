@@ -273,10 +273,11 @@ static inline JSValue __JS_NewFloat64(double d)
     JSValue v;
     u.d = d;
     /* normalize NaN */
-    if ((u.u64 & 0x7fffffffffffffff) > 0x7ff0000000000000)
+    if ((u.u64 & 0x7fffffffffffffff) > 0x7ff0000000000000) {
         v = JS_NAN;
-    else
+    } else {
         v = u.u64 - ((uint64_t)JS_FLOAT64_TAG_ADDEND << 32);
+    }
     return v;
 }
 
@@ -293,10 +294,11 @@ static inline int JS_VALUE_GET_NORM_TAG(JSValue v)
 {
     uint32_t tag;
     tag = JS_VALUE_GET_TAG(v);
-    if (JS_TAG_IS_FLOAT64(tag))
+    if (JS_TAG_IS_FLOAT64(tag)) {
         return JS_TAG_FLOAT64;
-    else
+    } else {
         return tag;
+    }
 }
 
 static inline bool JS_VALUE_IS_NAN(JSValue v)
@@ -387,8 +389,9 @@ static inline bool JS_VALUE_IS_NAN(JSValue v)
         double d;
         uint64_t u64;
     } u;
-    if (v.tag != JS_TAG_FLOAT64)
+    if (v.tag != JS_TAG_FLOAT64) {
         return 0;
+    }
     u.d = v.u.float64;
     return (u.u64 & 0x7fffffffffffffff) > 0x7ff0000000000000;
 }
@@ -621,7 +624,7 @@ JS_EXTERN void JS_FreeAtomRT(JSRuntime *rt, JSAtom v);
 JS_EXTERN JSValue JS_AtomToValue(JSContext *ctx, JSAtom atom);
 JS_EXTERN JSValue JS_AtomToString(JSContext *ctx, JSAtom atom);
 JS_EXTERN const char *JS_AtomToCStringLen(JSContext *ctx, size_t *plen, JSAtom atom);
-static inline const char *JS_AtomToCString(JSContext *ctx, JSAtom atom) 
+static inline const char *JS_AtomToCString(JSContext *ctx, JSAtom atom)
 {
     return JS_AtomToCStringLen(ctx, NULL, atom);
 }
@@ -646,7 +649,7 @@ typedef struct JSClassExoticMethods {
        false if the property does not exists, true if it exists. If 1 is
        returned, the property descriptor 'desc' is filled if != NULL. */
     int (*get_own_property)(JSContext *ctx, JSPropertyDescriptor *desc,
-                             JSValueConst obj, JSAtom prop);
+                            JSValueConst obj, JSAtom prop);
     /* '*ptab' should hold the '*plen' property keys. Return 0 if OK,
        -1 if exception. The 'is_enumerable' field is ignored.
     */
@@ -663,8 +666,8 @@ typedef struct JSClassExoticMethods {
        so they are usually not needed */
     /* return < 0 if exception or true/false */
     int (*has_property)(JSContext *ctx, JSValueConst obj, JSAtom atom);
-    JSValue (*get_property)(JSContext *ctx, JSValueConst obj, JSAtom atom,
-                            JSValueConst receiver);
+    JSValue(*get_property)(JSContext *ctx, JSValueConst obj, JSAtom atom,
+                           JSValueConst receiver);
     /* return < 0 if exception or true/false */
     int (*set_property)(JSContext *ctx, JSValueConst obj, JSAtom atom,
                         JSValueConst value, JSValueConst receiver, int flags);
@@ -696,11 +699,11 @@ typedef struct JSClassDef {
 #define JS_EVAL_OPTIONS_VERSION 1
 
 typedef struct JSEvalOptions {
-  int version;
-  int eval_flags;
-  const char *filename;
-  int line_num;
-  // can add new fields in ABI-compatible manner by incrementing JS_EVAL_OPTIONS_VERSION
+    int version;
+    int eval_flags;
+    const char *filename;
+    int line_num;
+    // can add new fields in ABI-compatible manner by incrementing JS_EVAL_OPTIONS_VERSION
 } JSEvalOptions;
 
 #define JS_INVALID_CLASS_ID 0
@@ -874,7 +877,8 @@ JS_EXTERN int JS_ToBigUint64(JSContext *ctx, uint64_t *pres, JSValueConst val);
 JS_EXTERN int JS_ToInt64Ext(JSContext *ctx, int64_t *pres, JSValueConst val);
 
 JS_EXTERN JSValue JS_NewStringLen(JSContext *ctx, const char *str1, size_t len1);
-static inline JSValue JS_NewString(JSContext *ctx, const char *str) {
+static inline JSValue JS_NewString(JSContext *ctx, const char *str)
+{
     return JS_NewStringLen(ctx, str, strlen(str));
 }
 // makes a copy of the input; does not check if the input is valid UTF-16,
@@ -1026,8 +1030,8 @@ JS_EXTERN JSValue JS_EvalThis(JSContext *ctx, JSValueConst this_obj,
                               const char *input, size_t input_len,
                               const char *filename, int eval_flags);
 JS_EXTERN JSValue JS_EvalThis2(JSContext *ctx, JSValueConst this_obj,
-                              const char *input, size_t input_len,
-                              JSEvalOptions *options);
+                               const char *input, size_t input_len,
+                               JSEvalOptions *options);
 JS_EXTERN JSValue JS_GetGlobalObject(JSContext *ctx);
 JS_EXTERN int JS_IsInstanceOf(JSContext *ctx, JSValueConst val, JSValueConst obj);
 JS_EXTERN int JS_DefineProperty(JSContext *ctx, JSValueConst this_obj,
@@ -1268,18 +1272,18 @@ typedef enum JSCFunctionEnum {  /* XXX: should rename for namespace isolation */
 
 typedef union JSCFunctionType {
     JSCFunction *generic;
-    JSValue (*generic_magic)(JSContext *ctx, JSValueConst this_val, int argc, JSValueConst *argv, int magic);
+    JSValue(*generic_magic)(JSContext *ctx, JSValueConst this_val, int argc, JSValueConst *argv, int magic);
     JSCFunction *constructor;
-    JSValue (*constructor_magic)(JSContext *ctx, JSValueConst new_target, int argc, JSValueConst *argv, int magic);
+    JSValue(*constructor_magic)(JSContext *ctx, JSValueConst new_target, int argc, JSValueConst *argv, int magic);
     JSCFunction *constructor_or_func;
     double (*f_f)(double);
     double (*f_f_f)(double, double);
-    JSValue (*getter)(JSContext *ctx, JSValueConst this_val);
-    JSValue (*setter)(JSContext *ctx, JSValueConst this_val, JSValueConst val);
-    JSValue (*getter_magic)(JSContext *ctx, JSValueConst this_val, int magic);
-    JSValue (*setter_magic)(JSContext *ctx, JSValueConst this_val, JSValueConst val, int magic);
-    JSValue (*iterator_next)(JSContext *ctx, JSValueConst this_val,
-                             int argc, JSValueConst *argv, int *pdone, int magic);
+    JSValue(*getter)(JSContext *ctx, JSValueConst this_val);
+    JSValue(*setter)(JSContext *ctx, JSValueConst this_val, JSValueConst val);
+    JSValue(*getter_magic)(JSContext *ctx, JSValueConst this_val, int magic);
+    JSValue(*setter_magic)(JSContext *ctx, JSValueConst this_val, JSValueConst val, int magic);
+    JSValue(*iterator_next)(JSContext *ctx, JSValueConst this_val,
+                            int argc, JSValueConst *argv, int *pdone, int magic);
 } JSCFunctionType;
 
 JS_EXTERN JSValue JS_NewCFunction2(JSContext *ctx, JSCFunction *func,
@@ -1388,8 +1392,8 @@ typedef struct JSCFunctionListEntry {
 #define JS_ALIAS_BASE_DEF(name, from, base) { name, JS_PROP_WRITABLE | JS_PROP_CONFIGURABLE, JS_DEF_ALIAS, 0, { .alias = { from, base } } }
 
 JS_EXTERN int JS_SetPropertyFunctionList(JSContext *ctx, JSValueConst obj,
-                                          const JSCFunctionListEntry *tab,
-                                          int len);
+                                         const JSCFunctionListEntry *tab,
+                                         int len);
 
 /* C module definition */
 
@@ -1400,7 +1404,7 @@ JS_EXTERN JSModuleDef *JS_NewCModule(JSContext *ctx, const char *name_str,
 /* can only be called before the module is instantiated */
 JS_EXTERN int JS_AddModuleExport(JSContext *ctx, JSModuleDef *m, const char *name_str);
 JS_EXTERN int JS_AddModuleExportList(JSContext *ctx, JSModuleDef *m,
-                                      const JSCFunctionListEntry *tab, int len);
+                                     const JSCFunctionListEntry *tab, int len);
 /* can only be called after the module is instantiated */
 JS_EXTERN int JS_SetModuleExport(JSContext *ctx, JSModuleDef *m, const char *export_name,
                                  JSValue val);

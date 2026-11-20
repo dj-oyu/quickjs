@@ -2388,7 +2388,7 @@ static const char unicode_gc_name_table[] =
     "P,Punctuation,punct"      "\0"
     "Z,Separator"              "\0"
     "C,Other"                  "\0"
-;
+    ;
 
 static const uint8_t unicode_gc_table[4122] = {
     0xfa, 0x18, 0x17, 0x56, 0x0d, 0x56, 0x12, 0x13,
@@ -3265,7 +3265,7 @@ static const char unicode_script_name_table[] =
     "Yezidi,Yezi"                 "\0"
     "Yi,Yiii"                     "\0"
     "Zanabazar_Square,Zanb"       "\0"
-;
+    ;
 
 static const uint8_t unicode_script_table[2818] = {
     0xc0, 0x1a, 0x99, 0x4c, 0x85, 0x1a, 0x99, 0x4c,
@@ -4593,7 +4593,7 @@ static const char unicode_prop_name_table[] =
     "Uppercase,Upper"                    "\0"
     "XID_Continue,XIDC"                  "\0"
     "XID_Start,XIDS"                     "\0"
-;
+    ;
 
 static const uint8_t * const unicode_prop_table[] = {
     unicode_prop_Hyphen_table,
@@ -4704,4 +4704,3 @@ static const uint16_t unicode_prop_len_table[] = {
     countof(unicode_prop_ID_Start_table),
     countof(unicode_prop_Case_Ignorable_table),
 };
-

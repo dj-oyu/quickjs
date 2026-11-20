@@ -70,8 +70,9 @@ int cr_copy(CharRange *cr, const CharRange *cr1);
 static inline int cr_add_point(CharRange *cr, uint32_t v)
 {
     if (cr->len >= cr->size) {
-        if (cr_realloc(cr, cr->len + 1))
+        if (cr_realloc(cr, cr->len + 1)) {
             return -1;
+        }
     }
     cr->points[cr->len++] = v;
     return 0;
@@ -80,8 +81,9 @@ static inline int cr_add_point(CharRange *cr, uint32_t v)
 static inline int cr_add_interval(CharRange *cr, uint32_t c1, uint32_t c2)
 {
     if ((cr->len + 2) > cr->size) {
-        if (cr_realloc(cr, cr->len + 2))
+        if (cr_realloc(cr, cr->len + 2)) {
             return -1;
+        }
     }
     cr->points[cr->len++] = c1;
     cr->points[cr->len++] = c2;
