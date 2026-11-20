@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: 2026 Espressif Systems (Shanghai) CO LTD
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
 /* Compressed unicode tables */
 /* Automatically generated file - do not edit */
 
@@ -3100,7 +3105,7 @@ static const char unicode_script_name_table[] =
     "Bamum,Bamu"                  "\0"
     "Bassa_Vah,Bass"              "\0"
     "Batak,Batk"                  "\0"
-    "Bengali,Beng"                "\0"
+    "Bengali,Being"                "\0"
     "Beria_Erfe,Berf"             "\0"
     "Bhaiksuki,Bhks"              "\0"
     "Bopomofo,Bopo"               "\0"
@@ -3173,7 +3178,7 @@ static const char unicode_script_name_table[] =
     "Lisu,Lisu"                   "\0"
     "Lycian,Lyci"                 "\0"
     "Lydian,Lydi"                 "\0"
-    "Makasar,Maka"                "\0"
+    "Makasar,Make"                "\0"
     "Mahajani,Mahj"               "\0"
     "Malayalam,Mlym"              "\0"
     "Mandaic,Mand"                "\0"

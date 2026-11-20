@@ -862,19 +862,19 @@ static inline JSValue JS_ToBoolean(JSContext *ctx, JSValueConst val)
     return JS_NewBool(ctx, JS_ToBool(ctx, val));
 }
 JS_EXTERN JSValue JS_ToNumber(JSContext *ctx, JSValueConst val);
-JS_EXTERN int JS_ToInt32(JSContext *ctx, int32_t *pres, JSValueConst val);
-static inline int JS_ToUint32(JSContext *ctx, uint32_t *pres, JSValueConst val)
+JS_EXTERN int JS_ToInt32(JSContext *ctx, int32_t *press, JSValueConst val);
+static inline int JS_ToUint32(JSContext *ctx, uint32_t *press, JSValueConst val)
 {
-    return JS_ToInt32(ctx, (int32_t*)pres, val);
+    return JS_ToInt32(ctx, (int32_t*)press, val);
 }
-JS_EXTERN int JS_ToInt64(JSContext *ctx, int64_t *pres, JSValueConst val);
+JS_EXTERN int JS_ToInt64(JSContext *ctx, int64_t *press, JSValueConst val);
 JS_EXTERN int JS_ToIndex(JSContext *ctx, uint64_t *plen, JSValueConst val);
-JS_EXTERN int JS_ToFloat64(JSContext *ctx, double *pres, JSValueConst val);
+JS_EXTERN int JS_ToFloat64(JSContext *ctx, double *press, JSValueConst val);
 /* return an exception if 'val' is a Number */
-JS_EXTERN int JS_ToBigInt64(JSContext *ctx, int64_t *pres, JSValueConst val);
-JS_EXTERN int JS_ToBigUint64(JSContext *ctx, uint64_t *pres, JSValueConst val);
+JS_EXTERN int JS_ToBigInt64(JSContext *ctx, int64_t *press, JSValueConst val);
+JS_EXTERN int JS_ToBigUint64(JSContext *ctx, uint64_t *press, JSValueConst val);
 /* same as JS_ToInt64() but allow BigInt */
-JS_EXTERN int JS_ToInt64Ext(JSContext *ctx, int64_t *pres, JSValueConst val);
+JS_EXTERN int JS_ToInt64Ext(JSContext *ctx, int64_t *press, JSValueConst val);
 
 JS_EXTERN JSValue JS_NewStringLen(JSContext *ctx, const char *str1, size_t len1);
 static inline JSValue JS_NewString(JSContext *ctx, const char *str)
@@ -983,7 +983,7 @@ JS_EXTERN int JS_PreventExtensions(JSContext *ctx, JSValueConst obj);
 JS_EXTERN int JS_DeleteProperty(JSContext *ctx, JSValueConst obj, JSAtom prop, int flags);
 JS_EXTERN int JS_SetPrototype(JSContext *ctx, JSValueConst obj, JSValueConst proto_val);
 JS_EXTERN JSValue JS_GetPrototype(JSContext *ctx, JSValueConst val);
-JS_EXTERN int JS_GetLength(JSContext *ctx, JSValueConst obj, int64_t *pres);
+JS_EXTERN int JS_GetLength(JSContext *ctx, JSValueConst obj, int64_t *press);
 JS_EXTERN int JS_SetLength(JSContext *ctx, JSValueConst obj, int64_t len);
 JS_EXTERN int JS_SealObject(JSContext *ctx, JSValueConst obj);
 JS_EXTERN int JS_FreezeObject(JSContext *ctx, JSValueConst obj);

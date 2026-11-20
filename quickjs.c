@@ -1277,9 +1277,9 @@ static void js_promise_resolve_function_mark(JSRuntime *rt, JSValueConst val,
 static JSValue JS_ToPrimitiveFree(JSContext *ctx, JSValue val, int hint);
 static JSValue JS_ToStringFree(JSContext *ctx, JSValue val);
 static int JS_ToBoolFree(JSContext *ctx, JSValue val);
-static int JS_ToInt32Free(JSContext *ctx, int32_t *pres, JSValue val);
-static int JS_ToFloat64Free(JSContext *ctx, double *pres, JSValue val);
-static int JS_ToUint8ClampFree(JSContext *ctx, int32_t *pres, JSValue val);
+static int JS_ToInt32Free(JSContext *ctx, int32_t *press, JSValue val);
+static int JS_ToFloat64Free(JSContext *ctx, double *press, JSValue val);
+static int JS_ToUint8ClampFree(JSContext *ctx, int32_t *press, JSValue val);
 static JSValue JS_ToPropertyKeyInternal(JSContext *ctx, JSValueConst val,
                                         int flags);
 static JSValue js_new_string8_len(JSContext *ctx, const char *buf, int len);
@@ -1314,7 +1314,7 @@ static JSValue JS_ToObjectFree(JSContext *ctx, JSValue val);
 static JSProperty *add_property(JSContext *ctx,
                                 JSObject *p, JSAtom prop, int prop_flags);
 static void free_property(JSRuntime *rt, JSProperty *pr, int prop_flags);
-static int JS_ToBigInt64Free(JSContext *ctx, int64_t *pres, JSValue val);
+static int JS_ToBigInt64Free(JSContext *ctx, int64_t *press, JSValue val);
 static JSValue JS_ThrowStackOverflow(JSContext *ctx);
 static JSValue JS_ThrowTypeErrorRevokedProxy(JSContext *ctx);
 static JSValue js_proxy_getPrototypeOf(JSContext *ctx, JSValueConst obj);
@@ -1415,9 +1415,9 @@ static void js_free_shape_null(JSRuntime *rt, JSShape *sh);
 static int js_shape_prepare_update(JSContext *ctx, JSObject *p,
                                    JSShapeProperty **pprs);
 static int init_shape_hash(JSRuntime *rt);
-static __exception int js_get_length32(JSContext *ctx, uint32_t *pres,
+static __exception int js_get_length32(JSContext *ctx, uint32_t *press,
                                        JSValueConst obj);
-static __exception int js_get_length64(JSContext *ctx, int64_t *pres,
+static __exception int js_get_length64(JSContext *ctx, int64_t *press,
                                        JSValueConst obj);
 static __exception int js_set_length64(JSContext *ctx, JSValueConst obj,
                                        int64_t len);
@@ -8638,9 +8638,9 @@ static JSValue JS_GetPrototypeFree(JSContext *ctx, JSValue obj)
     return obj1;
 }
 
-int JS_GetLength(JSContext *ctx, JSValueConst obj, int64_t *pres)
+int JS_GetLength(JSContext *ctx, JSValueConst obj, int64_t *press)
 {
-    return js_get_length64(ctx, pres, obj);
+    return js_get_length64(ctx, press, obj);
 }
 
 int JS_SetLength(JSContext *ctx, JSValueConst obj, int64_t len)
@@ -11272,7 +11272,7 @@ not_configurable:
                 } else if (prs->flags & JS_PROP_LENGTH) {
                     if (flags & JS_PROP_HAS_VALUE) {
                         /* Note: no JS code is executable because
-                           'val' is guaranted to be a Uint32 */
+                           'val' is guaranteed to be a Uint32 */
                         res = set_array_length(ctx, p, js_dup(val), flags);
                     } else {
                         res = true;
@@ -12435,7 +12435,7 @@ static void js_mp_mul_basecase(js_limb_t *result,
     }
 }
 
-/* tabr[] -= taba[] * b. Return the value to substract to the high
+/* tabr[] -= taba[] * b. Return the value to subtract to the high
    word. */
 static js_limb_t js_mp_sub_mul1(js_limb_t *tabr, const js_limb_t *taba, js_limb_t n,
                                 js_limb_t b)
@@ -13320,7 +13320,7 @@ static double js_bigint_to_float64(JSContext *ctx, const JSBigInt *a)
 
 /* return (1, NULL) if not an integer, (2, NULL) if NaN or Infinity,
    (0, n) if an integer, (0, NULL) in case of memory error */
-static JSBigInt *js_bigint_from_float64(JSContext *ctx, int *pres, double a1)
+static JSBigInt *js_bigint_from_float64(JSContext *ctx, int *press, double a1)
 {
     uint64_t a = float64_as_uint64(a1);
     int sgn, e, shift;
@@ -13333,12 +13333,12 @@ static JSBigInt *js_bigint_from_float64(JSContext *ctx, int *pres, double a1)
     mant = a & (((uint64_t)1 << 52) - 1);
     if (e == 2047) {
         /* NaN, Infinity */
-        *pres = 2;
+        *press = 2;
         return NULL;
     }
     if (e == 0 && mant == 0) {
         /* zero */
-        *pres = 0;
+        *press = 0;
         return js_bigint_new_si(ctx, 0);
     }
     e -= 1023;
@@ -13352,7 +13352,7 @@ static JSBigInt *js_bigint_from_float64(JSContext *ctx, int *pres, double a1)
         /* check that there is no fractional part */
         if (mant & (((uint64_t)1 << shift) - 1)) {
 not_an_integer:
-            *pres = 1;
+            *press = 1;
             return NULL;
         }
         mant >>= shift;
@@ -13365,7 +13365,7 @@ not_an_integer:
     }
     /* the integer is mant*2^e */
     r = js_bigint_set_si64(&buf, (int64_t)mant);
-    *pres = 0;
+    *press = 0;
     return js_bigint_shl(ctx, r, e);
 }
 
@@ -14071,7 +14071,7 @@ static JSValue JS_ToNumeric(JSContext *ctx, JSValueConst val)
     return JS_ToNumericFree(ctx, js_dup(val));
 }
 
-static __exception int __JS_ToFloat64Free(JSContext *ctx, double *pres,
+static __exception int __JS_ToFloat64Free(JSContext *ctx, double *press,
                                           JSValue val)
 {
     double d;
@@ -14092,32 +14092,32 @@ static __exception int __JS_ToFloat64Free(JSContext *ctx, double *pres,
     default:
         abort();
     }
-    *pres = d;
+    *press = d;
     return 0;
 fail:
-    *pres = NAN;
+    *press = NAN;
     return -1;
 }
 
-static inline int JS_ToFloat64Free(JSContext *ctx, double *pres, JSValue val)
+static inline int JS_ToFloat64Free(JSContext *ctx, double *press, JSValue val)
 {
     uint32_t tag;
 
     tag = JS_VALUE_GET_TAG(val);
     if (tag <= JS_TAG_NULL) {
-        *pres = JS_VALUE_GET_INT(val);
+        *press = JS_VALUE_GET_INT(val);
         return 0;
     } else if (JS_TAG_IS_FLOAT64(tag)) {
-        *pres = JS_VALUE_GET_FLOAT64(val);
+        *press = JS_VALUE_GET_FLOAT64(val);
         return 0;
     } else {
-        return __JS_ToFloat64Free(ctx, pres, val);
+        return __JS_ToFloat64Free(ctx, press, val);
     }
 }
 
-int JS_ToFloat64(JSContext *ctx, double *pres, JSValueConst val)
+int JS_ToFloat64(JSContext *ctx, double *press, JSValueConst val)
 {
-    return JS_ToFloat64Free(ctx, pres, js_dup(val));
+    return JS_ToFloat64Free(ctx, press, js_dup(val));
 }
 
 JSValue JS_ToNumber(JSContext *ctx, JSValueConst val)
@@ -14162,7 +14162,7 @@ redo:
 }
 
 /* Note: the integer value is satured to 32 bits */
-static int JS_ToInt32SatFree(JSContext *ctx, int *pres, JSValue val)
+static int JS_ToInt32SatFree(JSContext *ctx, int *press, JSValue val)
 {
     uint32_t tag;
     int ret;
@@ -14177,7 +14177,7 @@ redo:
         ret = JS_VALUE_GET_INT(val);
         break;
     case JS_TAG_EXCEPTION:
-        *pres = 0;
+        *press = 0;
         return -1;
     case JS_TAG_FLOAT64: {
         double d = JS_VALUE_GET_FLOAT64(val);
@@ -14197,40 +14197,40 @@ redo:
     default:
         val = JS_ToNumberFree(ctx, val);
         if (JS_IsException(val)) {
-            *pres = 0;
+            *press = 0;
             return -1;
         }
         goto redo;
     }
-    *pres = ret;
+    *press = ret;
     return 0;
 }
 
-static int JS_ToInt32Sat(JSContext *ctx, int *pres, JSValueConst val)
+static int JS_ToInt32Sat(JSContext *ctx, int *press, JSValueConst val)
 {
-    return JS_ToInt32SatFree(ctx, pres, js_dup(val));
+    return JS_ToInt32SatFree(ctx, press, js_dup(val));
 }
 
-static int JS_ToInt32Clamp(JSContext *ctx, int *pres, JSValueConst val,
+static int JS_ToInt32Clamp(JSContext *ctx, int *press, JSValueConst val,
                            int min, int max, int min_offset)
 {
-    int res = JS_ToInt32SatFree(ctx, pres, js_dup(val));
+    int res = JS_ToInt32SatFree(ctx, press, js_dup(val));
     if (res == 0) {
-        if (*pres < min) {
-            *pres += min_offset;
-            if (*pres < min) {
-                *pres = min;
+        if (*press < min) {
+            *press += min_offset;
+            if (*press < min) {
+                *press = min;
             }
         } else {
-            if (*pres > max) {
-                *pres = max;
+            if (*press > max) {
+                *press = max;
             }
         }
     }
     return res;
 }
 
-static int JS_ToInt64SatFree(JSContext *ctx, int64_t *pres, JSValue val)
+static int JS_ToInt64SatFree(JSContext *ctx, int64_t *press, JSValue val)
 {
     uint32_t tag;
 
@@ -14241,22 +14241,22 @@ redo:
     case JS_TAG_BOOL:
     case JS_TAG_NULL:
     case JS_TAG_UNDEFINED:
-        *pres = JS_VALUE_GET_INT(val);
+        *press = JS_VALUE_GET_INT(val);
         return 0;
     case JS_TAG_EXCEPTION:
-        *pres = 0;
+        *press = 0;
         return -1;
     case JS_TAG_FLOAT64: {
         double d = JS_VALUE_GET_FLOAT64(val);
         if (isnan(d)) {
-            *pres = 0;
+            *press = 0;
         } else {
             if (d < INT64_MIN) {
-                *pres = INT64_MIN;
+                *press = INT64_MIN;
             } else if (d >= 0x1p63) {
-                *pres = INT64_MAX;
+                *press = INT64_MAX;
             } else {
-                *pres = (int64_t)d;
+                *press = (int64_t)d;
             }
         }
     }
@@ -14264,30 +14264,30 @@ redo:
     default:
         val = JS_ToNumberFree(ctx, val);
         if (JS_IsException(val)) {
-            *pres = 0;
+            *press = 0;
             return -1;
         }
         goto redo;
     }
 }
 
-int JS_ToInt64Sat(JSContext *ctx, int64_t *pres, JSValueConst val)
+int JS_ToInt64Sat(JSContext *ctx, int64_t *press, JSValueConst val)
 {
-    return JS_ToInt64SatFree(ctx, pres, js_dup(val));
+    return JS_ToInt64SatFree(ctx, press, js_dup(val));
 }
 
-int JS_ToInt64Clamp(JSContext *ctx, int64_t *pres, JSValueConst val,
+int JS_ToInt64Clamp(JSContext *ctx, int64_t *press, JSValueConst val,
                     int64_t min, int64_t max, int64_t neg_offset)
 {
-    int res = JS_ToInt64SatFree(ctx, pres, js_dup(val));
+    int res = JS_ToInt64SatFree(ctx, press, js_dup(val));
     if (res == 0) {
-        if (*pres < 0) {
-            *pres += neg_offset;
+        if (*press < 0) {
+            *press += neg_offset;
         }
-        if (*pres < min) {
-            *pres = min;
-        } else if (*pres > max) {
-            *pres = max;
+        if (*press < min) {
+            *press = min;
+        } else if (*press > max) {
+            *press = max;
         }
     }
     return res;
@@ -14295,7 +14295,7 @@ int JS_ToInt64Clamp(JSContext *ctx, int64_t *pres, JSValueConst val,
 
 /* Same as JS_ToInt32Free() but with a 64 bit result. Return (<0, 0)
    in case of exception */
-static int JS_ToInt64Free(JSContext *ctx, int64_t *pres, JSValue val)
+static int JS_ToInt64Free(JSContext *ctx, int64_t *press, JSValue val)
 {
     uint32_t tag;
     int64_t ret;
@@ -14338,31 +14338,31 @@ redo:
     default:
         val = JS_ToNumberFree(ctx, val);
         if (JS_IsException(val)) {
-            *pres = 0;
+            *press = 0;
             return -1;
         }
         goto redo;
     }
-    *pres = ret;
+    *press = ret;
     return 0;
 }
 
-int JS_ToInt64(JSContext *ctx, int64_t *pres, JSValueConst val)
+int JS_ToInt64(JSContext *ctx, int64_t *press, JSValueConst val)
 {
-    return JS_ToInt64Free(ctx, pres, js_dup(val));
+    return JS_ToInt64Free(ctx, press, js_dup(val));
 }
 
-int JS_ToInt64Ext(JSContext *ctx, int64_t *pres, JSValueConst val)
+int JS_ToInt64Ext(JSContext *ctx, int64_t *press, JSValueConst val)
 {
     if (JS_IsBigInt(val)) {
-        return JS_ToBigInt64(ctx, pres, val);
+        return JS_ToBigInt64(ctx, press, val);
     } else {
-        return JS_ToInt64(ctx, pres, val);
+        return JS_ToInt64(ctx, press, val);
     }
 }
 
 /* return (<0, 0) in case of exception */
-static int JS_ToInt32Free(JSContext *ctx, int32_t *pres, JSValue val)
+static int JS_ToInt32Free(JSContext *ctx, int32_t *press, JSValue val)
 {
     uint32_t tag;
     int32_t ret;
@@ -14406,26 +14406,26 @@ redo:
     default:
         val = JS_ToNumberFree(ctx, val);
         if (JS_IsException(val)) {
-            *pres = 0;
+            *press = 0;
             return -1;
         }
         goto redo;
     }
-    *pres = ret;
+    *press = ret;
     return 0;
 }
 
-int JS_ToInt32(JSContext *ctx, int32_t *pres, JSValueConst val)
+int JS_ToInt32(JSContext *ctx, int32_t *press, JSValueConst val)
 {
-    return JS_ToInt32Free(ctx, pres, js_dup(val));
+    return JS_ToInt32Free(ctx, press, js_dup(val));
 }
 
-static inline int JS_ToUint32Free(JSContext *ctx, uint32_t *pres, JSValue val)
+static inline int JS_ToUint32Free(JSContext *ctx, uint32_t *press, JSValue val)
 {
-    return JS_ToInt32Free(ctx, (int32_t *)pres, val);
+    return JS_ToInt32Free(ctx, (int32_t *)press, val);
 }
 
-static int JS_ToUint8ClampFree(JSContext *ctx, int32_t *pres, JSValue val)
+static int JS_ToUint8ClampFree(JSContext *ctx, int32_t *press, JSValue val)
 {
     uint32_t tag;
     int res;
@@ -14458,12 +14458,12 @@ redo:
     default:
         val = JS_ToNumberFree(ctx, val);
         if (JS_IsException(val)) {
-            *pres = 0;
+            *press = 0;
             return -1;
         }
         goto redo;
     }
-    *pres = res;
+    *press = res;
     return 0;
 }
 
@@ -15221,13 +15221,13 @@ static JSValue JS_ToBigInt(JSContext *ctx, JSValueConst val)
 }
 
 /* XXX: merge with JS_ToInt64Free with a specific flag */
-static int JS_ToBigInt64Free(JSContext *ctx, int64_t *pres, JSValue val)
+static int JS_ToBigInt64Free(JSContext *ctx, int64_t *press, JSValue val)
 {
     uint64_t res;
 
     val = JS_ToBigIntFree(ctx, val);
     if (JS_IsException(val)) {
-        *pres = 0;
+        *press = 0;
         return -1;
     }
     if (JS_VALUE_GET_TAG(val) == JS_TAG_SHORT_BIG_INT) {
@@ -15241,18 +15241,18 @@ static int JS_ToBigInt64Free(JSContext *ctx, int64_t *pres, JSValue val)
         }
         JS_FreeValue(ctx, val);
     }
-    *pres = res;
+    *press = res;
     return 0;
 }
 
-int JS_ToBigInt64(JSContext *ctx, int64_t *pres, JSValueConst val)
+int JS_ToBigInt64(JSContext *ctx, int64_t *press, JSValueConst val)
 {
-    return JS_ToBigInt64Free(ctx, pres, js_dup(val));
+    return JS_ToBigInt64Free(ctx, press, js_dup(val));
 }
 
-int JS_ToBigUint64(JSContext *ctx, uint64_t *pres, JSValueConst val)
+int JS_ToBigUint64(JSContext *ctx, uint64_t *press, JSValueConst val)
 {
-    return JS_ToBigInt64Free(ctx, (int64_t *)pres, js_dup(val));
+    return JS_ToBigInt64Free(ctx, (int64_t *)press, js_dup(val));
 }
 
 static no_inline __exception int js_unary_arith_slow(JSContext *ctx,
@@ -17849,7 +17849,7 @@ static int js_op_define_class(JSContext *ctx, JSValue *sp,
         }
     }
 
-    /* the constructor property must be first. It can be overriden by
+    /* the constructor property must be first. It can be overridden by
        computed property names */
     if (JS_DefinePropertyValue(ctx, proto, JS_ATOM_constructor,
                                js_dup(ctor),
@@ -22124,7 +22124,7 @@ typedef struct BlockEnv {
 
 typedef struct JSGlobalVar {
     int cpool_idx; /* if >= 0, index in the constant pool for hoisted
-                      function defintion*/
+                      function definition*/
     uint8_t force_init : 1; /* force initialization to undefined */
     uint8_t is_lexical : 1; /* global let/const definition */
     uint8_t is_const   : 1; /* const definition */
@@ -22239,9 +22239,9 @@ typedef struct JSFunctionDef {
     int func_var_idx; /* variable containing the current function (-1
                          if none, only used if is_func_expr is true) */
     int eval_ret_idx; /* variable containing the return value of the eval, -1 if none */
-    int this_var_idx; /* variable containg the 'this' value, -1 if none */
-    int new_target_var_idx; /* variable containg the 'new.target' value, -1 if none */
-    int this_active_func_var_idx; /* variable containg the 'this.active_func' value, -1 if none */
+    int this_var_idx; /* variable containing the 'this' value, -1 if none */
+    int new_target_var_idx; /* variable containing the 'new.target' value, -1 if none */
+    int this_active_func_var_idx; /* variable containing the 'this.active_func' value, -1 if none */
     int home_object_var_idx;
 
     int scope_level;    /* index into fd->scopes if the current lexical scope */
@@ -28121,7 +28121,7 @@ static __exception int js_parse_unary(JSParseState *s, int parse_flags)
             /* Strict ES7 exponentiation syntax rules: To solve
                conficting semantics between different implementations
                regarding the precedence of prefix operators and the
-               postifx exponential, ES7 specifies that -2**2 is a
+               postfix exponential, ES7 specifies that -2**2 is a
                syntax error. */
             if (parse_flags & PF_POW_FORBIDDEN) {
                 return js_parse_error(s, "unparenthesized unary expression can't appear on the left-hand side of '**'");
@@ -32943,7 +32943,7 @@ static void free_bytecode_atoms(JSRuntime *rt,
         case OP_FMT_atom_label_u8:
         case OP_FMT_atom_label_u16:
             if ((pos + 1 + 4) > bc_len) {
-                break;    /* may happen if there is not enough memory when emiting bytecode */
+                break;    /* may happen if there is not enough memory when emitting bytecode */
             }
             atom = get_u32(bc_buf + pos + 1);
             JS_FreeAtomRT(rt, atom);
@@ -34288,7 +34288,7 @@ static int find_private_class_field_all(JSContext *ctx, JSFunctionDef *fd,
 
 static void get_loc_or_ref(DynBuf *bc, bool is_ref, int idx)
 {
-    /* if the field is not initialized, the error is catched when
+    /* if the field is not initialized, the error is caught when
        accessing it */
     if (is_ref) {
         dbuf_putc(bc, OP_get_var_ref);
@@ -38680,17 +38680,17 @@ static void bc_set_flags(uint32_t *pflags, int *pidx, uint32_t val, int n)
     *pidx += n;
 }
 
-static int bc_atom_to_idx(BCWriterState *s, uint32_t *pres, JSAtom atom)
+static int bc_atom_to_idx(BCWriterState *s, uint32_t *press, JSAtom atom)
 {
     uint32_t v;
 
     if (atom < s->first_atom || __JS_AtomIsTaggedInt(atom)) {
-        *pres = atom;
+        *press = atom;
         return 0;
     }
     atom -= s->first_atom;
     if (atom < s->atom_to_idx_size && s->atom_to_idx[atom] != 0) {
-        *pres = s->atom_to_idx[atom];
+        *press = s->atom_to_idx[atom];
         return 0;
     }
     if (atom >= s->atom_to_idx_size) {
@@ -38716,10 +38716,10 @@ static int bc_atom_to_idx(BCWriterState *s, uint32_t *pres, JSAtom atom)
     s->idx_to_atom[v] = atom + s->first_atom;
     v += s->first_atom;
     s->atom_to_idx[atom] = v;
-    *pres = v;
+    *press = v;
     return 0;
 fail:
-    *pres = 0;
+    *press = 0;
     return -1;
 }
 
@@ -42793,28 +42793,28 @@ fail1:
     return JS_EXCEPTION;
 }
 
-static __exception int js_get_length32(JSContext *ctx, uint32_t *pres,
+static __exception int js_get_length32(JSContext *ctx, uint32_t *press,
                                        JSValueConst obj)
 {
     JSValue len_val;
     len_val = JS_GetProperty(ctx, obj, JS_ATOM_length);
     if (JS_IsException(len_val)) {
-        *pres = 0;
+        *press = 0;
         return -1;
     }
-    return JS_ToUint32Free(ctx, pres, len_val);
+    return JS_ToUint32Free(ctx, press, len_val);
 }
 
-static __exception int js_get_length64(JSContext *ctx, int64_t *pres,
+static __exception int js_get_length64(JSContext *ctx, int64_t *press,
                                        JSValueConst obj)
 {
     JSValue len_val;
     len_val = JS_GetProperty(ctx, obj, JS_ATOM_length);
     if (JS_IsException(len_val)) {
-        *pres = 0;
+        *press = 0;
         return -1;
     }
-    return JS_ToLengthFree(ctx, pres, len_val);
+    return JS_ToLengthFree(ctx, press, len_val);
 }
 
 static __exception int js_set_length64(JSContext *ctx, JSValueConst obj,
@@ -51248,7 +51248,7 @@ static JSValue js_regexp_Symbol_replace(JSContext *ctx, JSValueConst this_val,
         } else if (position < 0) {
             position = 0;
         }
-        /* ignore substition if going backward (can happen
+        /* ignore substitution if going backward (can happen
            with custom regexp object) */
         JS_FreeValue(ctx, tab);
         tab = JS_NewArray(ctx);
@@ -59676,7 +59676,7 @@ static JSValue js_array_buffer_constructor3(JSContext *ctx,
     if (alloc_flag) {
         if (class_id == JS_CLASS_SHARED_ARRAY_BUFFER &&
                 rt->sab_funcs.sab_alloc) {
-            // TOOD(bnoordhuis) resizing backing memory for SABs atomically
+            // TODO(bnoordhuis) resizing backing memory for SABs atomically
             // is hard so we cheat and allocate |maxByteLength| bytes upfront
             sab_alloc_len = max_len ? *max_len : len;
             abuf->data = rt->sab_funcs.sab_alloc(rt->sab_funcs.sab_opaque,

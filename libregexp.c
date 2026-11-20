@@ -1027,7 +1027,7 @@ simple_char:
         case REOP_backward_back_reference:
             break;
         default:
-            /* safe behvior: we cannot predict the outcome */
+            /* safe behavior: we cannot predict the outcome */
             return true;
         }
         pos += len;

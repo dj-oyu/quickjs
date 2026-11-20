@@ -1502,7 +1502,7 @@ static inline void *med3(void *a, void *b, void *c, cmp_f cmp, void *opaque)
            (cmp(b, c, opaque) > 0 ? b : (cmp(a, c, opaque) < 0 ? a : c));
 }
 
-/* pointer based version with local stack and insertion sort threshhold */
+/* pointer based version with local stack and insertion sort threshold */
 static inline void rqsort(void *base, size_t nmemb, size_t size, cmp_f cmp, void *opaque)
 {
     struct {
