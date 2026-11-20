@@ -12,3 +12,6 @@ CMakeUserPresets.json
 fuzz
 .vscode/
 microbench*.txt
+
+# Fetched by fetch-test262.sh, not a submodule.
+/test262/
