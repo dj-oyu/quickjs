@@ -294,7 +294,8 @@ typedef enum JSErrorEnum {
 
    JS_UPSTREAM_COMPAT: upstream quickjs-ng's behaviour where PocketJS
    departs from it on purpose -- line tables in every build, NDEBUG or not,
-   and every function keeps its source text for Function.prototype.toString.
+   every function keeps its source text for Function.prototype.toString, and
+   Math.sin/cos/tan are libm's instead of pocket_trig.h's table.
    The fork's own build files (CMakeLists.txt, meson.build) define it, so
    qjs, run-test262 and upstream's tests see upstream's engine; PocketJS
    compiles quickjs.c itself and does not. */
@@ -57057,7 +57058,11 @@ static double js_math_atan2(double a, double b)
 }
 static double js_math_cos(double d)
 {
+#ifdef JS_UPSTREAM_COMPAT
+    return cos(d);
+#else
     return pocket_cos(d);   /* POCKET: pocket_trig.h */
+#endif
 }
 static double js_math_exp(double d)
 {
@@ -57069,11 +57074,19 @@ static double js_math_log(double d)
 }
 static double js_math_sin(double d)
 {
+#ifdef JS_UPSTREAM_COMPAT
+    return sin(d);
+#else
     return pocket_sin(d);   /* POCKET: pocket_trig.h */
+#endif
 }
 static double js_math_tan(double d)
 {
+#ifdef JS_UPSTREAM_COMPAT
+    return tan(d);
+#else
     return pocket_tan(d);   /* POCKET: pocket_trig.h */
+#endif
 }
 static double js_math_trunc(double d)
 {

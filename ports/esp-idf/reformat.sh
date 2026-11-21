@@ -10,7 +10,6 @@
 set -euo pipefail
 root="${1:-$(cd "$(dirname "$0")/../.." && pwd)}"
 files=(
-  builtin-array-fromasync.h builtin-iterator-zip-keyed.h builtin-iterator-zip.h
   cutils.h dtoa.c dtoa.h libregexp-opcode.h libregexp.c libregexp.h
   libunicode-table.h libunicode.c libunicode.h list.h quickjs-atom.h
   quickjs-c-atomics.h quickjs-libc.c quickjs-libc.h quickjs-opcode.h
