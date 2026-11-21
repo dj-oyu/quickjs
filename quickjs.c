@@ -285,6 +285,16 @@ typedef enum JSErrorEnum {
    (docs/vm/oom-parse-safety.md; tools/vmtest/corpus/memory_device.js and the
    oom_* tests). Build with -DJS_UNCATCHABLE_INTERNAL_ERRORS=1 for upstream's
    behaviour. "interrupted" stays uncatchable either way. */
+/* PocketJS: one debug switch. A build without assertions (NDEBUG, e.g.
+   ESP-IDF's CONFIG_COMPILER_OPTIMIZATION_ASSERTIONS_DISABLE) is a
+   non-debug build, and a non-debug build keeps no line tables: the parser
+   emits no OP_source_loc and builds no pc2line, so a runtime error names
+   the first line of each function. CONFIG_POCKET_VM_STRIP_DEBUG asks for
+   the same in a build that keeps its assertions. */
+#if defined(NDEBUG) || defined(CONFIG_POCKET_VM_STRIP_DEBUG)
+#define JS_NO_LINE_TABLES 1
+#endif
+
 #ifndef JS_UNCATCHABLE_INTERNAL_ERRORS
 #define JS_UNCATCHABLE_INTERNAL_ERRORS 0
 #endif
@@ -27727,6 +27737,13 @@ static void emit_source_loc_at(JSParseState *s, int line_num, int col_num)
     JSFunctionDef *fd = s->cur_func;
     DynBuf *bc = &fd->byte_code;
 
+    /* OP_source_loc only feeds the line table (compute_pc2line_info): with
+       no table it would be 9 bytes of pass-1 bytecode each, for nothing. */
+#ifdef JS_NO_LINE_TABLES
+    return;
+#endif
+    if (s->ctx->strip_debug)
+        return;
     dbuf_putc(bc, OP_source_loc);
     dbuf_put_u32(bc, line_num);
     dbuf_put_u32(bc, col_num);
@@ -40169,7 +40186,7 @@ static void add_pc2line_info(JSFunctionDef *s, uint32_t pc,
 
 static void compute_pc2line_info(JSFunctionDef *s)
 {
-#ifdef CONFIG_POCKET_VM_STRIP_DEBUG
+#ifdef JS_NO_LINE_TABLES
     /* No line table (main/Kconfig.projbuild): a runtime error's position is
        the function's first line (find_line_num's fallback); parse errors
        keep their exact position, which comes from the tokenizer. */
@@ -42258,7 +42275,7 @@ static JSValue js_create_function(JSContext *ctx, JSFunctionDef *fd)
     b->line_num = fd->line_num;
     b->col_num = fd->col_num;
 
-#ifdef CONFIG_POCKET_VM_STRIP_DEBUG
+#ifdef JS_NO_LINE_TABLES
     /* compute_pc2line_info() left the table empty: keep no block at all
        (a zero-length realloc would still cost a heap block). */
     b->pc2line_buf = NULL;
