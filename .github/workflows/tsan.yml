@@ -19,7 +19,7 @@ jobs:
   linux:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           submodules: true
       - name: build
@@ -28,5 +28,5 @@ jobs:
           cmake --build build -j`nproc`
       - name: test
         run: |
-          git submodule update --init --checkout --depth 1
+          ./fetch-test262.sh
           ./build/run-test262 -m -c test262.conf -c test262-fast.conf -a

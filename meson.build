@@ -1,10 +1,12 @@
 project(
   'quickjs-ng',
   'c',
-  version: '0.14.0',
+  version: '0.18.0',
   default_options: [
     'c_std=gnu11,c11',
     'warning_level=3',
+    'buildtype=release',
+    'b_ndebug=if-release',
   ],
   license: 'MIT',
   license_files: 'LICENSE',
@@ -15,6 +17,9 @@ host_system = host_machine.system()
 cc = meson.get_compiler('c')
 
 add_project_arguments('-DQUICKJS_NG_BUILD', language: 'c')
+# Upstream quickjs-ng's behaviour where PocketJS departs from it on purpose
+# (quickjs.c, JS_UPSTREAM_COMPAT). PocketJS builds quickjs.c without this file.
+add_project_arguments('-DJS_UPSTREAM_COMPAT', language: 'c')
 
 qjs_gcc_warning_args = [
   '-Wno-unsafe-buffer-usage',
@@ -138,6 +143,8 @@ qjs_srcs = files(
   'libregexp.c',
   'libunicode.c',
   'quickjs.c',
+  # PocketJS: the VM's second file (yield and stack segments).
+  'quickjs-vm.c',
 )
 qjs_hdrs = files(
   'quickjs.h',
@@ -516,7 +523,7 @@ if tests.allowed()
       'api-test.c',
 
       c_args: qjs_c_args,
-      dependencies: qjs_dep,
+      dependencies: [qjs_dep, qjs_libc_dep],
       build_by_default: false,
     ),
   )
@@ -631,17 +638,6 @@ alias_target('codegen',
       '-m',
       '-n', 'examples/test_fib.js',
       files('examples/test_fib.js'),
-    ],
-  ),
-  run_target(
-    'codegen_builtin-array-fromasync.h',
-    command: [
-      qjsc_exe,
-      '-C',
-      '-ss',
-      '-o', files('builtin-array-fromasync.h'),
-      '-n', 'builtin-array-fromasync.js',
-      files('builtin-array-fromasync.js'),
     ],
   ),
 )

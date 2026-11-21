@@ -26,7 +26,7 @@ jobs:
   codegen:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: build
         run: |
           make codegen
@@ -61,20 +61,20 @@ jobs:
           - { os: ubuntu-latest, arch: x86, runTest262: true }
           - { os: ubuntu-latest, arch: riscv64 }
 
-          - { os: macos-14, configType: Debug }
-          - { os: macos-14, configType: Release }
-          - { os: macos-14, configType: examples }
-          - { os: macos-14, configType: shared }
-          - { os: macos-14, configType: asan+ubsan, runTest262: true }
+          - { os: macos-15, configType: Debug }
+          - { os: macos-15, configType: Release }
+          - { os: macos-15, configType: examples }
+          - { os: macos-15, configType: shared }
+          - { os: macos-15, configType: asan+ubsan, runTest262: true }
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           submodules: true
 
       - name: install TCC
         if: ${{ matrix.config.configType == 'tcc' }}
         run: |
-          pushd /tmp
+          pushd "$RUNNER_TEMP"
           git clone https://repo.or.cz/tinycc.git
           cd tinycc
           git checkout c21576f8a32715ab439690d18184b0e02022bbbd
@@ -93,10 +93,11 @@ jobs:
 
       - name: Setup Alpine
         if: ${{ matrix.config.arch != '' }}
-        uses: jirutka/setup-alpine@v1
+        uses: quickjs-ng/setup-alpine@master
         with:
           arch: ${{ matrix.config.arch }}
           packages: "build-base make cmake git"
+          apk-tools-url: https://raw.githubusercontent.com/quickjs-ng/apk-for-ci/refs/heads/master/apk.static#!sha256!34bb1a96f0258982377a289392d4ea9f3f4b767a4bb5806b1b87179b79ad8a1c
 
       - name: uname
         run: uname -a
@@ -156,7 +157,7 @@ jobs:
       - name: test 262
         if: ${{ matrix.config.runTest262 }}
         run: |
-          git submodule update --init --checkout --depth 1
+          ./fetch-test262.sh
           make test262
 
       - name: test standalone
@@ -178,17 +179,17 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          - { arch: x64, vsArch: x64, buildType: Debug, os: windows-latest }
-          - { arch: x64, vsArch: x64, buildType: Release, os: windows-latest }
-          - { arch: Win32, vsArch: x86, buildType: Debug, os: windows-latest }
-          - { arch: Win32, vsArch: x86, buildType: Release, os: windows-latest }
-          - { arch: ARM64, vsArch: arm64, buildType: Debug, os: windows-11-arm }
-          - { arch: ARM64, vsArch: arm64, buildType: Release, os: windows-11-arm }
+          - { arch: x64, vsArch: x64, buildType: Debug, os: windows-latest, msvc: 18 }
+          - { arch: x64, vsArch: x64, buildType: Release, os: windows-latest, msvc: 18 }
+          - { arch: Win32, vsArch: x86, buildType: Debug, os: windows-latest, msvc: 18 }
+          - { arch: Win32, vsArch: x86, buildType: Release, os: windows-latest, msvc: 18 }
+          - { arch: ARM64, vsArch: arm64, buildType: Debug, os: windows-11-arm, msvc: 18 }
+          - { arch: ARM64, vsArch: arm64, buildType: Release, os: windows-11-arm, msvc: 18 }
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: build
         run: |
-          cmake -B build -DQJS_BUILD_WERROR=ON -DQJS_BUILD_EXAMPLES=ON -G "Visual Studio 17 2022" -A ${{matrix.config.arch}}
+          cmake -B build -DQJS_BUILD_WERROR=ON -DQJS_BUILD_EXAMPLES=ON -G "Visual Studio ${{matrix.config.msvc}}" -A ${{matrix.config.arch}}
           cmake --build build --config ${{matrix.config.buildType}}
       - name: stats
         run: |
@@ -227,7 +228,7 @@ jobs:
       matrix:
         buildType: [Debug, Release]
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: install ninja
         run: |
           choco install ninja
@@ -260,11 +261,11 @@ jobs:
       matrix:
         buildType: [Debug, Release]
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: build
         run: |
           git submodule update --init --checkout --depth 1
-          cmake -B build -DQJS_BUILD_WERROR=ON -DQJS_BUILD_EXAMPLES=ON -G "Visual Studio 17 2022" -T ClangCL
+          cmake -B build -DQJS_BUILD_WERROR=ON -DQJS_BUILD_EXAMPLES=ON -G "Visual Studio 18" -T ClangCL
           cmake --build build --config ${{matrix.buildType}}
       - name: stats
         run: |
@@ -295,7 +296,7 @@ jobs:
       matrix:
         buildType: [Debug, Release]
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: install ninja
         run: |
           choco install ninja
@@ -331,7 +332,7 @@ jobs:
         arch: [x64, Win32]
         buildType: [Debug, Release]
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: Install windows sdk
         uses: ChristopheLav/windows-sdk-install@v1
         with:
@@ -374,7 +375,7 @@ jobs:
       run:
         shell: msys2 {0}
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
     - name: Setup MSYS2
       uses: msys2/setup-msys2@v2
       with:
@@ -421,7 +422,7 @@ jobs:
       run:
         shell: msys2 {0}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: Setup MSYS2
         uses: msys2/setup-msys2@v2
         with:
@@ -443,8 +444,8 @@ jobs:
   emscripten:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
-      - uses: mymindstorm/setup-emsdk@v15
+      - uses: actions/checkout@v7
+      - uses: mymindstorm/setup-emsdk@v16
       - name: check emsdk
         run: emcc -v
       - name: build
@@ -456,12 +457,12 @@ jobs:
   wasi:
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: jcbhmr/setup-wasmtime@v2
       - name: setup wasi-sdk
         run: |
-          wget -nv https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-29/wasi-sdk-29.0-x86_64-linux.deb -P /tmp
-          sudo apt install /tmp/wasi-sdk*.deb
+          wget -nv https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-29/wasi-sdk-29.0-x86_64-linux.deb -P "$RUNNER_TEMP"
+          sudo apt install "$RUNNER_TEMP/wasi-sdk-29.0-x86_64-linux.deb"
       - name: test
         run: |
           cmake -B build -DQJS_BUILD_WERROR=ON -DCMAKE_TOOLCHAIN_FILE=/opt/wasi-sdk/share/cmake/wasi-sdk.cmake
@@ -469,11 +470,65 @@ jobs:
           wasmtime run build/qjs -qd
           echo "console.log('hello wasi!');" > t.js
           wasmtime run --dir . build/qjs t.js
+          wasmtime run --dir . build/qjs --stack-size 64K tests/wasi-stack-limit.js
+          wasmtime run --dir . build/qjs tests/wasi-stack-limit.js
       - name: build wasi reactor
         run: |
           cmake -B build -DQJS_BUILD_WERROR=ON -DCMAKE_TOOLCHAIN_FILE=/opt/wasi-sdk/share/cmake/wasi-sdk.cmake -DQJS_WASI_REACTOR=ON
           make -C build qjs_wasi
           ls -lh build/qjs.wasm
+      - name: check wasi reactor exports
+        run: |
+          exports=$(/opt/wasi-sdk/bin/llvm-nm --extern-only --defined-only --just-symbol-name build/qjs.wasm)
+          expected=(
+            # Reactor entry points
+            qjs_init qjs_init_argv qjs_get_context qjs_destroy
+            # libc allocator
+            malloc free realloc calloc
+            # Some of core JS_EXTERN API
+            JS_NewRuntime JS_FreeRuntime JS_NewContext JS_FreeContext
+            JS_Eval JS_FreeValue JS_GetException JS_ToCStringLen2
+            # Some of quickjs-libc JS_LIBC_EXTERN API
+            js_std_add_helpers js_std_init_handlers
+          )
+          missing=0
+          for sym in "${expected[@]}"; do
+            echo "$exports" | grep -qx "$sym" || { echo "missing export: $sym"; missing=1; }
+          done
+          exit $missing
+      - name: check wasi reactor table is exported and growable
+        shell: node {0}
+        run: |
+          const m = new WebAssembly.Module(require('fs').readFileSync('build/qjs.wasm'));
+          const imports = {};
+          for (const i of WebAssembly.Module.imports(m)) (imports[i.module] ??= {})[i.name] = () => {};
+          new WebAssembly.Instance(m, imports).exports.__indirect_function_table.grow(1);
+
+  cosmopolitan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: setup cosmocc
+        run: |
+          wget -nv https://github.com/jart/cosmopolitan/releases/download/4.0.2/cosmocc-4.0.2.zip -P "$RUNNER_TEMP"
+          mkdir -p "$RUNNER_TEMP/cosmocc"
+          unzip -q "$RUNNER_TEMP/cosmocc-4.0.2.zip" -d "$RUNNER_TEMP/cosmocc"
+          echo "$RUNNER_TEMP/cosmocc/bin" >> "$GITHUB_PATH"
+      - name: setup ape loader
+        run: |
+          sudo cp "$RUNNER_TEMP/cosmocc/bin/ape-x86_64.elf" /usr/bin/ape
+          sudo sh -c "echo ':APE:M::MZqFpD::/usr/bin/ape:' > /proc/sys/fs/binfmt_misc/register"
+          sudo sh -c "echo ':APE-jart:M::jartsr::/usr/bin/ape:' > /proc/sys/fs/binfmt_misc/register"
+      - name: build
+        run: |
+          cmake -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=cosmocc -DCMAKE_AR="$(command -v cosmoar)"
+          cmake --build build -j$(getconf _NPROCESSORS_ONLN)
+      - name: stats
+        run: |
+          build/qjs -qd
+      - name: test
+        run: |
+          build/run-test262 -c tests.conf
 
   cygwin:
     runs-on: windows-latest
@@ -489,7 +544,7 @@ jobs:
         with:
             packages: make cmake gcc-g++ bash
 
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: build
         run: make
@@ -515,7 +570,7 @@ jobs:
   openbsd:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: build + test
         uses: vmactions/openbsd-vm@v1
         with:
@@ -529,7 +584,7 @@ jobs:
   freebsd:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: build + test
         uses: vmactions/freebsd-vm@v1
         with:
@@ -544,7 +599,7 @@ jobs:
     runs-on: ubuntu-latest
     container: reactnativecommunity/react-native-android:v13.0
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: Configure android arm64
         # see build options you can use in https://developer.android.com/ndk/guides/cmake
         run: |
@@ -559,7 +614,7 @@ jobs:
   ios:
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: configure
         run: |
           cmake -B build -GXcode -DQJS_BUILD_WERROR=ON -DCMAKE_SYSTEM_NAME:STRING=iOS -DCMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_ALLOWED:BOOL=NO -DQJS_BUILD_LIBC=ON
@@ -574,7 +629,7 @@ jobs:
       QJS_BUILD_CLI_WITH_MIMALLOC: ON
       MIMALLOC_SHOW_STATS: 1
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: install dependencies
         run: |
           sudo apt update && sudo apt -y install libmimalloc-dev
@@ -594,7 +649,7 @@ jobs:
       QJS_BUILD_CLI_WITH_STATIC_MIMALLOC: ON
       MIMALLOC_SHOW_STATS: 1
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: install dependencies
         run: |
           brew install mimalloc
@@ -617,7 +672,7 @@ jobs:
           - { os: macos-latest }
     runs-on: ${{ matrix.config.os }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: build
         run: |
           make
@@ -628,7 +683,7 @@ jobs:
         run: |
           unzip -d "$RUNNER_TEMP" build/quickjs-amalgam.zip
           cc -Wall -I. -o "$RUNNER_TEMP/run-test262.o" -c run-test262.c
-          cc -Wall -I/ -DQJS_BUILD_LIBC -o "$RUNNER_TEMP/quickjs-amalgam.o" -c "$RUNNER_TEMP/quickjs-amalgam.c"
+          cc -Wall -I/ -DQJS_BUILD_LIBC -DJS_UPSTREAM_COMPAT -o "$RUNNER_TEMP/quickjs-amalgam.o" -c "$RUNNER_TEMP/quickjs-amalgam.c"
           cc -o "$RUNNER_TEMP/run-test262" "$RUNNER_TEMP/run-test262.o" "$RUNNER_TEMP/quickjs-amalgam.o" -lm
       - name: test
         run: |
@@ -637,7 +692,7 @@ jobs:
   jscheck:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: jscheck
         run: |
           make jscheck
@@ -645,7 +700,7 @@ jobs:
   parserless:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: build
         run: |
           make QJS_DISABLE_PARSER=ON QJS_BUILD_EXAMPLES=ON
@@ -717,13 +772,20 @@ jobs:
 
           # default clang on GitHub hosted runners is from MSYS2.
           # Use Visual Studio supplied clang-cl instead.
+          # clang-cl's AddressSanitizer does not support the debug CRT (/MDd),
+          # so force the release CRT (/MD) for both debug and release builds.
           - name: clang-cl+sanitize
             args: >-
               "-Db_sanitize=address,undefined"
               "-Db_lundef=false"
+              "-Db_vscrt=md"
             extra_envs:
               CC: clang-cl
               CXX: clang-cl
+              # clang-cl's AddressSanitizer reports false positive
+              # global-buffer-overflows on pooled string literals on Windows,
+              # same as MSVC; disable global checks (covered on Linux).
+              ASAN_OPTIONS: report_globals=0:halt_on_error=1:abort_on_error=1:print_summary=1
         platform:
           - ubuntu-latest
           - windows-latest
@@ -817,12 +879,37 @@ jobs:
       # ... good job, microsoft :))))
 
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       - name: Activate MSVC and Configure
         if: ${{ matrix.platform == 'windows-latest' }}
         env: ${{ matrix.mode.extra_envs }}
         run: |
-          meson setup build-${{ matrix.flavor }} --buildtype=${{ matrix.flavor }} ${{ matrix.mode.args }} ${{ matrix.features.args }} --vsenv
+          $extraArgs = @()
+          if ($env:CC -eq 'clang-cl') {
+            # Newer clang-cl no longer emits the asan runtime /defaultlib directives
+            # when -fsanitize is passed through /clang:, and meson links with lld-link
+            # directly (not the clang driver), so the asan/ubsan runtime is never pulled
+            # in. Link it explicitly and make its directory discoverable at link and run
+            # time (the dynamic runtime ships as a DLL).
+            $runtimeDir = (clang -print-runtime-dir).Trim()
+            $env:LIB = "$runtimeDir;$env:LIB"
+            "LIB=$env:LIB" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+            $runtimeDir | Out-File -FilePath $env:GITHUB_PATH -Append -Encoding utf8
+            $libs = "clang_rt.asan_dynamic-x86_64.lib clang_rt.asan_dynamic_runtime_thunk-x86_64.lib"
+            $extraArgs = @("-Dc_link_args=$libs", "-Dcpp_link_args=$libs")
+          }
+          meson setup build-${{ matrix.flavor }} --buildtype=${{ matrix.flavor }} ${{ matrix.mode.args }} ${{ matrix.features.args }} --vsenv @extraArgs
+          if ($env:CC -eq 'clang-cl') {
+            # The tests run under --vsenv, whose PATH finds one of Visual
+            # Studio's own clang_rt.asan_dynamic DLLs (its clang 22, MSVC's
+            # bin) before the one the import library above belongs to (LLVM's
+            # clang 20): every test then fails to load with
+            # STATUS_ENTRYPOINT_NOT_FOUND (0xc0000139). Windows looks next to
+            # the executable first.
+            $llvmRoot = Split-Path (Split-Path (Get-Command clang).Source)
+            $dll = Get-ChildItem $llvmRoot -Recurse -Filter clang_rt.asan_dynamic-x86_64.dll | Select-Object -First 1
+            Copy-Item $dll.FullName build-${{ matrix.flavor }}
+          }
       - name: Configuring
         if: ${{ matrix.platform != 'windows-latest' }}
         env: ${{ matrix.mode.extra_envs }}

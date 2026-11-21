@@ -75,10 +75,10 @@ JS_LIBC_EXTERN void js_std_promise_rejection_tracker(JSContext *ctx,
                                                      void *opaque);
 // Defaults to JS_NewRuntime, no-op if compiled without worker support.
 // Call before creating the first worker thread.
-JS_LIBC_EXTERN void js_std_set_worker_new_runtime_func(JSRuntime *(*func)(void));
+JS_LIBC_EXTERN void js_std_set_worker_new_runtime_func(JSRuntime * (*func)(void));
 // Defaults to JS_NewContext, no-op if compiled without worker support.
 // Call before creating the first worker thread.
-JS_LIBC_EXTERN void js_std_set_worker_new_context_func(JSContext *(*func)(JSRuntime *rt));
+JS_LIBC_EXTERN void js_std_set_worker_new_context_func(JSContext * (*func)(JSRuntime *rt));
 
 #ifdef __cplusplus
 } /* extern "C" { */
