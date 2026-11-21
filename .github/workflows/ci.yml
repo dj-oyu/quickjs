@@ -68,6 +68,13 @@ jobs:
             $extraArgs = @("-Dc_link_args=$libs", "-Dcpp_link_args=$libs")
           }
           meson setup build-${{ matrix.flavor }} --buildtype=${{ matrix.flavor }} ${{ matrix.mode.args }} ${{ matrix.features.args }} --vsenv @extraArgs
+          if ($env:CC -eq 'clang-cl') {
+            # The tests run under --vsenv, whose PATH puts Visual Studio's own
+            # LLVM first: its clang_rt.asan_dynamic DLL is another version than
+            # the import library linked above (STATUS_ENTRYPOINT_NOT_FOUND at
+            # load). Windows looks next to the executable first.
+            Copy-Item (Join-Path $runtimeDir "clang_rt.asan_dynamic-x86_64.dll") build-${{ matrix.flavor }}
+          }
       - name: Configuring
         if: ${{ matrix.platform != 'windows-latest' }}
         env: ${{ matrix.mode.extra_envs }}
