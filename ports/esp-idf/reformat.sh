@@ -16,10 +16,19 @@ files=(
   quickjs-c-atomics.h quickjs-libc.c quickjs-libc.h quickjs-opcode.h
   quickjs.c quickjs.h
 )
+opts=(--astyle-version=3.4.7
+  --style=otbs --attach-namespaces --attach-classes --indent=spaces=4
+  --convert-tabs --align-reference=name --keep-one-line-statements
+  --pad-header --pad-oper --unpad-paren --max-continuation-indent=120)
+here="$(cd "$(dirname "$0")" && pwd)"
 paths=()
-for f in "${files[@]}"; do [ -f "$root/$f" ] && paths+=("$root/$f"); done
-astyle_py --astyle-version=3.4.7 \
-  --style=otbs --attach-namespaces --attach-classes --indent=spaces=4 \
-  --convert-tabs --align-reference=name --keep-one-line-statements \
-  --pad-header --pad-oper --unpad-paren --max-continuation-indent=120 \
-  "${paths[@]}"
+for f in "${files[@]}"; do
+  [ -f "$root/$f" ] || continue
+  if [ "$(wc -c < "$root/$f")" -gt 2000000 ]; then
+    # Too big for astyle_py's WebAssembly memory: two halves (astyle_split.py).
+    python3 "$here/astyle_split.py" "$root/$f" "$(command -v astyle_py)" "${opts[@]}"
+  else
+    paths+=("$root/$f")
+  fi
+done
+astyle_py "${opts[@]}" "${paths[@]}"

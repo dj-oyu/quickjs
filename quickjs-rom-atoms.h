@@ -40,6 +40,7 @@ static const char js_rom_chars[] =
     "extends" "\0"
     "import" "\0"
     "super" "\0"
+    "using" "\0"
     "implements" "\0"
     "interface" "\0"
     "let" "\0"
@@ -56,6 +57,8 @@ static const char js_rom_chars[] =
     "message" "\0"
     "cause" "\0"
     "errors" "\0"
+    "error" "\0"
+    "suppressed" "\0"
     "stack" "\0"
     "name" "\0"
     "toString" "\0"
@@ -88,6 +91,10 @@ static const char js_rom_chars[] =
     "<var>" "\0"
     "<arg_var>" "\0"
     "<with>" "\0"
+    "<using_dispose>" "\0"
+    "use" "\0"
+    "dispose" "\0"
+    "disposeAsync" "\0"
     "lastIndex" "\0"
     "target" "\0"
     "index" "\0"
@@ -95,7 +102,6 @@ static const char js_rom_chars[] =
     "defineProperties" "\0"
     "apply" "\0"
     "join" "\0"
-    "concat" "\0"
     "split" "\0"
     "construct" "\0"
     "getPrototypeOf" "\0"
@@ -223,6 +229,9 @@ static const char js_rom_chars[] =
     "InternalError" "\0"
     "DOMException" "\0"
     "CallSite" "\0"
+    "DisposableStack" "\0"
+    "AsyncDisposableStack" "\0"
+    "SuppressedError" "\0"
     "ABORT_ERR" "\0"
     "AggregateError" "\0"
     "Atomics" "\0"
@@ -271,7 +280,9 @@ static const char js_rom_chars[] =
     "UTC" "\0"
     "VALIDATION_ERR" "\0"
     "WRONG_DOCUMENT_ERR" "\0"
+    "[Symbol.asyncDispose]" "\0"
     "[Symbol.asyncIterator]" "\0"
+    "[Symbol.dispose]" "\0"
     "[Symbol.hasInstance]" "\0"
     "[Symbol.iterator]" "\0"
     "[Symbol.matchAll]" "\0"
@@ -287,6 +298,7 @@ static const char js_rom_chars[] =
     "abs" "\0"
     "acos" "\0"
     "acosh" "\0"
+    "adopt" "\0"
     "all" "\0"
     "allSettled" "\0"
     "anchor" "\0"
@@ -297,15 +309,18 @@ static const char js_rom_chars[] =
     "asin" "\0"
     "asinh" "\0"
     "assign" "\0"
+    "asyncDispose" "\0"
     "asyncIterator" "\0"
     "at" "\0"
     "atan" "\0"
     "atan2" "\0"
     "atanh" "\0"
+    "atob" "\0"
     "big" "\0"
     "bind" "\0"
     "blink" "\0"
     "bold" "\0"
+    "btoa" "\0"
     "buffer" "\0"
     "byteLength" "\0"
     "byteOffset" "\0"
@@ -315,6 +330,7 @@ static const char js_rom_chars[] =
     "ceil" "\0"
     "charAt" "\0"
     "charCodeAt" "\0"
+    "chunks" "\0"
     "clear" "\0"
     "clz32" "\0"
     "code" "\0"
@@ -322,16 +338,19 @@ static const char js_rom_chars[] =
     "columnNumber" "\0"
     "compareExchange" "\0"
     "compile" "\0"
+    "concat" "\0"
     "copyWithin" "\0"
     "cos" "\0"
     "cosh" "\0"
     "create" "\0"
     "decodeURI" "\0"
     "decodeURIComponent" "\0"
+    "defer" "\0"
     "deref" "\0"
     "description" "\0"
     "detached" "\0"
     "difference" "\0"
+    "disposed" "\0"
     "dotAll" "\0"
     "drop" "\0"
     "encodeURI" "\0"
@@ -359,9 +378,11 @@ static const char js_rom_chars[] =
     "fontsize" "\0"
     "forEach" "\0"
     "freeze" "\0"
+    "fromBase64" "\0"
     "fromCharCode" "\0"
     "fromCodePoint" "\0"
     "fromEntries" "\0"
+    "fromHex" "\0"
     "fround" "\0"
     "get [Symbol.species]" "\0"
     "get [Symbol.toStringTag]" "\0"
@@ -373,6 +394,7 @@ static const char js_rom_chars[] =
     "get columnNumber" "\0"
     "get description" "\0"
     "get detached" "\0"
+    "get disposed" "\0"
     "get dotAll" "\0"
     "get fileName" "\0"
     "get flags" "\0"
@@ -391,6 +413,7 @@ static const char js_rom_chars[] =
     "get resizable" "\0"
     "get size" "\0"
     "get source" "\0"
+    "get stack" "\0"
     "get stackTraceLimit" "\0"
     "get sticky" "\0"
     "get unicode" "\0"
@@ -452,6 +475,7 @@ static const char js_rom_chars[] =
     "is" "\0"
     "isArray" "\0"
     "isConcatSpreadable" "\0"
+    "isConstructor" "\0"
     "isDisjointFrom" "\0"
     "isError" "\0"
     "isFinite" "\0"
@@ -485,6 +509,7 @@ static const char js_rom_chars[] =
     "matchAll" "\0"
     "max" "\0"
     "min" "\0"
+    "move" "\0"
     "multiline" "\0"
     "normalize" "\0"
     "notify" "\0"
@@ -521,6 +546,7 @@ static const char js_rom_chars[] =
     "set [Symbol.toStringTag]" "\0"
     "set __proto__" "\0"
     "set prepareStackTrace" "\0"
+    "set stack" "\0"
     "set stackTraceLimit" "\0"
     "setBigInt64" "\0"
     "setBigUint64" "\0"
@@ -528,6 +554,8 @@ static const char js_rom_chars[] =
     "setFloat16" "\0"
     "setFloat32" "\0"
     "setFloat64" "\0"
+    "setFromBase64" "\0"
+    "setFromHex" "\0"
     "setFullYear" "\0"
     "setHours" "\0"
     "setInt16" "\0"
@@ -580,10 +608,12 @@ static const char js_rom_chars[] =
     "test" "\0"
     "timeOrigin" "\0"
     "toArray" "\0"
+    "toBase64" "\0"
     "toDateString" "\0"
     "toExponential" "\0"
     "toFixed" "\0"
     "toGMTString" "\0"
+    "toHex" "\0"
     "toISOString" "\0"
     "toLocaleDateString" "\0"
     "toLocaleLowerCase" "\0"
@@ -616,770 +646,804 @@ static const char js_rom_chars[] =
     "unscopables" "\0"
     "unshift" "\0"
     "wait" "\0"
+    "windows" "\0"
     "withResolvers" "\0"
     "xor" "\0"
     ;
 
 static const JSRomAtom js_rom_atoms[JS_ROM_ATOM_END] = {
     {0, JS_ROM_NOT, 0},
-    {0x4ed0e88u, 4, 0}, /* 1 null */
-    {0x07f337au, 5, 5}, /* 2 false */
-    {0xb6b6737u, 4, 11}, /* 3 true */
-    {0x0017a76u, 2, 16}, /* 4 if */
-    {0xb215eeau, 4, 19}, /* 5 else */
-    {0xb081491u, 6, 24}, /* 6 return */
-    {0x1928306u, 3, 31}, /* 7 var */
-    {0xb60cd07u, 4, 35}, /* 8 this */
-    {0x82273acu, 6, 40}, /* 9 delete */
-    {0xd9358fdu, 4, 47}, /* 10 void */
-    {0xd2f15eau, 6, 52}, /* 11 typeof */
-    {0x18a159fu, 3, 59}, /* 12 new */
-    {0x0017a7eu, 2, 63}, /* 13 in */
-    {0xd1cf505u, 10, 66}, /* 14 instanceof */
-    {0x001755cu, 2, 77}, /* 15 do */
-    {0x7f4cb88u, 5, 80}, /* 16 while */
-    {0x181ae58u, 3, 86}, /* 17 for */
-    {0xe3901eeu, 5, 90}, /* 18 break */
-    {0x163f230u, 8, 96}, /* 19 continue */
-    {0x3bbdeadu, 6, 105}, /* 20 switch */
-    {0x8ea9a21u, 4, 112}, /* 21 case */
-    {0x80b39e8u, 7, 117}, /* 22 default */
-    {0x07c1e45u, 5, 125}, /* 23 throw */
-    {0x1907822u, 3, 131}, /* 24 try */
-    {0x9056472u, 5, 135}, /* 25 catch */
-    {0x426eafau, 7, 141}, /* 26 finally */
-    {0x1bc22b1u, 8, 149}, /* 27 function */
-    {0xd645ba2u, 8, 158}, /* 28 debugger */
-    {0xea2a37fu, 4, 167}, /* 29 with */
-    {0x4dec707u, 5, 172}, /* 30 class */
-    {0x82d3c8au, 5, 178}, /* 31 const */
-    {0xb237d62u, 4, 184}, /* 32 enum */
-    {0xe50fdcdu, 6, 189}, /* 33 export */
-    {0xf063ef8u, 7, 196}, /* 34 extends */
-    {0xbc83d3eu, 6, 204}, /* 35 import */
-    {0x1671aa2u, 5, 211}, /* 36 super */
-    {0x6f7e4a9u, 10, 217}, /* 37 implements */
-    {0x92b2db0u, 9, 228}, /* 38 interface */
-    {0x187f93au, 3, 238}, /* 39 let */
-    {0x7b79c55u, 7, 242}, /* 40 package */
-    {0x390facau, 7, 250}, /* 41 private */
-    {0x7c5f985u, 9, 258}, /* 42 protected */
-    {0xb062632u, 6, 268}, /* 43 public */
-    {0x38d11f7u, 6, 275}, /* 44 static */
-    {0x35cf1dcu, 5, 282}, /* 45 yield */
-    {0x67551bdu, 5, 288}, /* 46 await */
+    {0x3cf1794u, 4, 0}, /* 1 null */
+    {0x895ac19u, 5, 5}, /* 2 false */
+    {0xc497e2bu, 4, 11}, /* 3 true */
+    {0x39076f8u, 2, 16}, /* 4 if */
+    {0xc0347f6u, 4, 19}, /* 5 else */
+    {0x1bb313bu, 6, 24}, /* 6 return */
+    {0x4cb11d3u, 3, 31}, /* 7 var */
+    {0xc42d41bu, 4, 35}, /* 8 this */
+    {0x2915606u, 6, 40}, /* 9 delete */
+    {0xab141e1u, 4, 47}, /* 10 void */
+    {0x79c3040u, 6, 52}, /* 11 typeof */
+    {0x4d3874au, 3, 59}, /* 12 new */
+    {0x39076f0u, 2, 63}, /* 13 in */
+    {0xcc9cbc3u, 10, 66}, /* 14 instanceof */
+    {0x39079d2u, 2, 77}, /* 15 do */
+    {0xf1e54ebu, 5, 80}, /* 16 while */
+    {0x4d83c8du, 3, 86}, /* 17 for */
+    {0x6d39e8du, 5, 90}, /* 18 break */
+    {0xf27c008u, 8, 96}, /* 19 continue */
+    {0x908fb07u, 6, 105}, /* 20 switch */
+    {0xfc8833du, 4, 112}, /* 21 case */
+    {0x4709219u, 7, 117}, /* 22 default */
+    {0x8968126u, 5, 125}, /* 23 throw */
+    {0x4c9eaf7u, 3, 131}, /* 24 try */
+    {0x1effb11u, 5, 135}, /* 25 catch */
+    {0x85d410bu, 7, 141}, /* 26 finally */
+    {0xff81089u, 8, 149}, /* 27 function */
+    {0x320699au, 8, 158}, /* 28 debugger */
+    {0x980ba63u, 4, 167}, /* 29 with */
+    {0xc345864u, 5, 172}, /* 30 class */
+    {0x0c7a3e9u, 5, 178}, /* 31 const */
+    {0xc01647eu, 4, 184}, /* 32 enum */
+    {0x4e3d867u, 6, 189}, /* 33 export */
+    {0x37d9509u, 7, 196}, /* 34 extends */
+    {0x17b1894u, 6, 204}, /* 35 import */
+    {0x98d85c1u, 5, 211}, /* 36 super */
+    {0x161fdf0u, 5, 217}, /* 37 using */
+    {0x722da6fu, 10, 223}, /* 38 implements */
+    {0x92795cfu, 9, 234}, /* 39 interface */
+    {0x4de6befu, 3, 244}, /* 40 let */
+    {0xbcc37a4u, 7, 248}, /* 41 package */
+    {0xfeb513bu, 7, 256}, /* 42 private */
+    {0x7c941fau, 9, 264}, /* 43 protected */
+    {0x1b50398u, 6, 274}, /* 44 public */
+    {0x93e345du, 6, 281}, /* 45 static */
+    {0xbb66ebfu, 5, 288}, /* 46 yield */
+    {0xe9fcedeu, 5, 294}, /* 47 await */
     {0, JS_ROM_NOT, 0},
-    {0x19b7bd5u, 4, 294}, /* 48 keys */
-    {0xa4c584au, 4, 299}, /* 49 size */
-    {0x6f8edf7u, 6, 304}, /* 50 length */
-    {0x2bf0f06u, 7, 311}, /* 51 message */
-    {0x9068310u, 5, 319}, /* 52 cause */
-    {0x177c634u, 6, 325}, /* 53 errors */
-    {0x041af57u, 5, 332}, /* 54 stack */
-    {0x4d7f3b4u, 4, 338}, /* 55 name */
-    {0x5becee5u, 8, 343}, /* 56 toString */
-    {0x4732bf7u, 14, 352}, /* 57 toLocaleString */
-    {0x67a59a7u, 7, 367}, /* 58 valueOf */
-    {0xb2bda5du, 4, 375}, /* 59 eval */
-    {0xdec1b59u, 9, 380}, /* 60 prototype */
-    {0x9c4a631u, 11, 390}, /* 61 constructor */
-    {0x66667aau, 12, 402}, /* 62 configurable */
-    {0xfbb9aa9u, 8, 415}, /* 63 writable */
-    {0x7b4c6a9u, 10, 424}, /* 64 enumerable */
-    {0x3358b98u, 5, 435}, /* 65 value */
-    {0x182b245u, 3, 441}, /* 66 get */
-    {0x18f5c91u, 3, 445}, /* 67 set */
-    {0x00180a0u, 2, 449}, /* 68 of */
-    {0x081320fu, 9, 452}, /* 69 __proto__ */
-    {0x391bcafu, 9, 462}, /* 70 undefined */
-    {0x7bea6aau, 6, 472}, /* 71 number */
-    {0x1cc530fu, 7, 479}, /* 72 boolean */
-    {0x5f054cau, 6, 487}, /* 73 string */
-    {0x1ddb2a0u, 6, 494}, /* 74 object */
-    {0x25607b1u, 6, 501}, /* 75 symbol */
-    {0xc163065u, 7, 508}, /* 76 integer */
-    {0xa1addd9u, 7, 516}, /* 77 unknown */
-    {0xe06445du, 9, 524}, /* 78 arguments */
-    {0xbe70b6fu, 6, 534}, /* 79 callee */
-    {0xbe70b7cu, 6, 541}, /* 80 caller */
-    {0x3a7f3d7u, 6, 548}, /* 81 <eval> */
-    {0x9c808e0u, 5, 555}, /* 82 <ret> */
-    {0xe1a1f6au, 5, 561}, /* 83 <var> */
-    {0xbec3ee3u, 9, 567}, /* 84 <arg_var> */
-    {0x2b095c5u, 6, 577}, /* 85 <with> */
-    {0x1867383u, 9, 584}, /* 86 lastIndex */
-    {0x34acfaau, 6, 594}, /* 87 target */
-    {0x6116c31u, 5, 601}, /* 88 index */
-    {0x61e26e9u, 5, 607}, /* 89 input */
-    {0xb4946f7u, 16, 613}, /* 90 defineProperties */
-    {0xeee1b55u, 5, 630}, /* 91 apply */
-    {0x09064f3u, 4, 636}, /* 92 join */
-    {0x6683ba5u, 6, 641}, /* 93 concat */
-    {0xbf70049u, 5, 648}, /* 94 split */
-    {0xb4c5396u, 9, 654}, /* 95 construct */
-    {0x5300f94u, 14, 664}, /* 96 getPrototypeOf */
-    {0x1a7d668u, 14, 679}, /* 97 setPrototypeOf */
-    {0xec5152eu, 12, 694}, /* 98 isExtensible */
-    {0x2c48273u, 17, 707}, /* 99 preventExtensions */
-    {0x183bc59u, 3, 725}, /* 100 has */
-    {0xd2fe111u, 14, 729}, /* 101 deleteProperty */
-    {0x35ee5a1u, 14, 744}, /* 102 defineProperty */
-    {0x56a19f5u, 24, 759}, /* 103 getOwnPropertyDescriptor */
-    {0x27d54b9u, 7, 784}, /* 104 ownKeys */
-    {0x17c5c08u, 3, 792}, /* 105 add */
-    {0xa0ef003u, 4, 796}, /* 106 done */
-    {0x4dc37d4u, 4, 801}, /* 107 next */
-    {0xc02699bu, 6, 806}, /* 108 values */
-    {0x7618b54u, 6, 813}, /* 109 source */
-    {0xc60ead6u, 5, 820}, /* 110 flags */
-    {0xe4f2c3cu, 6, 826}, /* 111 global */
-    {0x3d69fccu, 7, 833}, /* 112 unicode */
-    {0x18e4a47u, 3, 841}, /* 113 raw */
-    {0xfb9f467u, 7, 845}, /* 114 rawJSON */
-    {0xcee6f90u, 10, 853}, /* 115 new.target */
-    {0x8af09beu, 16, 864}, /* 116 this.active_func */
-    {0xe95a32au, 13, 881}, /* 117 <home_object> */
-    {0x38f9c0bu, 16, 895}, /* 118 <computed_field> */
-    {0x7de42e8u, 23, 912}, /* 119 <static_computed_field> */
-    {0xd5715eau, 19, 936}, /* 120 <class_fields_init> */
-    {0x620bc12u, 7, 956}, /* 121 <brand> */
-    {0x827e460u, 12, 964}, /* 122 #constructor */
-    {0x001724bu, 2, 977}, /* 123 as */
-    {0xc3d4453u, 4, 980}, /* 124 from */
-    {0x2a16b69u, 9, 985}, /* 125 fromAsync */
-    {0x3c69f4eu, 4, 995}, /* 126 meta */
-    {0x26802b2u, 9, 1000}, /* 127 .default. */
-    {0x0000131u, 1, 1010}, /* 128 . */
-    {0x4d22895u, 6, 1012}, /* 129 Module */
-    {0xb60c8e6u, 4, 1019}, /* 130 then */
-    {0x199f503u, 7, 1024}, /* 131 resolve */
-    {0x01f56b8u, 6, 1032}, /* 132 reject */
-    {0x8db9482u, 7, 1039}, /* 133 promise */
-    {0x6a332d5u, 5, 1047}, /* 134 proxy */
-    {0xd2ce0dfu, 6, 1053}, /* 135 revoke */
-    {0x2385a0bu, 5, 1060}, /* 136 async */
-    {0xb2dfad2u, 4, 1066}, /* 137 exec */
-    {0xd67a995u, 6, 1071}, /* 138 groups */
-    {0xdb1f2eeu, 7, 1078}, /* 139 indices */
-    {0x38d1e5bu, 6, 1086}, /* 140 status */
-    {0x66bf2a5u, 6, 1093}, /* 141 reason */
-    {0xe0a4b82u, 10, 1100}, /* 142 globalThis */
-    {0x83e08d8u, 6, 1111}, /* 143 bigint */
-    {0x753fe81u, 9, 1118}, /* 144 not-equal */
-    {0x7ef57bfu, 9, 1128}, /* 145 timed-out */
-    {0x00180a5u, 2, 1138}, /* 146 ok */
-    {0x035faccu, 6, 1141}, /* 147 toJSON */
-    {0x9a97e51u, 13, 1148}, /* 148 maxByteLength */
-    {0x196c400u, 3, 1162}, /* 149 zip */
-    {0x82c330eu, 8, 1166}, /* 150 zipKeyed */
-    {0x3d11cccu, 4, 1175}, /* 151 mode */
-    {0xd546c10u, 7, 1180}, /* 152 padding */
-    {0x7f3b493u, 8, 1188}, /* 153 shortest */
-    {0x5803229u, 7, 1197}, /* 154 longest */
-    {0x5f0498au, 6, 1205}, /* 155 strict */
-    {0xf38ddc0u, 6, 1212}, /* 156 Object */
-    {0xbaea8f8u, 5, 1219}, /* 157 Array */
-    {0x05c4cd7u, 5, 1225}, /* 158 Error */
-    {0x519d1cau, 6, 1231}, /* 159 Number */
-    {0x34b7feau, 6, 1238}, /* 160 String */
-    {0xa75a0efu, 7, 1245}, /* 161 Boolean */
-    {0xfb132d1u, 6, 1253}, /* 162 Symbol */
-    {0x6906c3du, 9, 1260}, /* 163 Arguments */
-    {0x10fdbb1u, 4, 1270}, /* 164 Math */
-    {0xdc031e1u, 4, 1275}, /* 165 JSON */
-    {0x74da49fu, 4, 1280}, /* 166 Date */
-    {0x7ab23d1u, 8, 1285}, /* 167 Function */
-    {0x1855bdau, 17, 1294}, /* 168 GeneratorFunction */
-    {0x4ea15c3u, 13, 1312}, /* 169 ForInIterator */
-    {0xa181442u, 6, 1326}, /* 170 RegExp */
-    {0xbe38340u, 11, 1333}, /* 171 ArrayBuffer */
-    {0x39959ebu, 17, 1345}, /* 172 SharedArrayBuffer */
-    {0xeb01ab4u, 17, 1363}, /* 173 Uint8ClampedArray */
-    {0x44405ffu, 9, 1381}, /* 174 Int8Array */
-    {0x662965cu, 10, 1391}, /* 175 Uint8Array */
-    {0x1a1fa56u, 10, 1402}, /* 176 Int16Array */
-    {0xf0849e1u, 11, 1413}, /* 177 Uint16Array */
-    {0x7c2cadcu, 10, 1425}, /* 178 Int32Array */
-    {0x5291a67u, 11, 1436}, /* 179 Uint32Array */
-    {0xb6f8c3bu, 13, 1448}, /* 180 BigInt64Array */
-    {0xe172dfau, 14, 1462}, /* 181 BigUint64Array */
-    {0x3b8c939u, 12, 1477}, /* 182 Float16Array */
-    {0x9d999bfu, 12, 1490}, /* 183 Float32Array */
-    {0x7b407c0u, 12, 1503}, /* 184 Float64Array */
-    {0x9149548u, 8, 1516}, /* 185 DataView */
-    {0x5776dd8u, 6, 1525}, /* 186 BigInt */
-    {0xbe9da1au, 7, 1532}, /* 187 WeakRef */
-    {0x47ba554u, 20, 1540}, /* 188 FinalizationRegistry */
-    {0x1673d2bu, 3, 1561}, /* 189 Map */
-    {0x16d9671u, 3, 1565}, /* 190 Set */
-    {0xbe48f13u, 7, 1569}, /* 191 WeakMap */
-    {0xbeae859u, 7, 1577}, /* 192 WeakSet */
-    {0x120349fu, 8, 1585}, /* 193 Iterator */
-    {0x26201bdu, 15, 1594}, /* 194 Iterator Concat */
-    {0x27c611fu, 15, 1610}, /* 195 Iterator Helper */
-    {0x197b953u, 13, 1626}, /* 196 Iterator Wrap */
-    {0x6eb2cebu, 12, 1640}, /* 197 Map Iterator */
-    {0x0fb1f55u, 12, 1653}, /* 198 Set Iterator */
-    {0x88efac6u, 14, 1666}, /* 199 Array Iterator */
-    {0xbdf27e4u, 15, 1681}, /* 200 String Iterator */
-    {0xc617acfu, 22, 1697}, /* 201 RegExp String Iterator */
-    {0x8b1234au, 9, 1720}, /* 202 Generator */
-    {0x13686b5u, 5, 1730}, /* 203 Proxy */
-    {0x184e262u, 7, 1736}, /* 204 Promise */
-    {0x971520au, 22, 1744}, /* 205 PromiseResolveFunction */
-    {0xe403999u, 21, 1767}, /* 206 PromiseRejectFunction */
-    {0x75c4d3bu, 13, 1789}, /* 207 AsyncFunction */
-    {0x72b5bd9u, 20, 1803}, /* 208 AsyncFunctionResolve */
-    {0xe8041b2u, 19, 1824}, /* 209 AsyncFunctionReject */
-    {0xfc82840u, 22, 1844}, /* 210 AsyncGeneratorFunction */
-    {0x7b2af30u, 14, 1867}, /* 211 AsyncGenerator */
-    {0x0778ebbu, 9, 1882}, /* 212 EvalError */
-    {0x2fdbe5cu, 10, 1892}, /* 213 RangeError */
-    {0x2f79d9eu, 14, 1903}, /* 214 ReferenceError */
-    {0x3bc728cu, 11, 1918}, /* 215 SyntaxError */
-    {0x6c4f8ddu, 9, 1930}, /* 216 TypeError */
-    {0xe962805u, 8, 1940}, /* 217 URIError */
-    {0xd11fe12u, 13, 1949}, /* 218 InternalError */
-    {0x99e8b26u, 12, 1963}, /* 219 DOMException */
-    {0x7b78596u, 8, 1976}, /* 220 CallSite */
-    {0, JS_ROM_NOT, 0},
-    {0, JS_ROM_NOT, 0},
-    {0, JS_ROM_NOT, 0},
-    {0, JS_ROM_NOT, 0},
-    {0, JS_ROM_NOT, 0},
-    {0, JS_ROM_NOT, 0},
-    {0, JS_ROM_NOT, 0},
-    {0, JS_ROM_NOT, 0},
-    {0, JS_ROM_NOT, 0},
-    {0, JS_ROM_NOT, 0},
-    {0, JS_ROM_NOT, 0},
+    {0x6b962c9u, 4, 300}, /* 49 keys */
+    {0xd6e4156u, 4, 305}, /* 50 size */
+    {0xc4bc85du, 6, 310}, /* 51 length */
+    {0xec4a4f7u, 7, 317}, /* 52 message */
+    {0x1ec1c73u, 5, 325}, /* 53 cause */
+    {0xbc4e39eu, 6, 331}, /* 54 errors */
+    {0xd226794u, 5, 338}, /* 55 error */
+    {0x7859dabu, 10, 344}, /* 56 suppressed */
+    {0x8ab3034u, 5, 355}, /* 57 stack */
+    {0x3f5eaa8u, 4, 361}, /* 58 name */
+    {0xbfafcddu, 8, 366}, /* 59 toString */
+    {0xc847c15u, 14, 375}, /* 60 toLocaleString */
+    {0xa01f256u, 7, 390}, /* 61 valueOf */
+    {0xc09c341u, 4, 398}, /* 62 eval */
+    {0xde0a326u, 9, 403}, /* 63 prototype */
+    {0xa59633cu, 11, 413}, /* 64 constructor */
+    {0x3002cfeu, 12, 425}, /* 65 configurable */
+    {0x1ffa891u, 8, 438}, /* 66 writable */
+    {0x661f86fu, 10, 447}, /* 67 enumerable */
+    {0xbdf14fbu, 5, 458}, /* 68 value */
+    {0x4db2090u, 3, 464}, /* 69 get */
+    {0x4d6ce44u, 3, 468}, /* 70 set */
+    {0x3908c2eu, 2, 472}, /* 71 of */
+    {0x08d8a70u, 9, 475}, /* 72 __proto__ */
+    {0x39d04d0u, 9, 485}, /* 73 undefined */
+    {0xd0d8300u, 6, 495}, /* 74 number */
+    {0xdb7f8feu, 7, 502}, /* 75 boolean */
+    {0xf437160u, 6, 510}, /* 76 string */
+    {0xb6e970au, 6, 517}, /* 77 object */
+    {0x8e5221bu, 6, 524}, /* 78 symbol */
+    {0x06d9b94u, 7, 531}, /* 79 integer */
+    {0x6617628u, 7, 539}, /* 80 unknown */
+    {0xe0afc22u, 9, 547}, /* 81 arguments */
+    {0x1542ec5u, 6, 557}, /* 82 callee */
+    {0x1542ed6u, 6, 564}, /* 83 caller */
+    {0x914d67du, 6, 571}, /* 84 <eval> */
+    {0x1229783u, 5, 578}, /* 85 <ret> */
+    {0x6f08009u, 5, 584}, /* 86 <var> */
+    {0xbe0869cu, 9, 590}, /* 87 <arg_var> */
+    {0x803b06fu, 6, 600}, /* 88 <with> */
+    {0xf0f2a44u, 15, 607}, /* 89 <using_dispose> */
+    {0x4c81593u, 3, 623}, /* 90 use */
+    {0xdaaf677u, 7, 627}, /* 91 dispose */
+    {0x4cc26fau, 12, 635}, /* 92 disposeAsync */
+    {0x18acbfcu, 9, 648}, /* 93 lastIndex */
+    {0x9f9ea00u, 6, 658}, /* 94 target */
+    {0xefbf352u, 5, 665}, /* 95 index */
+    {0xef4b98au, 5, 671}, /* 96 input */
+    {0x7c12287u, 16, 677}, /* 97 defineProperties */
+    {0x6048436u, 5, 694}, /* 98 apply */
+    {0x7b27defu, 4, 700}, /* 99 join */
+    {0x31d9f2au, 5, 705}, /* 100 split */
+    {0xb40ebe9u, 9, 711}, /* 101 construct */
+    {0xdc75876u, 14, 721}, /* 102 getPrototypeOf */
+    {0x950818au, 14, 736}, /* 103 setPrototypeOf */
+    {0xba35e7au, 12, 751}, /* 104 isExtensible */
+    {0xc9468c4u, 17, 764}, /* 105 preventExtensions */
+    {0x4da2e8cu, 3, 782}, /* 106 has */
+    {0x5d8b6f3u, 14, 786}, /* 107 deleteProperty */
+    {0xba9b243u, 14, 801}, /* 108 defineProperty */
+    {0xfa68f5du, 24, 816}, /* 109 getOwnPropertyDescriptor */
+    {0xe06ff48u, 7, 841}, /* 110 ownKeys */
+    {0x425ceddu, 3, 849}, /* 111 add */
+    {0xd2ce91fu, 4, 853}, /* 112 done */
+    {0x3fe2ec8u, 4, 858}, /* 113 next */
+    {0x6b14c31u, 6, 863}, /* 114 values */
+    {0xdd2aefeu, 6, 870}, /* 115 source */
+    {0x48a75b5u, 5, 877}, /* 116 flags */
+    {0x4fc0996u, 6, 883}, /* 117 global */
+    {0xfad343du, 7, 890}, /* 118 unicode */
+    {0x4d7d892u, 3, 898}, /* 119 raw */
+    {0x3c25f96u, 7, 902}, /* 120 rawJSON */
+    {0xd3b5156u, 10, 910}, /* 121 new.target */
+    {0x4276dceu, 16, 921}, /* 122 this.active_func */
+    {0x9bb72b1u, 13, 938}, /* 123 <home_object> */
+    {0xf07f87bu, 16, 952}, /* 124 <computed_field> */
+    {0xeda5289u, 23, 969}, /* 125 <static_computed_field> */
+    {0xcb6e2afu, 19, 993}, /* 126 <class_fields_init> */
+    {0xa5b17e3u, 7, 1013}, /* 127 <brand> */
+    {0xd41af34u, 12, 1021}, /* 128 #constructor */
+    {0x3907ec5u, 2, 1034}, /* 129 as */
+    {0xb1f5d4fu, 4, 1037}, /* 130 from */
+    {0x2add316u, 9, 1042}, /* 131 fromAsync */
+    {0x4e48652u, 4, 1052}, /* 132 meta */
+    {0x264bacdu, 9, 1057}, /* 133 .default. */
+    {0x1c88776u, 1, 1067}, /* 134 . */
+    {0xe610d3fu, 6, 1069}, /* 135 Module */
+    {0xc42d1fau, 4, 1076}, /* 136 then */
+    {0xde25ef2u, 7, 1081}, /* 137 resolve */
+    {0xaac7312u, 6, 1089}, /* 138 reject */
+    {0x4a03f73u, 7, 1096}, /* 139 promise */
+    {0xe49adb6u, 5, 1104}, /* 140 proxy */
+    {0x79fc575u, 6, 1110}, /* 141 revoke */
+    {0xad2c568u, 5, 1117}, /* 142 async */
+    {0xc0fe3ceu, 4, 1123}, /* 143 exec */
+    {0x7d48c3fu, 6, 1128}, /* 144 groups */
+    {0x1ca591fu, 7, 1135}, /* 145 indices */
+    {0x93e3bf1u, 6, 1143}, /* 146 status */
+    {0xcd8d70fu, 6, 1150}, /* 147 reason */
+    {0xfdf7544u, 10, 1157}, /* 148 globalThis */
+    {0x28d2d72u, 6, 1168}, /* 149 bigint */
+    {0x75f46feu, 9, 1175}, /* 150 not-equal */
+    {0x7e3efc0u, 9, 1185}, /* 151 timed-out */
+    {0x3908c2bu, 2, 1195}, /* 152 ok */
+    {0xa86df66u, 6, 1198}, /* 153 toJSON */
+    {0xe87afcau, 13, 1205}, /* 154 maxByteLength */
+    {0x4cf56d5u, 3, 1219}, /* 155 zip */
+    {0x6680136u, 8, 1223}, /* 156 zipKeyed */
+    {0x4f305d0u, 4, 1232}, /* 157 mode */
+    {0x12fc7e1u, 7, 1237}, /* 158 padding */
+    {0x9b786abu, 8, 1245}, /* 159 shortest */
+    {0x9fb99d8u, 7, 1254}, /* 160 longest */
+    {0xf436c20u, 6, 1262}, /* 161 strict */
+    {0x58bf86au, 6, 1269}, /* 162 Object */
+    {0x344379bu, 5, 1276}, /* 163 Array */
+    {0x8b6d3b4u, 5, 1282}, /* 164 Error */
+    {0xfaaf460u, 6, 1288}, /* 165 Number */
+    {0x9f85a40u, 6, 1295}, /* 166 String */
+    {0x60e0b1eu, 7, 1302}, /* 167 Boolean */
+    {0x502177bu, 6, 1310}, /* 168 Symbol */
+    {0x69cd442u, 9, 1317}, /* 169 Arguments */
+    {0x62dc2adu, 4, 1327}, /* 170 Math */
+    {0xae228fdu, 4, 1332}, /* 171 JSON */
+    {0x06fbd83u, 4, 1337}, /* 172 Date */
+    {0x9ef11e9u, 8, 1342}, /* 173 Function */
+    {0xfd5b16du, 17, 1351}, /* 174 GeneratorFunction */
+    {0x3c4c458u, 13, 1369}, /* 175 ForInIterator */
+    {0x0ab31e8u, 6, 1383}, /* 176 RegExp */
+    {0x87e464du, 11, 1390}, /* 177 ArrayBuffer */
+    {0xdc9b35cu, 17, 1402}, /* 178 SharedArrayBuffer */
+    {0x0e0f003u, 17, 1420}, /* 179 Uint8ClampedArray */
+    {0x448bd80u, 9, 1438}, /* 180 Int8Array */
+    {0x7b7a89au, 10, 1448}, /* 181 Uint8Array */
+    {0x074c490u, 10, 1459}, /* 182 Int16Array */
+    {0xc958cecu, 11, 1470}, /* 183 Uint16Array */
+    {0x617f41au, 10, 1482}, /* 184 Int32Array */
+    {0x6b4df6au, 11, 1493}, /* 185 Uint32Array */
+    {0xc415da0u, 13, 1505}, /* 186 BigInt64Array */
+    {0x6e07a18u, 14, 1519}, /* 187 BigUint64Array */
+    {0x6de826du, 12, 1534}, /* 188 Float16Array */
+    {0xcbfd2ebu, 12, 1547}, /* 189 Float32Array */
+    {0x2d24c94u, 12, 1560}, /* 190 Float64Array */
+    {0x750a770u, 8, 1573}, /* 191 DataView */
+    {0xfc44872u, 6, 1582}, /* 192 BigInt */
+    {0x79271ebu, 7, 1589}, /* 193 WeakRef */
+    {0x7d1d8d8u, 20, 1597}, /* 194 FinalizationRegistry */
+    {0x43eaffeu, 3, 1618}, /* 195 Map */
+    {0x43404a4u, 3, 1622}, /* 196 Set */
+    {0x79f24e2u, 7, 1626}, /* 197 WeakMap */
+    {0x79143a8u, 7, 1634}, /* 198 WeakSet */
+    {0xf6406a7u, 8, 1642}, /* 199 Iterator */
+    {0x8dddf94u, 15, 1651}, /* 200 Iterator Concat */
+    {0x8c3bf36u, 15, 1667}, /* 201 Iterator Helper */
+    {0x6b968c8u, 13, 1683}, /* 202 Iterator Wrap */
+    {0x38d67bfu, 12, 1697}, /* 203 Map Iterator */
+    {0x59d5401u, 12, 1710}, /* 204 Set Iterator */
+    {0x079ad24u, 14, 1723}, /* 205 Array Iterator */
+    {0x160f9cdu, 15, 1738}, /* 206 String Iterator */
+    {0xb5af0d5u, 22, 1754}, /* 207 RegExp String Iterator */
+    {0x8bd9b35u, 9, 1777}, /* 208 Generator */
+    {0x9dc19d6u, 5, 1787}, /* 209 Proxy */
+    {0xdff4993u, 7, 1793}, /* 210 Promise */
+    {0xe4ad810u, 22, 1801}, /* 211 PromiseResolveFunction */
+    {0xb333a4au, 21, 1824}, /* 212 PromiseRejectFunction */
+    {0x0729ca0u, 13, 1846}, /* 213 AsyncFunction */
+    {0x4812655u, 20, 1860}, /* 214 AsyncFunctionResolve */
+    {0xf61b6f7u, 19, 1881}, /* 215 AsyncFunctionReject */
+    {0x8f3a25au, 22, 1901}, /* 216 AsyncGeneratorFunction */
+    {0xf45f8d2u, 14, 1924}, /* 217 AsyncGenerator */
+    {0x07b36c4u, 9, 1939}, /* 218 EvalError */
+    {0x328809au, 10, 1949}, /* 219 RangeError */
+    {0xa00ca7cu, 14, 1960}, /* 220 ReferenceError */
+    {0x021b781u, 11, 1975}, /* 221 SyntaxError */
+    {0x6c840a2u, 9, 1987}, /* 222 TypeError */
+    {0x0d21a3du, 8, 1997}, /* 223 URIError */
+    {0xa3f2f89u, 13, 2006}, /* 224 InternalError */
+    {0xcf8c072u, 12, 2020}, /* 225 DOMException */
+    {0x9f3b7aeu, 8, 2033}, /* 226 CallSite */
+    {0x6814d26u, 15, 2042}, /* 227 DisposableStack */
+    {0x18e13d9u, 20, 2058}, /* 228 AsyncDisposableStack */
+    {0xcf93802u, 15, 2079}, /* 229 SuppressedError */
     {0, JS_ROM_NOT, 0},
     {0, JS_ROM_NOT, 0},
     {0, JS_ROM_NOT, 0},
-    {0x8a7d615u, 9, 1985}, /* 235 ABORT_ERR */
-    {0x84dee5au, 14, 1995}, /* 236 AggregateError */
-    {0x73e7bcfu, 7, 2010}, /* 237 Atomics */
-    {0x812fe0du, 17, 2018}, /* 238 BYTES_PER_ELEMENT */
-    {0x4f862cfu, 14, 2036}, /* 239 DATA_CLONE_ERR */
-    {0xf9f64acu, 18, 2051}, /* 240 DOMSTRING_SIZE_ERR */
-    {0x000014cu, 1, 2070}, /* 241 E */
-    {0x7493f81u, 7, 2072}, /* 242 EPSILON */
-    {0x1760842u, 21, 2080}, /* 243 HIERARCHY_REQUEST_ERR */
-    {0xafb81adu, 14, 2102}, /* 244 INDEX_SIZE_ERR */
-    {0xf538a44u, 19, 2117}, /* 245 INUSE_ATTRIBUTE_ERR */
-    {0x505b1fbu, 18, 2137}, /* 246 INVALID_ACCESS_ERR */
-    {0x9592a2eu, 21, 2156}, /* 247 INVALID_CHARACTER_ERR */
-    {0x1dfbb13u, 24, 2178}, /* 248 INVALID_MODIFICATION_ERR */
-    {0x2ec8d0cu, 21, 2203}, /* 249 INVALID_NODE_TYPE_ERR */
-    {0x8812a96u, 17, 2225}, /* 250 INVALID_STATE_ERR */
-    {0x2db7af1u | JS_ROM_NUMERIC, 8, 2243}, /* 251 Infinity */
-    {0xfe5f4aau, 4, 2252}, /* 252 LN10 */
-    {0x1661b37u, 3, 2257}, /* 253 LN2 */
-    {0x816852bu, 6, 2261}, /* 254 LOG10E */
-    {0x66b2986u, 5, 2268}, /* 255 LOG2E */
-    {0x83ad9d0u, 16, 2274}, /* 256 MAX_SAFE_INTEGER */
-    {0x79da6adu, 9, 2291}, /* 257 MAX_VALUE */
-    {0x7dfe152u, 16, 2301}, /* 258 MIN_SAFE_INTEGER */
-    {0x3d6cebbu, 9, 2318}, /* 259 MIN_VALUE */
-    {0xd137d68u, 13, 2328}, /* 260 NAMESPACE_ERR */
-    {0x2464271u, 17, 2342}, /* 261 NEGATIVE_INFINITY */
-    {0x5fbd923u, 11, 2360}, /* 262 NETWORK_ERR */
-    {0xfe5f0d3u, 13, 2372}, /* 263 NOT_FOUND_ERR */
-    {0x0e0f687u, 17, 2386}, /* 264 NOT_SUPPORTED_ERR */
-    {0x45ac696u, 19, 2404}, /* 265 NO_DATA_ALLOWED_ERR */
-    {0x0d4b360u, 27, 2424}, /* 266 NO_MODIFICATION_ALLOWED_ERR */
-    {0x1684b3au, 3, 2452}, /* 267 NaN */
-    {0x00160aau, 2, 2456}, /* 268 PI */
-    {0x700709du, 17, 2459}, /* 269 POSITIVE_INFINITY */
-    {0xc4641c1u, 18, 2477}, /* 270 QUOTA_EXCEEDED_ERR */
-    {0xbc6e924u, 7, 2496}, /* 271 Reflect */
-    {0x8e308bfu, 12, 2504}, /* 272 SECURITY_ERR */
-    {0xcb9df9bu, 7, 2517}, /* 273 SQRT1_2 */
-    {0x4d1d6d1u, 5, 2525}, /* 274 SQRT2 */
-    {0x5f9cfb2u, 10, 2531}, /* 275 SYNTAX_ERR */
-    {0xd20ad9eu, 11, 2542}, /* 276 TIMEOUT_ERR */
-    {0x74ed758u, 17, 2554}, /* 277 TYPE_MISMATCH_ERR */
-    {0xa200b48u, 10, 2572}, /* 278 TypedArray */
-    {0x275b415u, 16, 2583}, /* 279 URL_MISMATCH_ERR */
-    {0x16fa12bu, 3, 2600}, /* 280 UTC */
-    {0x82e5040u, 14, 2604}, /* 281 VALIDATION_ERR */
-    {0xd1e4b24u, 18, 2619}, /* 282 WRONG_DOCUMENT_ERR */
-    {0x421ff67u, 22, 2638}, /* 283 [Symbol.asyncIterator] */
-    {0x413d9bau, 20, 2661}, /* 284 [Symbol.hasInstance] */
-    {0x78831f3u, 17, 2682}, /* 285 [Symbol.iterator] */
-    {0xb103cedu, 17, 2700}, /* 286 [Symbol.matchAll] */
-    {0x1dca0acu, 14, 2718}, /* 287 [Symbol.match] */
-    {0x1cf4bb5u, 16, 2733}, /* 288 [Symbol.replace] */
-    {0xb63dc51u, 15, 2750}, /* 289 [Symbol.search] */
-    {0xc403807u, 14, 2766}, /* 290 [Symbol.split] */
-    {0x128f8edu, 20, 2781}, /* 291 [Symbol.toPrimitive] */
-    {0xd1c2357u, 16, 2802}, /* 292 __defineGetter__ */
-    {0x8e282ebu, 16, 2819}, /* 293 __defineSetter__ */
-    {0x291de46u, 16, 2836}, /* 294 __lookupGetter__ */
-    {0xe583ddau, 16, 2853}, /* 295 __lookupSetter__ */
-    {0x17c5a09u, 3, 2870}, /* 296 abs */
-    {0x6c189c7u, 4, 2874}, /* 297 acos */
-    {0x0d48bd9u, 5, 2879}, /* 298 acosh */
-    {0x17c6448u, 3, 2885}, /* 299 all */
-    {0x32b6391u, 10, 2889}, /* 300 allSettled */
-    {0xe2a7e8eu, 6, 2900}, /* 301 anchor */
-    {0x17c664eu, 3, 2907}, /* 302 and */
-    {0x17c6663u, 3, 2911}, /* 303 any */
-    {0x3d8c2c2u, 6, 2915}, /* 304 asIntN */
-    {0xc46c259u, 7, 2922}, /* 305 asUintN */
-    {0x6d266a8u, 4, 2930}, /* 306 asin */
-    {0x2277700u, 5, 2935}, /* 307 asinh */
-    {0x15dc4d8u, 6, 2941}, /* 308 assign */
-    {0x01ce229u, 13, 2948}, /* 309 asyncIterator */
-    {0x001724cu, 2, 2962}, /* 310 at */
-    {0x6d36ca1u, 4, 2965}, /* 311 atan */
-    {0x3349999u, 5, 2970}, /* 312 atan2 */
-    {0x33499cfu, 5, 2976}, /* 313 atanh */
-    {0x17d6f5fu, 3, 2982}, /* 314 big */
-    {0x7dd722eu, 4, 2986}, /* 315 bind */
-    {0x7bbce03u, 5, 2991}, /* 316 blink */
-    {0x7e3c546u, 4, 2997}, /* 317 bold */
-    {0x52e0139u, 6, 3002}, /* 318 buffer */
-    {0xe8666ffu, 10, 3009}, /* 319 byteLength */
-    {0x9d1388cu, 10, 3020}, /* 320 byteOffset */
-    {0x8ea92f7u, 4, 3031}, /* 321 call */
-    {0xd93d6f2u, 17, 3036}, /* 322 captureStackTrace */
-    {0x8eba75au, 4, 3054}, /* 323 cbrt */
-    {0x8eec8a6u, 4, 3059}, /* 324 ceil */
-    {0xc2fa192u, 6, 3064}, /* 325 charAt */
-    {0x07af347u, 10, 3071}, /* 326 charCodeAt */
-    {0x4e2ed4cu, 5, 3082}, /* 327 clear */
-    {0x4f8e7cfu, 5, 3088}, /* 328 clz32 */
-    {0x8f95166u, 4, 3094}, /* 329 code */
-    {0x8ebd6bdu, 11, 3099}, /* 330 codePointAt */
-    {0xd6de4e0u, 12, 3111}, /* 331 columnNumber */
-    {0xb23e6a7u, 15, 3124}, /* 332 compareExchange */
-    {0x60ad342u, 7, 3140}, /* 333 compile */
-    {0x9eee6d9u, 10, 3148}, /* 334 copyWithin */
-    {0x17e83c6u, 3, 3159}, /* 335 cos */
-    {0x8f960d2u, 4, 3163}, /* 336 cosh */
-    {0x4262bcdu, 6, 3168}, /* 337 create */
-    {0x517949du, 9, 3175}, /* 338 decodeURI */
-    {0xbd94530u, 18, 3185}, /* 339 decodeURIComponent */
-    {0xa8500d9u, 5, 3204}, /* 340 deref */
-    {0xe53ba73u, 11, 3210}, /* 341 description */
-    {0xa27e493u, 8, 3222}, /* 342 detached */
-    {0xd49d896u, 10, 3231}, /* 343 difference */
-    {0x45b0519u, 6, 3242}, /* 344 dotAll */
-    {0xa121ba8u, 4, 3249}, /* 345 drop */
-    {0xaa80b0du, 9, 3254}, /* 346 encodeURI */
-    {0x0d59e40u, 18, 3264}, /* 347 encodeURIComponent */
-    {0xf41ae8fu, 8, 3283}, /* 348 endsWith */
-    {0x145feefu, 7, 3292}, /* 349 entries */
-    {0xe50b1b2u, 6, 3300}, /* 350 escape */
-    {0xa1194f2u, 5, 3307}, /* 351 every */
-    {0x7f74964u, 8, 3313}, /* 352 exchange */
-    {0x180a964u, 3, 3322}, /* 353 exp */
-    {0xc485450u, 5, 3326}, /* 354 expm1 */
-    {0x1af27dcu, 8, 3332}, /* 355 f16round */
-    {0x8eba4d0u, 8, 3341}, /* 356 fileName */
-    {0xc33c184u, 4, 3350}, /* 357 fill */
-    {0xc0a1c01u, 6, 3355}, /* 358 filter */
-    {0xc33c38au, 4, 3362}, /* 359 find */
-    {0x32ca470u, 9, 3367}, /* 360 findIndex */
-    {0x8bf6a48u, 8, 3377}, /* 361 findLast */
-    {0xb9c9e62u, 13, 3386}, /* 362 findLastIndex */
-    {0x938721bu, 5, 3400}, /* 363 fixed */
-    {0xc36e0d2u, 4, 3406}, /* 364 flat */
-    {0x42b7832u, 7, 3411}, /* 365 flatMap */
-    {0xc6fb9bbu, 5, 3419}, /* 366 floor */
-    {0x1e89aa3u, 9, 3425}, /* 367 fontcolor */
-    {0x32813a9u, 8, 3435}, /* 368 fontsize */
-    {0x7eb8979u, 7, 3444}, /* 369 forEach */
-    {0xae9deb0u, 6, 3452}, /* 370 freeze */
-    {0x02170beu, 12, 3459}, /* 371 fromCharCode */
-    {0x9e52bc0u, 13, 3472}, /* 372 fromCodePoint */
-    {0x5b375edu, 11, 3486}, /* 373 fromEntries */
-    {0x5d280d1u, 6, 3498}, /* 374 fround */
-    {0x0ffb4cfu, 20, 3505}, /* 375 get [Symbol.species] */
-    {0xb3773adu, 24, 3526}, /* 376 get [Symbol.toStringTag] */
-    {0xbf7859du, 13, 3551}, /* 377 get __proto__ */
-    {0x2f6615bu, 10, 3565}, /* 378 get buffer */
-    {0x5163de1u, 14, 3576}, /* 379 get byteLength */
-    {0x0610f6eu, 14, 3591}, /* 380 get byteOffset */
-    {0x91c2128u, 8, 3606}, /* 381 get code */
-    {0x3986222u, 16, 3615}, /* 382 get columnNumber */
-    {0xc197ca1u, 15, 3632}, /* 383 get description */
-    {0x2e62715u, 12, 3648}, /* 384 get detached */
-    {0x223653bu, 10, 3661}, /* 385 get dotAll */
-    {0x1a9e752u, 12, 3672}, /* 386 get fileName */
-    {0x0245b24u, 9, 3685}, /* 387 get flags */
-    {0xc178c5eu, 10, 3695}, /* 388 get global */
-    {0x87275c8u, 12, 3706}, /* 389 get growable */
-    {0x6d83898u, 14, 3719}, /* 390 get hasIndices */
-    {0x77d121du, 14, 3734}, /* 391 get ignoreCase */
-    {0x8f4693fu, 13, 3749}, /* 392 get immutable */
-    {0x4c14e19u, 10, 3763}, /* 393 get length */
-    {0x4632d80u, 14, 3774}, /* 394 get lineNumber */
-    {0xf502d1fu, 17, 3789}, /* 395 get maxByteLength */
-    {0xb99d1f4u, 11, 3807}, /* 396 get message */
-    {0x7aef1bau, 13, 3819}, /* 397 get multiline */
-    {0x4fac376u, 8, 3833}, /* 398 get name */
-    {0x0246189u, 21, 3842}, /* 399 get prepareStackTrace */
-    {0xe702028u, 13, 3864}, /* 400 get resizable */
-    {0xa6f280cu, 8, 3878}, /* 401 get size */
-    {0x529eb76u, 10, 3887}, /* 402 get source */
-    {0x7beb6cbu, 19, 3898}, /* 403 get stackTraceLimit */
-    {0x9f025b4u, 10, 3918}, /* 404 get sticky */
-    {0xcb162bau, 11, 3929}, /* 405 get unicode */
-    {0xcd1f3a3u, 15, 3941}, /* 406 get unicodeSets */
-    {0x214ab4au, 11, 3957}, /* 407 getBigInt64 */
-    {0x620c60bu, 12, 3969}, /* 408 getBigUint64 */
-    {0xf205cc4u, 15, 3982}, /* 409 getColumnNumber */
-    {0xf940463u, 7, 3998}, /* 410 getDate */
-    {0x76ba297u, 6, 4006}, /* 411 getDay */
-    {0xf394334u, 11, 4013}, /* 412 getFileName */
-    {0xf1f2274u, 10, 4025}, /* 413 getFloat16 */
-    {0xf1f247eu, 10, 4036}, /* 414 getFloat32 */
-    {0xf1f2795u, 10, 4047}, /* 415 getFloat64 */
-    {0x21b17e1u, 11, 4058}, /* 416 getFullYear */
-    {0x809c115u, 11, 4070}, /* 417 getFunction */
-    {0x9607568u, 15, 4082}, /* 418 getFunctionName */
-    {0x4ed4ffau, 8, 4098}, /* 419 getHours */
-    {0x101cfcfu, 8, 4107}, /* 420 getInt16 */
-    {0x101d1d9u, 8, 4116}, /* 421 getInt32 */
-    {0x50da266u, 7, 4125}, /* 422 getInt8 */
-    {0xfbc1fc2u, 13, 4133}, /* 423 getLineNumber */
-    {0xd057457u, 15, 4147}, /* 424 getMilliseconds */
-    {0x87f0c8au, 10, 4163}, /* 425 getMinutes */
-    {0x6bee98bu, 8, 4174}, /* 426 getMonth */
-    {0x5636319u, 11, 4183}, /* 427 getOrInsert */
-    {0x7e97506u, 19, 4195}, /* 428 getOrInsertComputed */
-    {0x000ab26u, 25, 4215}, /* 429 getOwnPropertyDescriptors */
-    {0xf237a22u, 19, 4241}, /* 430 getOwnPropertyNames */
-    {0x676e19du, 21, 4261}, /* 431 getOwnPropertySymbols */
-    {0x02587f2u, 10, 4283}, /* 432 getSeconds */
-    {0x0f5b42au, 7, 4294}, /* 433 getTime */
-    {0xf109679u, 17, 4302}, /* 434 getTimezoneOffset */
-    {0xf992325u, 10, 4320}, /* 435 getUTCDate */
-    {0x864d745u, 9, 4331}, /* 436 getUTCDay */
-    {0xdc44963u, 14, 4341}, /* 437 getUTCFullYear */
-    {0xa2fe948u, 11, 4356}, /* 438 getUTCHours */
-    {0x37f8099u, 18, 4368}, /* 439 getUTCMilliseconds */
-    {0x7eea878u, 13, 4387}, /* 440 getUTCMinutes */
-    {0xc0182d9u, 11, 4401}, /* 441 getUTCMonth */
-    {0xf9523e0u, 13, 4413}, /* 442 getUTCSeconds */
-    {0xbc68a74u, 9, 4427}, /* 443 getUint16 */
-    {0xbc68c7eu, 9, 4437}, /* 444 getUint32 */
-    {0x9989a59u, 8, 4447}, /* 445 getUint8 */
-    {0x65d54d2u, 7, 4456}, /* 446 getYear */
-    {0x57f0635u, 7, 4464}, /* 447 groupBy */
-    {0xd52d8b4u, 4, 4472}, /* 448 grow */
-    {0xfb43346u, 8, 4477}, /* 449 growable */
-    {0x04861b6u, 10, 4486}, /* 450 hasIndices */
-    {0xad547eeu, 11, 4497}, /* 451 hasInstance */
-    {0x949520du, 6, 4509}, /* 452 hasOwn */
-    {0x77e7632u, 14, 4516}, /* 453 hasOwnProperty */
-    {0x4e01b1bu, 5, 4531}, /* 454 hypot */
-    {0x0ed3b3bu, 10, 4537}, /* 455 ignoreCase */
-    {0xd7e15b1u, 9, 4548}, /* 456 immutable */
-    {0xf78c08cu, 4, 4558}, /* 457 imul */
-    {0x540edfcu, 8, 4563}, /* 458 includes */
-    {0x971b4f0u, 7, 4572}, /* 459 indexOf */
-    {0x7890f72u, 12, 4580}, /* 460 intersection */
-    {0x0017a83u, 2, 4593}, /* 461 is */
-    {0x07edfc6u, 7, 4596}, /* 462 isArray */
-    {0xd93f8dcu, 18, 4604}, /* 463 isConcatSpreadable */
-    {0x396e601u, 14, 4623}, /* 464 isDisjointFrom */
-    {0x52c83a5u, 7, 4638}, /* 465 isError */
-    {0xd6d30b2u, 8, 4646}, /* 466 isFinite */
-    {0x51b3753u, 8, 4655}, /* 467 isFrozen */
-    {0xa673fb3u, 9, 4664}, /* 468 isInteger */
-    {0xba119dau, 10, 4674}, /* 469 isLockFree */
-    {0xb661568u, 5, 4685}, /* 470 isNaN */
-    {0x73cb6fau, 8, 4691}, /* 471 isNative */
-    {0xee3fe26u, 13, 4700}, /* 472 isPrototypeOf */
-    {0xe0b03b5u, 9, 4714}, /* 473 isRawJSON */
-    {0xa73d4f6u, 13, 4724}, /* 474 isSafeInteger */
-    {0xd3d2467u, 8, 4738}, /* 475 isSealed */
-    {0xc9a13b4u, 10, 4747}, /* 476 isSubsetOf */
-    {0x8c887d9u, 12, 4758}, /* 477 isSupersetOf */
-    {0xe952a30u, 6, 4771}, /* 478 isView */
-    {0xa699574u, 12, 4778}, /* 479 isWellFormed */
-    {0x6f5bad2u, 7, 4791}, /* 480 italics */
-    {0xb31337fu, 8, 4799}, /* 481 iterator */
-    {0xb2e4da3u, 6, 4808}, /* 482 keyFor */
-    {0x89097a2u, 11, 4815}, /* 483 lastIndexOf */
-    {0xdd3569eu, 10, 4827}, /* 484 lineNumber */
-    {0x2b53d9bu, 4, 4838}, /* 485 link */
-    {0x2bb855fu, 4, 4843}, /* 486 load */
-    {0xd616a12u, 13, 4848}, /* 487 localeCompare */
-    {0x1880373u, 3, 4862}, /* 488 log */
-    {0xeac258au, 5, 4866}, /* 489 log10 */
-    {0xeac25cau, 5, 4872}, /* 490 log1p */
-    {0x2bb8b57u, 4, 4878}, /* 491 log2 */
-    {0x189034bu, 3, 4883}, /* 492 map */
-    {0xcb75a3cu, 5, 4887}, /* 493 match */
-    {0x5ab6435u, 8, 4893}, /* 494 matchAll */
-    {0x1890353u, 3, 4902}, /* 495 max */
-    {0x1890b81u, 3, 4906}, /* 496 min */
-    {0xc389e2cu, 9, 4910}, /* 497 multiline */
-    {0xe023144u, 9, 4920}, /* 498 normalize */
-    {0x058b92au, 6, 4930}, /* 499 notify */
-    {0x18a1fe5u, 3, 4937}, /* 500 now */
-    {0x00180acu, 2, 4941}, /* 501 or */
-    {0x5a43ef9u, 6, 4944}, /* 502 padEnd */
-    {0xdb8fc00u, 8, 4951}, /* 503 padStart */
-    {0x4377e6au, 5, 4960}, /* 504 parse */
-    {0x6170bbau, 10, 4966}, /* 505 parseFloat */
-    {0xcf0bb75u, 8, 4977}, /* 506 parseInt */
-    {0x43aa8fdu, 5, 4986}, /* 507 pause */
-    {0x8d0f20fu, 11, 4992}, /* 508 performance */
-    {0x18c3c40u, 3, 5004}, /* 509 pop */
-    {0x18c3c47u, 3, 5008}, /* 510 pow */
-    {0x66adf7bu, 17, 5012}, /* 511 prepareStackTrace */
-    {0x30b9df0u, 20, 5030}, /* 512 propertyIsEnumerable */
-    {0x7183e63u, 4, 5051}, /* 513 push */
-    {0xfa16c81u, 14, 5056}, /* 514 queueMicrotask */
-    {0x92e3acau, 4, 5071}, /* 515 race */
-    {0xfc710acu, 6, 5076}, /* 516 random */
-    {0x9aebfafu, 6, 5083}, /* 517 reduce */
-    {0x57b76edu, 11, 5090}, /* 518 reduceRight */
-    {0x2bd786cu, 8, 5102}, /* 519 register */
-    {0x6a0ceb4u, 6, 5111}, /* 520 repeat */
-    {0x6cb583bu, 7, 5118}, /* 521 replace */
-    {0x63921deu, 10, 5126}, /* 522 replaceAll */
-    {0x2f9cc9au, 9, 5137}, /* 523 resizable */
-    {0x9e5de1du, 6, 5147}, /* 524 resize */
-    {0xe4aabd1u, 7, 5154}, /* 525 reverse */
-    {0x042b980u, 9, 5162}, /* 526 revocable */
-    {0xdbf8b5du, 5, 5172}, /* 527 round */
-    {0xa4805deu, 4, 5178}, /* 528 seal */
-    {0xdfffec1u, 6, 5183}, /* 529 search */
-    {0x9a9a141u, 24, 5190}, /* 530 set [Symbol.toStringTag] */
-    {0x9b3d729u, 13, 5215}, /* 531 set __proto__ */
-    {0xbcf0415u, 21, 5229}, /* 532 set prepareStackTrace */
-    {0x6c8e317u, 19, 5251}, /* 533 set stackTraceLimit */
-    {0xce4b696u, 11, 5271}, /* 534 setBigInt64 */
-    {0x1dc611fu, 12, 5283}, /* 535 setBigUint64 */
-    {0xa54872fu, 7, 5296}, /* 536 setDate */
-    {0x8e585c8u, 10, 5304}, /* 537 setFloat16 */
-    {0x8e587d2u, 10, 5315}, /* 538 setFloat32 */
-    {0x8e58ae9u, 10, 5326}, /* 539 setFloat64 */
-    {0xceb232du, 11, 5337}, /* 540 setFullYear */
-    {0x0b3af8eu, 8, 5349}, /* 541 setHours */
-    {0xcc82f63u, 8, 5358}, /* 542 setInt16 */
-    {0xcc8316du, 8, 5367}, /* 543 setInt32 */
-    {0xfce2532u, 7, 5376}, /* 544 setInt8 */
-    {0xc12b823u, 15, 5384}, /* 545 setMilliseconds */
-    {0x2456fdeu, 10, 5400}, /* 546 setMinutes */
-    {0x285491fu, 8, 5411}, /* 547 setMonth */
-    {0x9ebeb46u, 10, 5420}, /* 548 setSeconds */
-    {0xbb636f6u, 7, 5431}, /* 549 setTime */
-    {0x95f8679u, 10, 5439}, /* 550 setUTCDate */
-    {0xa3c1037u, 14, 5450}, /* 551 setUTCFullYear */
-    {0x4fff494u, 11, 5465}, /* 552 setUTCHours */
-    {0x7ef7aedu, 18, 5477}, /* 553 setUTCMilliseconds */
-    {0x5aafa04u, 13, 5496}, /* 554 setUTCMinutes */
-    {0x6d18e25u, 11, 5510}, /* 555 setUTCMonth */
-    {0xd51756cu, 13, 5522}, /* 556 setUTCSeconds */
-    {0x492bb80u, 9, 5536}, /* 557 setUint16 */
-    {0x492bd8au, 9, 5546}, /* 558 setUint32 */
-    {0x55ef9edu, 8, 5556}, /* 559 setUint8 */
-    {0x11dd79eu, 7, 5565}, /* 560 setYear */
-    {0x3472fe9u, 5, 5573}, /* 561 shift */
-    {0xa4c44ceu, 4, 5579}, /* 562 sign */
-    {0x18f60a7u, 3, 5584}, /* 563 sin */
-    {0xa4c4bf9u, 4, 5588}, /* 564 sinh */
-    {0x79d7e21u, 5, 5593}, /* 565 slice */
-    {0x20e579eu, 16, 5599}, /* 566 sliceToImmutable */
-    {0x8aaaa36u, 5, 5616}, /* 567 small */
-    {0xa52a015u, 4, 5622}, /* 568 some */
-    {0xa52a547u, 4, 5627}, /* 569 sort */
-    {0x9d79863u, 7, 5632}, /* 570 species */
-    {0xac139edu, 6, 5640}, /* 571 splice */
-    {0xa54c1a9u, 4, 5647}, /* 572 sqrt */
-    {0x679fd5du, 15, 5652}, /* 573 stackTraceLimit */
-    {0x07588f0u, 10, 5668}, /* 574 startsWith */
-    {0xc27c592u, 6, 5679}, /* 575 sticky */
-    {0x0508568u, 5, 5686}, /* 576 store */
-    {0x5f051b3u, 6, 5692}, /* 577 strike */
-    {0x4b2d402u, 9, 5699}, /* 578 stringify */
-    {0x18f6cefu, 3, 5709}, /* 579 sub */
-    {0x85cb85au, 8, 5713}, /* 580 subarray */
-    {0x1cd08dau, 6, 5722}, /* 581 substr */
-    {0xa1d4d98u, 9, 5729}, /* 582 substring */
-    {0x6a49471u, 10, 5739}, /* 583 sumPrecise */
-    {0x18f6cfdu, 3, 5750}, /* 584 sup */
-    {0x339d4bbu, 19, 5754}, /* 585 symmetricDifference */
-    {0xb596bb0u, 4, 5774}, /* 586 take */
-    {0x19066a0u, 3, 5779}, /* 587 tan */
-    {0xb596ec8u, 4, 5783}, /* 588 tanh */
-    {0xb5dacbbu, 4, 5788}, /* 589 test */
-    {0xdc90114u, 10, 5793}, /* 590 timeOrigin */
-    {0x2b01265u, 7, 5804}, /* 591 toArray */
-    {0x2786783u, 12, 5812}, /* 592 toDateString */
-    {0x08f8b91u, 13, 5825}, /* 593 toExponential */
-    {0xacd2f68u, 7, 5839}, /* 594 toFixed */
-    {0xfdb3653u, 11, 5847}, /* 595 toGMTString */
-    {0xc1037cau, 11, 5859}, /* 596 toISOString */
-    {0x98dc555u, 18, 5871}, /* 597 toLocaleDateString */
-    {0xcf9cf73u, 17, 5890}, /* 598 toLocaleLowerCase */
-    {0xc40080cu, 18, 5908}, /* 599 toLocaleTimeString */
-    {0xe48853cu, 17, 5927}, /* 600 toLocaleUpperCase */
-    {0x365c655u, 11, 5945}, /* 601 toLowerCase */
-    {0x388b51au, 11, 5957}, /* 602 toPrecision */
-    {0x95ca963u, 11, 5969}, /* 603 toPrimitive */
-    {0xa045d46u, 10, 5981}, /* 604 toReversed */
-    {0x3f166d9u, 8, 5992}, /* 605 toSorted */
-    {0x9a1f49cu, 9, 6001}, /* 606 toSpliced */
-    {0x196bff5u, 11, 6011}, /* 607 toStringTag */
-    {0x52aaa3au, 12, 6023}, /* 608 toTimeString */
-    {0xc6c6e01u, 11, 6036}, /* 609 toUTCString */
-    {0x4b47c1eu, 11, 6048}, /* 610 toUpperCase */
-    {0x590352du, 12, 6060}, /* 611 toWellFormed */
-    {0x0a50d04u, 8, 6073}, /* 612 transfer */
-    {0xe87ee03u, 21, 6082}, /* 613 transferToFixedLength */
-    {0xecca483u, 19, 6104}, /* 614 transferToImmutable */
-    {0xb6b5aebu, 4, 6124}, /* 615 trim */
-    {0x29c0678u, 7, 6129}, /* 616 trimEnd */
-    {0x5d83672u, 8, 6137}, /* 617 trimLeft */
-    {0x47ba311u, 9, 6146}, /* 618 trimRight */
-    {0xd8e1d4fu, 9, 6156}, /* 619 trimStart */
-    {0xb571323u, 5, 6166}, /* 620 trunc */
-    {0x8d9d313u, 8, 6172}, /* 621 unescape */
-    {0xf0c3175u, 11, 6181}, /* 622 unicodeSets */
-    {0x41f7deeu, 5, 6193}, /* 623 union */
-    {0x83129fdu, 10, 6199}, /* 624 unregister */
-    {0xcfc4456u, 11, 6210}, /* 625 unscopables */
-    {0xcee2840u, 7, 6222}, /* 626 unshift */
-    {0xe9a26b6u, 4, 6230}, /* 627 wait */
-    {0x3c1f4f6u, 13, 6235}, /* 628 withResolvers */
-    {0x194adcau, 3, 6249}, /* 629 xor */
+    {0, JS_ROM_NOT, 0},
+    {0, JS_ROM_NOT, 0},
+    {0, JS_ROM_NOT, 0},
+    {0, JS_ROM_NOT, 0},
+    {0, JS_ROM_NOT, 0},
+    {0, JS_ROM_NOT, 0},
+    {0, JS_ROM_NOT, 0},
+    {0, JS_ROM_NOT, 0},
+    {0, JS_ROM_NOT, 0},
+    {0, JS_ROM_NOT, 0},
+    {0, JS_ROM_NOT, 0},
+    {0, JS_ROM_NOT, 0},
+    {0, JS_ROM_NOT, 0},
+    {0x8ab6e6au, 9, 2095}, /* 246 ABORT_ERR */
+    {0x0bab9b8u, 14, 2105}, /* 247 AggregateError */
+    {0xb45d03eu, 7, 2120}, /* 248 Atomics */
+    {0x64214bau, 17, 2128}, /* 249 BYTES_PER_ELEMENT */
+    {0xc0f352du, 14, 2146}, /* 250 DATA_CLONE_ERR */
+    {0xf861452u, 18, 2161}, /* 251 DOMSTRING_SIZE_ERR */
+    {0x1c8870bu, 1, 2180}, /* 252 E */
+    {0xb329470u, 7, 2182}, /* 253 EPSILON */
+    {0x4050b91u, 21, 2190}, /* 254 HIERARCHY_REQUEST_ERR */
+    {0x20cd64fu, 14, 2212}, /* 255 INDEX_SIZE_ERR */
+    {0xeb27d01u, 19, 2227}, /* 256 INUSE_ATTRIBUTE_ERR */
+    {0x51cc105u, 18, 2247}, /* 257 INVALID_ACCESS_ERR */
+    {0xc2a29fdu, 21, 2266}, /* 258 INVALID_CHARACTER_ERR */
+    {0xb132dbbu, 24, 2288}, /* 259 INVALID_MODIFICATION_ERR */
+    {0x79f8edfu, 21, 2313}, /* 260 INVALID_NODE_TYPE_ERR */
+    {0x6d1c021u, 17, 2335}, /* 261 INVALID_STATE_ERR */
+    {0xc9f48c9u | JS_ROM_NUMERIC, 8, 2353}, /* 262 Infinity */
+    {0x8c7edb6u, 4, 2362}, /* 263 LN10 */
+    {0x43f89e2u, 3, 2367}, /* 264 LN2 */
+    {0x2a5a081u, 6, 2371}, /* 265 LOG10E */
+    {0xe81b6e5u, 5, 2378}, /* 266 LOG2E */
+    {0x4b2bda0u, 16, 2384}, /* 267 MAX_SAFE_INTEGER */
+    {0x7911ed2u, 9, 2401}, /* 268 MAX_VALUE */
+    {0xb578522u, 16, 2411}, /* 269 MIN_SAFE_INTEGER */
+    {0x3da76c4u, 9, 2428}, /* 270 MIN_VALUE */
+    {0xa3dacf3u, 13, 2438}, /* 271 NAMESPACE_ERR */
+    {0xc16a8c6u, 17, 2452}, /* 272 NEGATIVE_INFINITY */
+    {0x6661c2eu, 11, 2470}, /* 273 NETWORK_ERR */
+    {0x8cb2148u, 13, 2482}, /* 274 NOT_FOUND_ERR */
+    {0xeb01c30u, 17, 2496}, /* 275 NOT_SUPPORTED_ERR */
+    {0x5bb31d3u, 19, 2514}, /* 276 NO_DATA_ALLOWED_ERR */
+    {0x0f29a1du, 27, 2534}, /* 277 NO_MODIFICATION_ALLOWED_ERR */
+    {0x431d9efu, 3, 2562}, /* 278 NaN */
+    {0x3906c24u, 2, 2566}, /* 279 PI */
+    {0x9509a2au, 17, 2569}, /* 280 POSITIVE_INFINITY */
+    {0xc5f313fu, 18, 2587}, /* 281 QUOTA_EXCEEDED_ERR */
+    {0x7bd42d5u, 7, 2606}, /* 282 Reflect */
+    {0xd8543ebu, 12, 2614}, /* 283 SECURITY_ERR */
+    {0x0c2746au, 7, 2627}, /* 284 SQRT1_2 */
+    {0xc3b49b2u, 5, 2635}, /* 285 SQRT2 */
+    {0x42cf174u, 10, 2641}, /* 286 SYNTAX_ERR */
+    {0xebd6893u, 11, 2652}, /* 287 TIMEOUT_ERR */
+    {0x91e3defu, 17, 2664}, /* 288 TYPE_MISMATCH_ERR */
+    {0xbf5358eu, 10, 2682}, /* 289 TypedArray */
+    {0xefdd065u, 16, 2693}, /* 290 URL_MISMATCH_ERR */
+    {0x43633feu, 3, 2710}, /* 291 UTC */
+    {0x0d907a2u, 14, 2714}, /* 292 VALIDATION_ERR */
+    {0xd073bdau, 18, 2729}, /* 293 WRONG_DOCUMENT_ERR */
+    {0xbc44a7du, 21, 2748}, /* 294 [Symbol.asyncDispose] */
+    {0x31a757du, 22, 2770}, /* 295 [Symbol.asyncIterator] */
+    {0x876dfb2u, 16, 2793}, /* 296 [Symbol.dispose] */
+    {0x7b9a436u, 20, 2810}, /* 297 [Symbol.hasInstance] */
+    {0x9d8db44u, 17, 2831}, /* 298 [Symbol.iterator] */
+    {0x540d65au, 17, 2849}, /* 299 [Symbol.matchAll] */
+    {0x92bf74eu, 14, 2867}, /* 300 [Symbol.match] */
+    {0xd472fc5u, 16, 2882}, /* 301 [Symbol.replace] */
+    {0x1dc0278u, 15, 2899}, /* 302 [Symbol.search] */
+    {0x4b76fe5u, 14, 2915}, /* 303 [Symbol.split] */
+    {0x2828561u, 20, 2930}, /* 304 [Symbol.toPrimitive] */
+    {0x1944727u, 16, 2951}, /* 305 __defineGetter__ */
+    {0x46ae69bu, 16, 2968}, /* 306 __defineSetter__ */
+    {0xe19ba36u, 16, 2985}, /* 307 __lookupGetter__ */
+    {0x2d059aau, 16, 3002}, /* 308 __lookupSetter__ */
+    {0x425c8dcu, 3, 3019}, /* 309 abs */
+    {0x1e390dbu, 4, 3023}, /* 310 acos */
+    {0x83e14bau, 5, 3028}, /* 311 acosh */
+    {0x9008244u, 5, 3034}, /* 312 adopt */
+    {0x425f69du, 3, 3040}, /* 313 all */
+    {0x2fe5d57u, 10, 3044}, /* 314 allSettled */
+    {0x4995b24u, 6, 3055}, /* 315 anchor */
+    {0x425f49bu, 3, 3062}, /* 316 and */
+    {0x425f4b6u, 3, 3066}, /* 317 any */
+    {0x96be768u, 6, 3070}, /* 318 asIntN */
+    {0x03d69a8u, 7, 3077}, /* 319 asUintN */
+    {0x1f07fb4u, 4, 3085}, /* 320 asin */
+    {0xacde863u, 5, 3090}, /* 321 asinh */
+    {0xbeee172u, 6, 3096}, /* 322 assign */
+    {0x8129a58u, 12, 3103}, /* 323 asyncDispose */
+    {0x73233b2u, 13, 3116}, /* 324 asyncIterator */
+    {0x3907ec2u, 2, 3130}, /* 325 at */
+    {0x1f175bdu, 4, 3133}, /* 326 atan */
+    {0xbde06fau, 5, 3138}, /* 327 atan2 */
+    {0xbde06acu, 5, 3144}, /* 328 atanh */
+    {0x1f163ebu, 4, 3150}, /* 329 atob */
+    {0x424fd8au, 3, 3155}, /* 330 big */
+    {0x0ff6b32u, 4, 3159}, /* 331 bind */
+    {0xf515160u, 5, 3164}, /* 332 blink */
+    {0x0c1dc5au, 4, 3170}, /* 333 bold */
+    {0x0cb1651u, 4, 3175}, /* 334 btoa */
+    {0xf9d2493u, 6, 3180}, /* 335 buffer */
+    {0xf535839u, 10, 3187}, /* 336 byteLength */
+    {0x804064au, 10, 3198}, /* 337 byteOffset */
+    {0xfc88bebu, 4, 3209}, /* 338 call */
+    {0x3c33c45u, 17, 3214}, /* 339 captureStackTrace */
+    {0xfc9be46u, 4, 3232}, /* 340 cbrt */
+    {0xfccd1bau, 4, 3237}, /* 341 ceil */
+    {0x69c8438u, 6, 3242}, /* 342 charAt */
+    {0x1afcd81u, 10, 3249}, /* 343 charCodeAt */
+    {0xb680f15u, 6, 3260}, /* 344 chunks */
+    {0xc08722fu, 5, 3267}, /* 345 clear */
+    {0xc1278acu, 5, 3273}, /* 346 clz32 */
+    {0xfdb487au, 4, 3279}, /* 347 code */
+    {0xb7613b0u, 11, 3284}, /* 348 codePointAt */
+    {0x80bafb4u, 12, 3296}, /* 349 columnNumber */
+    {0x19c388eu, 15, 3309}, /* 350 compareExchange */
+    {0xa7178b3u, 7, 3325}, /* 351 compile */
+    {0xcdb1e0fu, 6, 3333}, /* 352 concat */
+    {0x83bd81fu, 10, 3340}, /* 353 copyWithin */
+    {0x4271113u, 3, 3351}, /* 354 cos */
+    {0xfdb79ceu, 4, 3355}, /* 355 cosh */
+    {0xe950e67u, 6, 3360}, /* 356 create */
+    {0x51b2ce2u, 9, 3367}, /* 357 decodeURI */
+    {0xbc035ceu, 18, 3377}, /* 358 decodeURIComponent */
+    {0x292c9fau, 5, 3396}, /* 359 defer */
+    {0x26f9fbau, 5, 3402}, /* 360 deref */
+    {0xdce7f7eu, 11, 3408}, /* 361 description */
+    {0x463d6abu, 8, 3420}, /* 362 detached */
+    {0xc9ce650u, 10, 3429}, /* 363 difference */
+    {0x0532736u, 8, 3440}, /* 364 disposed */
+    {0xee820b3u, 6, 3449}, /* 365 dotAll */
+    {0xd3002b4u, 4, 3456}, /* 366 drop */
+    {0xaa4b372u, 9, 3461}, /* 367 encodeURI */
+    {0x0cceebeu, 18, 3471}, /* 368 encodeURIComponent */
+    {0x1059cb7u, 8, 3490}, /* 369 endsWith */
+    {0xd3e551eu, 7, 3499}, /* 370 entries */
+    {0x4e39418u, 6, 3507}, /* 371 escape */
+    {0x2fb0b91u, 5, 3514}, /* 372 every */
+    {0x9b37b5cu, 8, 3520}, /* 373 exchange */
+    {0x4d93bb1u, 3, 3529}, /* 374 exp */
+    {0x4a2cb33u, 5, 3533}, /* 375 expm1 */
+    {0xfeb15e4u, 8, 3539}, /* 376 f16round */
+    {0x6af96e8u, 8, 3548}, /* 377 fileName */
+    {0xb11d898u, 4, 3557}, /* 378 fill */
+    {0x6b939abu, 6, 3562}, /* 379 filter */
+    {0xb11da96u, 4, 3569}, /* 380 find */
+    {0x3201c0fu, 9, 3574}, /* 381 findIndex */
+    {0x6fb5870u, 8, 3584}, /* 382 findLast */
+    {0xcb24ff9u, 13, 3593}, /* 383 findLastIndex */
+    {0x1d2ed78u, 5, 3607}, /* 384 fixed */
+    {0xb14f9ceu, 4, 3613}, /* 385 flat */
+    {0x850d3c3u, 7, 3618}, /* 386 flatMap */
+    {0x48526d8u, 5, 3626}, /* 387 floor */
+    {0x1e422dcu, 9, 3632}, /* 388 fontcolor */
+    {0xd6c2191u, 8, 3642}, /* 389 fontsize */
+    {0xb902288u, 7, 3651}, /* 390 forEach */
+    {0x05afb1au, 6, 3659}, /* 391 freeze */
+    {0x607082cu, 10, 3666}, /* 392 fromBase64 */
+    {0x5473beau, 12, 3677}, /* 393 fromCharCode */
+    {0xecbfa5bu, 13, 3690}, /* 394 fromCodePoint */
+    {0x62eb0e0u, 11, 3704}, /* 395 fromEntries */
+    {0xe1631c9u, 7, 3716}, /* 396 fromHex */
+    {0xf61a57bu, 6, 3724}, /* 397 fround */
+    {0x355c943u, 20, 3731}, /* 398 get [Symbol.species] */
+    {0x1fbe505u, 24, 3752}, /* 399 get [Symbol.toStringTag] */
+    {0xcd95406u, 13, 3777}, /* 400 get __proto__ */
+    {0x3235f9du, 10, 3791}, /* 401 get buffer */
+    {0xde16a03u, 14, 3802}, /* 402 get byteLength */
+    {0x896588cu, 14, 3817}, /* 403 get byteOffset */
+    {0x7581310u, 8, 3832}, /* 404 get code */
+    {0xf100652u, 16, 3841}, /* 405 get columnNumber */
+    {0x6a6a288u, 15, 3858}, /* 406 get description */
+    {0x7806c41u, 12, 3874}, /* 407 get detached */
+    {0x3b31cc4u, 12, 3887}, /* 408 get disposed */
+    {0x3f65bfdu, 10, 3900}, /* 409 get dotAll */
+    {0x4cfac06u, 12, 3911}, /* 410 get fileName */
+    {0x028e35bu, 9, 3924}, /* 411 get flags */
+    {0xdc2b298u, 10, 3934}, /* 412 get global */
+    {0xd143e9cu, 12, 3945}, /* 413 get growable */
+    {0xe2f6f7au, 14, 3958}, /* 414 get hasIndices */
+    {0xf8a45ffu, 14, 3973}, /* 415 get ignoreCase */
+    {0xfdab8a4u, 13, 3988}, /* 416 get immutable */
+    {0x51470dfu, 10, 4002}, /* 417 get length */
+    {0xc947a62u, 14, 4013}, /* 418 get lineNumber */
+    {0x100c7a8u, 17, 4028}, /* 419 get maxByteLength */
+    {0x80414f9u, 11, 4046}, /* 420 get message */
+    {0x0802021u, 13, 4058}, /* 421 get multiline */
+    {0xabef14eu, 8, 4072}, /* 422 get name */
+    {0x557625au, 21, 4081}, /* 423 get prepareStackTrace */
+    {0x95ef1b3u, 13, 4103}, /* 424 get resizable */
+    {0x42b1a34u, 8, 4117}, /* 425 get size */
+    {0x4fcd5b0u, 10, 4126}, /* 426 get source */
+    {0x409a7dau, 9, 4137}, /* 427 get stack */
+    {0x65f418eu, 19, 4147}, /* 428 get stackTraceLimit */
+    {0x8251b72u, 10, 4167}, /* 429 get sticky */
+    {0xf2ca7b7u, 11, 4178}, /* 430 get unicode */
+    {0x66e2d8au, 15, 4190}, /* 431 get unicodeSets */
+    {0x1896e47u, 11, 4206}, /* 432 getBigInt64 */
+    {0x3468d5fu, 12, 4218}, /* 433 getBigUint64 */
+    {0x59f82edu, 15, 4231}, /* 434 getColumnNumber */
+    {0x3efaf92u, 7, 4247}, /* 435 getDate */
+    {0xdd8873du, 6, 4255}, /* 436 getDay */
+    {0xca48639u, 11, 4262}, /* 437 getFileName */
+    {0xeca1cb2u, 10, 4274}, /* 438 getFloat16 */
+    {0xeca1ab8u, 10, 4285}, /* 439 getFloat32 */
+    {0xeca1953u, 10, 4296}, /* 440 getFloat64 */
+    {0x186d2ecu, 11, 4307}, /* 441 getFullYear */
+    {0xb940418u, 11, 4319}, /* 442 getFunction */
+    {0x3dfab41u, 15, 4331}, /* 443 getFunctionName */
+    {0xaa97dc2u, 8, 4347}, /* 444 getHours */
+    {0xf45fdf7u, 8, 4356}, /* 445 getInt16 */
+    {0xf45e3e1u, 8, 4365}, /* 446 getInt32 */
+    {0x9760997u, 7, 4374}, /* 447 getInt8 */
+    {0x892ce59u, 13, 4382}, /* 448 getLineNumber */
+    {0x7baaa7eu, 15, 4396}, /* 449 getMilliseconds */
+    {0x9aa324cu, 10, 4412}, /* 450 getMinutes */
+    {0x8fadbb3u, 8, 4423}, /* 451 getMonth */
+    {0x6fea614u, 11, 4432}, /* 452 getOrInsert */
+    {0x6088243u, 19, 4444}, /* 453 getOrInsertComputed */
+    {0xc95b7c9u, 25, 4464}, /* 454 getOwnPropertyDescriptors */
+    {0xec28d67u, 19, 4490}, /* 455 getOwnPropertyNames */
+    {0x305e24eu, 21, 4510}, /* 456 getOwnPropertySymbols */
+    {0x1f0b934u, 10, 4532}, /* 457 getSeconds */
+    {0xc8e1fdbu, 7, 4543}, /* 458 getTime */
+    {0x1407cceu, 17, 4551}, /* 459 getTimezoneOffset */
+    {0xe4c1de3u, 10, 4569}, /* 460 getUTCDate */
+    {0x8686f3au, 9, 4580}, /* 461 getUTCDay */
+    {0x5331e81u, 14, 4590}, /* 462 getUTCFullYear */
+    {0x9b22c45u, 11, 4605}, /* 463 getUTCHours */
+    {0x366f067u, 18, 4617}, /* 464 getUTCMilliseconds */
+    {0x0c079e3u, 13, 4636}, /* 465 getUTCMinutes */
+    {0xf9c47d4u, 11, 4650}, /* 466 getUTCMonth */
+    {0x8bbf27bu, 13, 4662}, /* 467 getUTCSeconds */
+    {0xbca320bu, 9, 4676}, /* 468 getUint16 */
+    {0xbca3401u, 9, 4686}, /* 469 getUint32 */
+    {0x7dca861u, 8, 4696}, /* 470 getUint8 */
+    {0xa26ff23u, 7, 4705}, /* 471 getYear */
+    {0x904adc4u, 7, 4713}, /* 472 groupBy */
+    {0xa70c1a8u, 4, 4721}, /* 473 grow */
+    {0x1f0017eu, 8, 4726}, /* 474 growable */
+    {0x19d5f70u, 10, 4735}, /* 475 hasIndices */
+    {0x94882e3u, 11, 4746}, /* 476 hasInstance */
+    {0x3fa77a7u, 6, 4758}, /* 477 hasOwn */
+    {0xf8921d0u, 14, 4765}, /* 478 hasOwnProperty */
+    {0xc0a8478u, 5, 4780}, /* 479 hypot */
+    {0x13805fdu, 10, 4786}, /* 480 ignoreCase */
+    {0xd72adceu, 9, 4797}, /* 481 immutable */
+    {0x85ad990u, 4, 4807}, /* 482 imul */
+    {0xb04dfc4u, 8, 4812}, /* 483 includes */
+    {0x50a1f01u, 7, 4821}, /* 484 indexOf */
+    {0x2ef4426u, 12, 4829}, /* 485 intersection */
+    {0x390760du, 2, 4842}, /* 486 is */
+    {0xc057437u, 7, 4845}, /* 487 isArray */
+    {0xd8a8822u, 18, 4853}, /* 488 isConcatSpreadable */
+    {0xeb1e924u, 13, 4872}, /* 489 isConstructor */
+    {0xb61b1e3u, 14, 4886}, /* 490 isDisjointFrom */
+    {0x9572854u, 7, 4901}, /* 491 isError */
+    {0x329028au, 8, 4909}, /* 492 isFinite */
+    {0xb5f056bu, 8, 4918}, /* 493 isFrozen */
+    {0xa6b87ccu, 9, 4927}, /* 494 isInteger */
+    {0xa74271cu, 10, 4937}, /* 495 isLockFree */
+    {0x38c8a0bu, 5, 4948}, /* 496 isNaN */
+    {0x97884c2u, 8, 4954}, /* 497 isNative */
+    {0x9cd2fbdu, 13, 4963}, /* 498 isPrototypeOf */
+    {0xe07bbcau, 9, 4977}, /* 499 isRawJSON */
+    {0xd5d056du, 13, 4987}, /* 500 isSafeInteger */
+    {0x379165fu, 8, 5001}, /* 501 isSealed */
+    {0xd4f2d72u, 10, 5010}, /* 502 isSubsetOf */
+    {0xdaecc8du, 12, 5021}, /* 503 isSupersetOf */
+    {0x4260f9au, 6, 5034}, /* 504 isView */
+    {0xf0fde20u, 12, 5041}, /* 505 isWellFormed */
+    {0xa8e1123u, 7, 5054}, /* 506 italics */
+    {0x5750147u, 8, 5062}, /* 507 iterator */
+    {0x19d6809u, 6, 5071}, /* 508 keyFor */
+    {0xb0d52afu, 11, 5078}, /* 509 lastIndexOf */
+    {0xc066858u, 10, 5090}, /* 510 lineNumber */
+    {0x5972487u, 4, 5101}, /* 511 link */
+    {0x5999c43u, 4, 5106}, /* 512 load */
+    {0xa4fbb89u, 13, 5111}, /* 513 localeCompare */
+    {0x4d191a6u, 3, 5125}, /* 514 log */
+    {0x646bae9u, 5, 5129}, /* 515 log10 */
+    {0x646baa9u, 5, 5135}, /* 516 log1p */
+    {0x599924bu, 4, 5141}, /* 517 log2 */
+    {0x4d0919eu, 3, 5146}, /* 518 map */
+    {0x45dc55fu, 5, 5150}, /* 519 match */
+    {0xbef560du, 8, 5156}, /* 520 matchAll */
+    {0x4d09186u, 3, 5165}, /* 521 max */
+    {0x4d09954u, 3, 5169}, /* 522 min */
+    {0x4f33656u, 4, 5173}, /* 523 move */
+    {0xc342653u, 9, 5178}, /* 524 multiline */
+    {0xe0e893bu, 9, 5188}, /* 525 normalize */
+    {0xaeb9c80u, 6, 5198}, /* 526 notify */
+    {0x4d38d30u, 3, 5205}, /* 527 now */
+    {0x3908c22u, 2, 5209}, /* 528 or */
+    {0xf171b53u, 6, 5212}, /* 529 padEnd */
+    {0x3fcce38u, 8, 5219}, /* 530 padStart */
+    {0xcdde109u, 5, 5228}, /* 531 parse */
+    {0x7c2357cu, 10, 5234}, /* 532 parseFloat */
+    {0x2b4894du, 8, 5245}, /* 533 parseInt */
+    {0xcd0379eu, 5, 5254}, /* 534 pause */
+    {0xb4d3702u, 11, 5260}, /* 535 performance */
+    {0x4d5ae95u, 3, 5272}, /* 536 pop */
+    {0x4d5ae92u, 3, 5276}, /* 537 pow */
+    {0x83a35ccu, 17, 5280}, /* 538 prepareStackTrace */
+    {0x0a1e07cu, 20, 5298}, /* 539 propertyIsEnumerable */
+    {0x03a277fu, 4, 5319}, /* 540 push */
+    {0x7563b63u, 14, 5324}, /* 541 queueMicrotask */
+    {0xe0c23d6u, 4, 5339}, /* 542 race */
+    {0x5743506u, 6, 5344}, /* 543 random */
+    {0x31d9a05u, 6, 5351}, /* 544 reduce */
+    {0x6e6b3e0u, 11, 5358}, /* 545 reduceRight */
+    {0xcf94a54u, 8, 5370}, /* 546 register */
+    {0xc13eb1eu, 6, 5379}, /* 547 repeat */
+    {0xab0f3cau, 7, 5386}, /* 548 replace */
+    {0x7ec1f18u, 10, 5394}, /* 549 replaceAll */
+    {0x2f574e5u, 9, 5405}, /* 550 resizable */
+    {0x356fbb7u, 6, 5415}, /* 551 resize */
+    {0x2310020u, 7, 5422}, /* 552 reverse */
+    {0x04e01ffu, 9, 5430}, /* 553 revocable */
+    {0x555143eu, 5, 5440}, /* 554 round */
+    {0xd6a1cc2u, 4, 5446}, /* 555 seal */
+    {0x74cdb6bu, 6, 5451}, /* 556 search */
+    {0x36537e9u, 24, 5458}, /* 557 set [Symbol.toStringTag] */
+    {0xe9d06b2u, 13, 5483}, /* 558 set __proto__ */
+    {0xebc07c6u, 21, 5497}, /* 559 set prepareStackTrace */
+    {0xcdde8ceu, 9, 5519}, /* 560 set stack */
+    {0x7291452u, 19, 5529}, /* 561 set stackTraceLimit */
+    {0xf79739bu, 11, 5549}, /* 562 setBigInt64 */
+    {0x4ba2a4bu, 12, 5561}, /* 563 setBigUint64 */
+    {0x62f2cdeu, 7, 5574}, /* 564 setDate */
+    {0x930bb0eu, 10, 5582}, /* 565 setFloat16 */
+    {0x930b914u, 10, 5593}, /* 566 setFloat32 */
+    {0x930b42fu, 10, 5604}, /* 567 setFloat64 */
+    {0x0598001u, 13, 5615}, /* 568 setFromBase64 */
+    {0x2ec19ceu, 10, 5629}, /* 569 setFromHex */
+    {0xf76e620u, 11, 5640}, /* 570 setFullYear */
+    {0xef79db6u, 8, 5652}, /* 571 setHours */
+    {0x28c1d5bu, 8, 5661}, /* 572 setInt16 */
+    {0x28c0355u, 8, 5670}, /* 573 setInt32 */
+    {0x3b58ec3u, 7, 5679}, /* 574 setInt8 */
+    {0x6ad660au, 15, 5687}, /* 575 setMilliseconds */
+    {0x3905118u, 10, 5703}, /* 576 setMinutes */
+    {0xcc17b27u, 8, 5714}, /* 577 setMonth */
+    {0x83ed580u, 10, 5723}, /* 578 setSeconds */
+    {0x7cd9d07u, 7, 5734}, /* 579 setTime */
+    {0x88ab8bfu, 10, 5742}, /* 580 setUTCDate */
+    {0x2cb47d5u, 14, 5753}, /* 581 setUTCFullYear */
+    {0x7623199u, 11, 5768}, /* 582 setUTCHours */
+    {0x7f60a13u, 18, 5780}, /* 583 setUTCMilliseconds */
+    {0x2842b9fu, 13, 5799}, /* 584 setUTCMinutes */
+    {0x54c4b28u, 11, 5813}, /* 585 setUTCMonth */
+    {0xa7fa4f7u, 13, 5825}, /* 586 setUTCSeconds */
+    {0x49e03ffu, 9, 5839}, /* 587 setUint16 */
+    {0x49e05f5u, 9, 5849}, /* 588 setUint32 */
+    {0xb1acbd5u, 8, 5859}, /* 589 setUint8 */
+    {0xd667c6fu, 7, 5868}, /* 590 setYear */
+    {0xbadb08au, 5, 5876}, /* 591 shift */
+    {0xd6e5dd2u, 4, 5882}, /* 592 sign */
+    {0x4d6f272u, 3, 5887}, /* 593 sin */
+    {0xd6e52e5u, 4, 5891}, /* 594 sinh */
+    {0xf77e142u, 5, 5896}, /* 595 slice */
+    {0xe8633eeu, 16, 5902}, /* 596 sliceToImmutable */
+    {0x0403555u, 5, 5919}, /* 597 small */
+    {0xd70b909u, 4, 5925}, /* 598 some */
+    {0xd70bc5bu, 4, 5930}, /* 599 sort */
+    {0x5ac3392u, 7, 5935}, /* 600 species */
+    {0x0721c47u, 6, 5943}, /* 601 splice */
+    {0xd76d8b5u, 4, 5950}, /* 602 sqrt */
+    {0xcc62374u, 15, 5955}, /* 603 stackTraceLimit */
+    {0x1a0b636u, 10, 5971}, /* 604 startsWith */
+    {0x694e038u, 6, 5982}, /* 605 sticky */
+    {0x8ba1a0bu, 5, 5989}, /* 606 store */
+    {0xf437419u, 6, 5995}, /* 607 strike */
+    {0x4be6c7du, 9, 6002}, /* 608 stringify */
+    {0x4d6fe3au, 3, 6012}, /* 609 sub */
+    {0x6188a62u, 8, 6016}, /* 610 subarray */
+    {0xb7e2d70u, 6, 6025}, /* 611 substr */
+    {0xa11f5e7u, 9, 6032}, /* 612 substring */
+    {0x771aab7u, 10, 6042}, /* 613 sumPrecise */
+    {0x4d6fe28u, 3, 6053}, /* 614 sup */
+    {0x2d823feu, 19, 6057}, /* 615 symmetricDifference */
+    {0xc7b72acu, 4, 6077}, /* 616 take */
+    {0x4c9f475u, 3, 6082}, /* 617 tan */
+    {0xc7b77d4u, 4, 6086}, /* 618 tanh */
+    {0xc7fb5a7u, 4, 6091}, /* 619 test */
+    {0xc1c3fd2u, 10, 6096}, /* 620 timeOrigin */
+    {0xecbb994u, 7, 6107}, /* 621 toArray */
+    {0x5ebeb4bu, 8, 6115}, /* 622 toBase64 */
+    {0x71e2cd7u, 12, 6124}, /* 623 toDateString */
+    {0x7a15a0au, 13, 6137}, /* 624 toExponential */
+    {0x6b68499u, 7, 6151}, /* 625 toFixed */
+    {0xc46f35eu, 11, 6159}, /* 626 toGMTString */
+    {0xf0c5134u, 5, 6171}, /* 627 toHex */
+    {0xf8df2c7u, 11, 6177}, /* 628 toISOString */
+    {0x994b5abu, 18, 6189}, /* 629 toLocaleDateString */
+    {0x2a925c4u, 17, 6208}, /* 630 toLocaleLowerCase */
+    {0xc5978f2u, 18, 6226}, /* 631 toLocaleTimeString */
+    {0x0186f8bu, 17, 6245}, /* 632 toLocaleUpperCase */
+    {0x0f80358u, 11, 6263}, /* 633 toLowerCase */
+    {0x0157017u, 11, 6275}, /* 634 toPrecision */
+    {0xac16c6eu, 11, 6287}, /* 635 toPrimitive */
+    {0xbd16380u, 10, 6299}, /* 636 toReversed */
+    {0xdb554e1u, 8, 6310}, /* 637 toSorted */
+    {0x9ad4ce3u, 9, 6319}, /* 638 toSpliced */
+    {0x20b7af8u, 11, 6329}, /* 639 toStringTag */
+    {0x04ce16eu, 12, 6341}, /* 640 toTimeString */
+    {0xff1ab0cu, 11, 6354}, /* 641 toUTCString */
+    {0x729b913u, 11, 6366}, /* 642 toUpperCase */
+    {0x0f67e79u, 12, 6378}, /* 643 toWellFormed */
+    {0xee13f3cu, 8, 6391}, /* 644 transfer */
+    {0xbf4edd0u, 21, 6400}, /* 645 transferToFixedLength */
+    {0xf2d53c6u, 19, 6422}, /* 646 transferToImmutable */
+    {0xc4943f7u, 4, 6442}, /* 647 trim */
+    {0xee7ad89u, 7, 6447}, /* 648 trimEnd */
+    {0xb9c044au, 8, 6455}, /* 649 trimLeft */
+    {0x4771b6eu, 9, 6464}, /* 650 trimRight */
+    {0xd82a530u, 9, 6474}, /* 651 trimStart */
+    {0x3bd8c40u, 5, 6484}, /* 652 trunc */
+    {0x69de12bu, 8, 6490}, /* 653 unescape */
+    {0xc91f478u, 11, 6499}, /* 654 unicodeSets */
+    {0xcf5e28du, 5, 6511}, /* 655 union */
+    {0x9e4173bu, 10, 6517}, /* 656 unregister */
+    {0xf61815bu, 11, 6528}, /* 657 unscopables */
+    {0x09583b1u, 7, 6540}, /* 658 unshift */
+    {0x9b83faau, 4, 6548}, /* 659 wait */
+    {0x92b478bu, 7, 6553}, /* 660 windows */
+    {0x4ef256du, 13, 6561}, /* 661 withResolvers */
+    {0x4cd3f1fu, 3, 6575}, /* 662 xor */
 };
 
 static const uint16_t js_rom_hash[1u << JS_ROM_HASH_BITS] = {
-    0,0,0,106,0,217,0,290,0,0,0,0,401,599,0,0,
-    0,0,0,0,0,568,0,0,0,0,0,0,0,0,0,0,
-    0,0,24,545,0,0,0,0,400,0,0,0,0,0,0,0,
-    0,0,365,0,0,0,0,551,0,0,0,521,0,0,0,0,
-    210,281,243,626,0,0,0,0,0,94,49,0,0,0,0,0,
-    0,0,0,0,0,0,0,0,0,192,580,0,0,0,0,0,
-    0,0,0,570,0,76,0,0,0,0,0,0,519,0,0,0,
-    0,0,0,0,0,0,0,0,440,0,0,0,0,0,0,0,
-    0,0,0,0,0,0,0,0,0,0,0,0,320,457,0,0,
-    0,0,0,0,0,129,343,0,390,439,0,0,0,269,0,0,
-    68,0,0,0,0,146,324,563,0,0,268,0,287,501,516,0,
-    0,0,466,0,448,0,0,0,0,0,0,0,0,0,371,272,
-    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-    0,374,336,263,364,0,0,0,143,340,581,0,463,216,0,135,
-    82,0,0,0,0,0,130,0,0,0,0,0,0,291,0,161,
-    574,0,0,0,0,0,0,0,157,0,0,0,0,10,507,0,
-    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-    0,101,0,0,590,417,0,0,0,0,0,0,0,0,0,195,
-    535,547,0,262,271,0,0,0,381,0,499,280,0,0,0,0,
-    0,128,0,0,0,0,0,0,0,182,39,318,0,0,0,392,
-    0,530,0,0,498,0,0,0,438,0,0,0,241,0,0,0,
-    0,0,258,196,0,0,0,0,0,0,0,378,0,0,0,0,
-    0,0,0,437,352,353,329,603,0,0,0,0,0,543,0,0,
-    0,0,0,0,0,622,0,0,0,369,0,0,0,0,0,0,
-    526,0,0,0,357,42,255,0,0,399,155,426,0,0,0,0,
-    0,0,325,0,0,138,0,0,0,206,312,108,0,431,0,0,
-    0,0,0,0,0,0,0,58,0,572,0,0,0,244,0,0,
-    0,0,209,350,577,0,450,0,0,0,284,366,397,46,116,183,
-    194,270,0,0,0,0,0,297,0,0,159,0,0,0,0,313,
-    256,0,0,0,0,0,0,0,0,421,469,0,45,0,522,0,
-    0,165,177,0,0,0,0,0,22,0,0,172,0,559,18,571,
-    0,0,0,285,396,103,0,44,0,0,0,246,0,624,0,0,
-    0,0,0,0,554,0,0,0,0,296,205,136,0,452,0,69,
-    508,0,487,0,0,0,0,0,0,0,187,363,0,391,0,0,
-    0,21,382,430,0,0,0,0,0,154,309,0,0,0,247,315,
-    19,478,0,0,0,0,567,0,0,0,608,0,493,0,0,0,
-    0,0,0,0,245,66,0,113,361,0,0,123,310,0,0,0,
-    0,0,0,0,0,0,176,0,0,305,445,0,0,59,0,0,
-    0,0,204,0,0,591,422,179,0,0,0,0,0,0,0,0,
-    0,261,0,99,341,413,4,443,0,0,0,0,0,0,13,0,
-    0,0,0,461,0,0,0,0,0,0,0,0,215,0,0,0,
-    0,0,0,0,0,0,250,411,0,0,0,0,0,0,0,0,
-    74,0,36,367,0,141,0,0,0,63,0,0,0,0,0,0,
-    0,27,127,0,173,0,0,0,0,0,405,0,0,0,0,0,
-    0,0,304,0,0,0,199,0,0,0,41,515,147,0,0,201,
-    239,162,137,480,0,134,110,0,0,441,0,0,178,0,0,0,
-    0,0,0,0,0,0,0,0,119,539,0,293,615,553,139,0,
-    0,251,0,0,0,0,0,321,0,0,26,0,0,0,0,0,
-    0,0,0,0,0,0,7,0,0,0,0,0,0,346,150,72,
-    52,618,0,248,621,0,0,533,0,427,0,454,0,0,0,0,
-    0,0,0,620,282,387,219,429,435,0,117,0,0,540,0,0,
-    0,0,0,0,412,0,0,253,0,0,267,455,0,0,0,0,
-    171,0,333,0,0,0,449,326,278,548,202,407,492,0,0,0,
-    0,0,0,495,109,91,0,292,491,60,0,0,0,527,0,0,
-    266,0,0,0,0,0,0,0,0,125,0,0,0,0,0,79,
-    0,0,0,488,0,506,398,402,0,0,2,0,80,0,0,29,
-    481,496,142,86,557,0,0,0,16,0,359,0,0,0,0,0,
-    0,300,593,0,0,0,95,0,65,0,0,0,0,0,0,0,
-    0,0,28,406,0,93,465,0,345,368,0,0,9,376,0,0,
-    586,164,0,0,55,288,473,476,0,0,505,0,0,0,0,0,
-    372,0,0,0,0,0,335,0,0,0,0,0,0,337,0,237,
-    0,167,525,0,0,48,0,81,0,208,168,298,0,0,0,0,
-    442,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-    0,0,0,0,0,0,0,57,0,564,0,0,0,0,0,0,
-    149,358,503,578,0,0,0,0,105,0,0,118,0,0,0,0,
-    152,0,121,0,0,279,532,0,0,0,0,0,0,0,610,0,
-    0,0,0,0,0,0,0,0,0,0,433,0,0,0,0,0,
-    0,88,0,0,0,494,0,0,0,0,0,180,111,163,0,0,
-    509,0,170,0,0,0,0,510,299,0,0,0,0,0,0,0,
-    354,289,0,124,0,40,625,424,0,100,0,0,0,78,388,0,
-    122,0,0,410,0,0,0,114,475,0,0,0,0,0,0,0,
-    360,583,25,0,0,0,0,0,0,0,0,0,0,0,414,444,
-    0,514,133,614,0,0,0,0,0,0,31,425,0,0,0,0,
-    0,6,67,153,342,552,0,0,0,0,523,0,606,338,0,166,
-    193,311,383,0,0,0,0,0,0,37,252,0,240,0,0,70,
-    0,0,0,0,0,0,0,0,0,104,0,585,589,0,0,0,
-    0,0,0,0,409,0,0,0,0,0,73,0,151,0,562,375,
-    356,0,446,0,0,0,0,158,308,0,0,0,0,0,0,0,
-    331,0,0,0,0,0,0,0,0,0,0,197,0,286,0,579,
-    459,0,351,92,0,0,474,628,0,0,0,0,0,584,0,0,
-    0,0,0,131,612,14,428,8,0,0,0,0,249,0,0,0,
-    0,0,0,0,0,0,0,0,0,344,602,0,0,0,0,395,
-    0,0,0,0,0,0,0,0,0,0,0,189,254,611,98,0,
-    339,0,544,0,0,0,0,0,0,0,0,207,385,600,35,0,
-    0,0,0,0,0,0,317,569,185,604,0,0,327,0,0,619,
-    0,0,0,0,188,597,0,0,0,0,0,0,15,573,0,486,
-    0,0,32,0,0,0,0,0,260,418,470,576,556,0,0,0,
-    0,0,0,0,479,0,0,0,0,0,0,0,0,0,0,0,
-    394,0,0,0,0,0,0,0,0,0,489,558,0,0,0,0,
-    0,0,575,0,0,0,220,0,582,0,0,485,0,377,214,12,
-    276,102,0,482,0,0,0,0,0,0,0,0,0,0,0,0,
-    38,456,0,0,404,0,0,0,0,0,0,0,0,0,0,0,
-    156,0,0,169,0,85,0,0,389,537,490,629,0,33,0,0,
-    0,0,0,0,0,0,0,0,186,77,295,0,0,0,528,0,
-    0,379,0,0,0,0,0,0,0,0,11,120,0,373,623,0,
-    512,0,0,0,0,0,0,50,0,0,181,0,458,0,0,174,
-    0,464,609,316,613,0,0,0,0,0,0,408,0,238,0,0,
-    0,0,218,0,0,235,0,0,0,393,0,0,0,524,0,0,
-    0,565,0,0,0,555,472,0,0,0,0,0,497,0,0,0,
-    0,61,43,453,53,447,0,0,0,0,0,0,0,0,0,0,
-    347,0,0,0,0,23,294,0,0,0,0,0,0,0,302,0,
-    0,148,0,595,0,601,0,0,17,0,236,140,175,213,0,0,
-    0,0,362,303,513,0,0,0,97,0,504,0,0,0,0,0,
-    0,190,617,0,0,0,0,0,616,434,550,0,0,0,0,0,
-    0,144,0,0,0,0,0,264,1,0,0,0,0,0,301,348,
-    0,0,0,0,0,0,265,534,0,0,0,0,0,0,484,0,
-    587,0,0,0,0,0,0,332,306,64,71,0,0,20,257,0,
-    370,0,0,0,520,203,627,0,132,0,0,212,259,330,0,0,
-    0,529,0,0,0,0,0,0,588,0,0,403,0,0,0,0,
-    0,274,0,0,0,0,0,0,0,334,605,0,0,0,0,0,
-    0,0,0,84,0,56,0,0,0,89,5,0,0,518,0,349,
-    0,0,322,0,0,0,549,90,34,502,471,0,0,0,0,319,
-    307,0,0,0,0,0,51,30,0,0,0,0,0,0,0,0,
-    0,0,0,191,0,384,0,0,0,0,0,0,0,0,0,0,
-    0,0,0,0,0,0,0,0,0,531,0,0,0,0,0,536,
-    211,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,
-    0,0,0,0,0,436,0,0,0,0,0,0,0,0,126,0,
-    0,0,386,467,0,198,0,54,277,0,323,0,0,0,0,314,
-    0,0,0,542,0,0,0,283,594,0,83,0,0,0,380,0,
-    0,0,460,598,0,0,0,0,0,0,0,511,0,0,0,0,
-    0,242,0,592,0,0,0,0,0,0,0,0,0,0,541,0,
-    115,0,0,0,96,415,0,0,0,0,0,273,0,0,560,566,
-    0,0,483,0,0,0,0,0,0,0,62,87,0,0,0,517,
-    0,75,275,468,0,0,0,0,0,0,0,0,0,0,0,145,
-    184,0,423,0,0,0,462,0,0,0,596,0,112,0,0,328,
-    420,0,538,0,107,0,0,0,0,477,0,0,355,0,546,0,
-    0,416,0,0,200,500,0,0,0,561,160,0,0,0,451,0,
-    0,0,432,0,0,607,0,0,0,0,419,0,0,0,0,0,
+    0,568,229,179,0,0,0,0,19,86,508,0,0,0,0,0,
+    211,0,0,0,0,0,0,634,0,0,0,0,0,0,0,353,
+    552,261,421,488,0,0,0,0,0,0,0,0,392,0,0,0,
+    0,0,0,0,57,0,0,0,605,336,0,0,0,0,248,0,
+    11,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,0,491,0,0,0,510,0,0,0,0,51,0,0,
+    0,470,0,321,30,290,0,33,464,0,162,0,0,0,0,67,
+    88,382,192,225,0,0,102,0,0,0,347,124,539,0,0,0,
+    0,265,0,0,0,0,0,0,0,27,591,0,403,0,350,0,
+    69,66,119,287,35,0,0,0,378,0,181,219,0,0,0,0,
+    0,0,222,0,416,0,0,0,0,0,0,0,346,0,0,0,
+    0,0,0,351,365,602,0,0,0,0,0,0,0,0,0,580,
+    0,0,0,0,105,0,272,0,202,262,0,0,0,0,560,0,
+    0,0,217,0,0,207,0,0,194,0,0,310,309,0,0,417,
+    395,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,631,0,0,0,0,0,0,0,0,0,0,171,75,0,
+    0,0,0,0,0,257,0,0,0,531,598,26,0,0,0,0,
+    0,0,0,354,566,642,0,0,576,0,0,0,0,0,0,112,
+    145,0,0,506,489,0,23,0,0,0,0,653,0,0,0,0,
+    0,0,0,0,457,627,156,0,0,0,0,6,42,525,0,281,
+    0,0,595,398,0,0,0,507,274,0,0,0,0,533,422,0,
+    0,0,0,440,522,0,50,121,0,0,0,657,0,0,0,0,
+    76,332,0,0,0,0,0,0,0,0,0,0,0,174,640,0,
+    0,0,322,0,286,0,0,0,0,0,0,0,0,0,474,0,
+    0,0,0,0,0,0,521,0,0,0,96,103,0,0,428,0,
+    482,389,0,210,621,0,117,447,0,582,28,0,0,0,518,0,
+    0,0,0,0,0,0,514,0,319,473,308,379,0,0,0,0,
+    0,0,285,424,0,0,0,0,247,0,341,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,0,396,0,0,0,206,355,385,
+    478,569,15,7,276,0,209,0,160,0,0,0,0,0,0,0,
+    0,10,264,465,490,0,0,0,176,173,0,193,0,0,0,278,
+    0,0,0,0,0,0,0,0,0,0,43,136,359,258,0,553,
+    94,0,0,402,0,544,0,0,0,0,624,468,496,606,0,0,
+    0,0,0,583,0,0,0,0,187,22,0,78,0,277,0,0,
+    0,0,0,0,0,0,0,0,0,0,280,0,0,0,0,345,
+    0,0,0,0,425,0,307,0,0,0,0,0,0,223,0,0,
+    166,0,0,108,89,312,453,0,0,0,212,517,450,563,456,0,
+    0,0,0,0,546,0,61,0,323,0,216,394,423,0,0,0,
+    0,0,418,29,610,0,0,0,0,0,0,0,0,188,0,38,
+    72,0,593,0,0,0,0,0,302,0,0,467,220,294,449,0,
+    0,0,0,0,0,0,0,97,390,125,406,492,0,655,0,0,
+    0,0,0,0,0,0,380,0,412,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,58,516,0,0,616,170,0,126,
+    509,123,0,0,366,0,0,613,439,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,628,0,49,0,0,0,133,0,0,
+    0,0,0,0,0,282,0,0,0,0,0,0,388,0,0,0,
+    0,0,0,476,0,594,0,0,0,515,0,189,441,434,0,0,
+    0,0,0,0,0,0,0,24,639,0,0,0,0,0,0,0,
+    74,0,0,0,0,0,0,20,0,0,0,0,641,0,565,0,
+    404,25,138,0,0,0,131,0,0,0,391,0,0,0,167,547,
+    0,0,0,0,315,0,63,577,585,0,0,0,0,0,0,0,
+    0,0,331,375,0,208,0,0,0,0,0,0,64,21,0,0,
+    0,62,443,0,298,0,0,0,0,0,0,622,0,0,0,0,
+    0,0,95,529,0,573,0,0,633,0,0,411,178,373,626,0,
+    0,0,0,541,0,0,0,0,0,0,0,556,0,0,650,0,
+    0,0,367,429,603,0,0,0,0,0,0,0,0,0,0,0,
+    636,0,0,0,0,0,0,0,0,513,0,0,0,0,0,0,
+    0,254,372,600,79,0,0,0,44,0,0,562,0,0,54,584,
+    0,0,0,0,0,0,0,0,198,0,0,0,0,0,0,0,
+    348,374,324,451,164,658,0,551,0,0,0,0,0,0,0,0,
+    0,0,0,14,386,0,646,0,0,0,499,548,0,0,143,0,
+    0,0,0,0,0,589,542,0,0,228,293,0,0,0,0,0,
+    545,446,0,0,0,0,0,0,0,31,101,283,329,338,393,40,
+    596,146,0,0,0,0,0,647,0,0,0,0,93,409,291,587,
+    615,204,469,0,0,0,400,410,0,0,0,0,0,0,0,381,
+    0,0,0,0,0,60,0,0,371,2,184,8,442,607,0,0,
+    161,0,81,528,279,0,485,0,0,0,0,152,0,0,71,273,
+    275,114,567,0,0,0,98,297,342,487,0,0,0,118,554,144,
+    652,407,169,512,0,339,463,601,0,0,649,0,0,0,0,0,
+    0,0,251,561,0,0,0,0,175,0,333,599,0,45,0,0,
+    165,0,0,0,0,0,0,0,0,0,284,0,0,0,635,590,
+    253,0,0,53,0,617,0,0,479,654,0,0,0,608,32,0,
+    526,0,0,0,0,0,0,511,0,0,0,0,0,17,503,0,
+    182,0,0,335,190,0,0,0,0,625,0,316,0,0,0,0,
+    213,0,0,0,196,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,438,0,0,0,317,369,0,0,249,311,0,0,0,0,
+    0,0,497,555,408,0,0,0,0,0,0,0,0,0,459,0,
+    73,0,0,0,0,0,0,623,0,0,0,0,0,59,564,0,
+    0,637,197,357,638,550,0,0,0,0,0,16,183,0,0,0,
+    0,0,0,271,0,0,0,52,586,420,0,68,0,0,65,0,
+    0,256,0,0,0,399,543,579,0,34,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,0,0,370,0,
+    0,0,269,0,205,0,227,0,0,0,0,0,0,250,0,0,
+    527,651,0,0,0,0,0,0,0,0,0,0,0,0,0,135,
+    0,0,0,0,148,0,0,0,0,0,0,0,0,0,0,130,
+    0,0,0,0,0,597,0,314,0,0,0,572,0,0,0,433,
+    519,304,0,0,0,0,0,455,142,0,0,493,0,500,661,0,
+    611,0,149,502,0,141,0,0,384,0,0,397,532,295,0,0,
+    180,343,578,172,0,0,0,0,0,648,330,431,0,0,289,0,
+    0,0,0,90,0,0,0,0,0,0,0,0,0,0,0,0,
+    186,267,0,0,0,0,0,619,0,0,0,56,629,0,0,0,
+    426,0,0,0,0,116,140,263,571,0,0,259,0,326,0,0,
+    0,36,444,0,472,630,0,0,0,0,0,0,538,0,122,39,
+    157,358,481,592,645,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,460,376,0,0,612,0,0,0,0,0,0,0,99,
+    37,288,0,0,0,588,0,445,0,0,0,0,0,480,0,415,
+    0,0,0,0,0,0,9,0,0,0,575,0,0,486,520,352,
+    0,0,0,0,452,0,0,0,0,0,0,0,0,0,0,0,
+    505,570,0,0,0,0,0,0,80,614,0,3,0,0,0,0,
+    0,0,0,0,0,0,604,0,530,437,609,0,0,0,0,0,
+    0,0,0,0,70,0,340,432,0,0,337,0,0,177,0,255,
+    363,334,132,405,524,214,523,0,0,448,299,0,0,0,0,501,
+    0,0,0,0,0,0,0,356,0,0,246,0,0,0,0,0,
+    0,0,0,0,0,0,0,91,0,643,104,0,0,84,0,0,
+    0,462,0,0,0,0,0,0,0,0,0,0,106,18,0,0,
+    0,0,537,0,0,536,0,0,0,0,0,306,87,313,413,0,
+    0,0,0,0,0,0,0,199,0,0,0,159,328,362,0,0,
+    0,0,558,0,0,0,0,0,0,0,0,0,0,0,368,46,
+    0,0,325,574,218,82,129,270,113,0,0,0,0,0,0,0,
+    0,0,268,0,0,155,83,0,387,0,0,0,0,111,47,260,
+    0,0,0,0,0,266,0,0,377,0,0,0,0,0,0,0,
+    13,0,137,107,0,0,0,215,4,0,92,327,0,0,115,150,
+    0,484,535,0,0,0,0,0,0,0,77,252,0,0,0,147,
+    0,0,0,0,0,344,0,0,549,0,0,0,495,0,0,662,
+    0,0,0,471,0,0,0,305,0,0,100,0,0,0,0,0,
+    0,0,0,0,128,0,201,364,0,0,461,656,644,436,0,0,
+    0,0,0,0,0,0,0,0,110,0,12,0,0,0,300,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,0,109,0,0,
+    0,0,0,0,0,0,153,0,318,0,185,0,0,0,0,0,
+    191,475,0,139,0,0,134,0,0,0,414,168,0,0,361,540,
+    0,221,0,85,0,0,0,0,0,224,0,632,660,0,0,0,
+    0,0,435,0,1,55,120,200,0,0,504,163,0,401,534,0,
+    0,0,292,0,41,0,0,477,419,0,659,0,0,0,226,0,
+    0,0,296,0,320,349,0,430,0,0,360,0,0,498,0,203,
+    151,0,0,0,483,301,559,0,0,454,154,0,494,0,0,0,
+    0,0,620,0,466,581,618,0,0,0,427,458,0,0,0,0,
+    0,158,0,127,0,303,0,0,0,557,0,0,0,0,0,0,
+    0,0,0,0,0,0,5,0,0,383,0,0,0,0,195,0,
 };
