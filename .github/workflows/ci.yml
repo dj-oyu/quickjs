@@ -73,7 +73,11 @@ jobs:
             # LLVM first: its clang_rt.asan_dynamic DLL is another version than
             # the import library linked above (STATUS_ENTRYPOINT_NOT_FOUND at
             # load). Windows looks next to the executable first.
-            Copy-Item (Join-Path $runtimeDir "clang_rt.asan_dynamic-x86_64.dll") build-${{ matrix.flavor }}
+            $llvmRoot = Split-Path (Split-Path (Get-Command clang).Source)
+            $dll = Get-ChildItem $llvmRoot -Recurse -Filter clang_rt.asan_dynamic-x86_64.dll | Select-Object -First 1
+            Write-Host "linked asan runtime: $($dll.FullName) (runtime dir $runtimeDir)"
+            Get-ChildItem "C:\Program Files\Microsoft Visual Studio" -Recurse -Filter clang_rt.asan_dynamic-x86_64.dll -ErrorAction SilentlyContinue | ForEach-Object { Write-Host "also on the machine: $($_.FullName)" }
+            Copy-Item $dll.FullName build-${{ matrix.flavor }}
           }
       - name: Configuring
         if: ${{ matrix.platform != 'windows-latest' }}
