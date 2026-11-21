@@ -74896,11 +74896,11 @@ int JS_PocketImmortalizeIntrinsics(JSContext *ctx, int full)
 #define ROM_OBJDATA_F64(bits, d) .u.object_data = (uint64_t)(bits) - ((uint64_t)JS_FLOAT64_TAG_ADDEND << 32)
 #else
 #define ROM_PV_PTR(tg, p) { .u.value = { .u.ptr = (void *)(p), .tag = (tg) } }
-#define ROM_PV_INT(tg, v) { .u.value = { .u.int32 = (v), .tag = (tg) } }
+#define ROM_PV_INT(tg, v) { .u.value = { .u.uint64 = (uint32_t)(v), .tag = (tg) } }
 #define ROM_PV_F64(bits, d) { .u.value = { .u.float64 = (d), .tag = JS_TAG_FLOAT64 } }
 #define ROM_PV_NAN() { .u.value = { .u.float64 = __builtin_nan(""), .tag = JS_TAG_FLOAT64 } }
 #define ROM_OBJDATA_PTR(tg, p) .u.object_data = { .u.ptr = (void *)(p), .tag = (tg) }
-#define ROM_OBJDATA_INT(tg, v) .u.object_data = { .u.int32 = (v), .tag = (tg) }
+#define ROM_OBJDATA_INT(tg, v) .u.object_data = { .u.uint64 = (uint32_t)(v), .tag = (tg) }
 #define ROM_OBJDATA_F64(bits, d) .u.object_data = { .u.float64 = (d), .tag = JS_TAG_FLOAT64 }
 #endif
 /* the wiring runs, so these are ordinary expressions */

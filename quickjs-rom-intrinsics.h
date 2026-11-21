@@ -633,30 +633,30 @@ ROM_CFD_CHECK(js_rom_cfd_168);
 
 /* shapes: 103 */
 static const ROM_SHAPE_T(16, 13) js_rom_sh_0 = {
-    .hash = { [ROM_HPAD(16) - 1 - 0] = 13, [ROM_HPAD(16) - 1 - 1] = 4, [ROM_HPAD(16) - 1 - 2] = 6, [ROM_HPAD(16) - 1 - 3] = 3, [ROM_HPAD(16) - 1 - 9] = 10, [ROM_HPAD(16) - 1 - 10] = 2, [ROM_HPAD(16) - 1 - 11] = 8, [ROM_HPAD(16) - 1 - 13] = 12, [ROM_HPAD(16) - 1 - 14] = 11, },
+    .hash = { [ROM_HPAD(16) - 1 - 0] = 10, [ROM_HPAD(16) - 1 - 1] = 5, [ROM_HPAD(16) - 1 - 2] = 2, [ROM_HPAD(16) - 1 - 4] = 12, [ROM_HPAD(16) - 1 - 6] = 7, [ROM_HPAD(16) - 1 - 7] = 13, [ROM_HPAD(16) - 1 - 8] = 8, [ROM_HPAD(16) - 1 - 10] = 9, [ROM_HPAD(16) - 1 - 11] = 3, [ROM_HPAD(16) - 1 - 12] = 11, [ROM_HPAD(16) - 1 - 15] = 4, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 15, .prop_size = 13, .prop_count = 13,
             .proto = (JSObject *)&js_rom_obj[1] },
     .prop = {
         { .hash_next = 0, .flags = 0x00, .atom = 51 }, /* length */
         { .hash_next = 0, .flags = 0x00, .atom = 58 }, /* name */
-        { .hash_next = 1, .flags = 0x10, .atom = 83 }, /* caller */
+        { .hash_next = 0, .flags = 0x10, .atom = 83 }, /* caller */
         { .hash_next = 0, .flags = 0x10, .atom = 81 }, /* arguments */
         { .hash_next = 0, .flags = 0x00, .atom = 338 }, /* call */
-        { .hash_next = 5, .flags = 0x00, .atom = 98 }, /* apply */
-        { .hash_next = 0, .flags = 0x00, .atom = 331 }, /* bind */
-        { .hash_next = 7, .flags = 0x00, .atom = 59 }, /* toString */
+        { .hash_next = 0, .flags = 0x00, .atom = 98 }, /* apply */
+        { .hash_next = 6, .flags = 0x00, .atom = 331 }, /* bind */
+        { .hash_next = 0, .flags = 0x00, .atom = 59 }, /* toString */
         { .hash_next = 0, .flags = 0x00, .atom = 240 }, /* Symbol.hasInstance */
         { .hash_next = 0, .flags = 0x10, .atom = 377 }, /* fileName */
         { .hash_next = 0, .flags = 0x10, .atom = 510 }, /* lineNumber */
         { .hash_next = 0, .flags = 0x10, .atom = 349 }, /* columnNumber */
-        { .hash_next = 9, .flags = 0x00, .atom = 64 }, /* constructor */
+        { .hash_next = 1, .flags = 0x00, .atom = 64 }, /* constructor */
     },
 };
 ROM_SHAPE_CHECK(js_rom_sh_0, 16);
 
 static const ROM_SHAPE_T(16, 12) js_rom_sh_1 = {
-    .hash = { [ROM_HPAD(16) - 1 - 0] = 12, [ROM_HPAD(16) - 1 - 1] = 8, [ROM_HPAD(16) - 1 - 2] = 9, [ROM_HPAD(16) - 1 - 3] = 10, [ROM_HPAD(16) - 1 - 4] = 11, [ROM_HPAD(16) - 1 - 8] = 7, [ROM_HPAD(16) - 1 - 11] = 6, [ROM_HPAD(16) - 1 - 12] = 2, [ROM_HPAD(16) - 1 - 13] = 3, [ROM_HPAD(16) - 1 - 14] = 4, },
+    .hash = { [ROM_HPAD(16) - 1 - 3] = 5, [ROM_HPAD(16) - 1 - 4] = 10, [ROM_HPAD(16) - 1 - 7] = 12, [ROM_HPAD(16) - 1 - 8] = 7, [ROM_HPAD(16) - 1 - 9] = 4, [ROM_HPAD(16) - 1 - 10] = 11, [ROM_HPAD(16) - 1 - 14] = 9, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 15, .prop_size = 12, .prop_count = 12,
             .proto = NULL },
@@ -666,19 +666,19 @@ static const ROM_SHAPE_T(16, 12) js_rom_sh_1 = {
         { .hash_next = 0, .flags = 0x00, .atom = 61 }, /* valueOf */
         { .hash_next = 0, .flags = 0x00, .atom = 478 }, /* hasOwnProperty */
         { .hash_next = 0, .flags = 0x00, .atom = 498 }, /* isPrototypeOf */
-        { .hash_next = 1, .flags = 0x00, .atom = 539 }, /* propertyIsEnumerable */
-        { .hash_next = 0, .flags = 0x10, .atom = 72 }, /* __proto__ */
+        { .hash_next = 2, .flags = 0x00, .atom = 539 }, /* propertyIsEnumerable */
+        { .hash_next = 1, .flags = 0x10, .atom = 72 }, /* __proto__ */
         { .hash_next = 0, .flags = 0x00, .atom = 305 }, /* __defineGetter__ */
-        { .hash_next = 5, .flags = 0x00, .atom = 306 }, /* __defineSetter__ */
-        { .hash_next = 0, .flags = 0x00, .atom = 307 }, /* __lookupGetter__ */
+        { .hash_next = 6, .flags = 0x00, .atom = 306 }, /* __defineSetter__ */
+        { .hash_next = 3, .flags = 0x00, .atom = 307 }, /* __lookupGetter__ */
         { .hash_next = 0, .flags = 0x00, .atom = 308 }, /* __lookupSetter__ */
-        { .hash_next = 0, .flags = 0x00, .atom = 64 }, /* constructor */
+        { .hash_next = 8, .flags = 0x00, .atom = 64 }, /* constructor */
     },
 };
 ROM_SHAPE_CHECK(js_rom_sh_1, 16);
 
 static const ROM_SHAPE_T(4, 2) js_rom_sh_2 = {
-    .hash = { [ROM_HPAD(4) - 1 - 2] = 2, [ROM_HPAD(4) - 1 - 3] = 1, },
+    .hash = { [ROM_HPAD(4) - 1 - 0] = 2, [ROM_HPAD(4) - 1 - 1] = 1, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 3, .prop_size = 2, .prop_count = 2,
             .proto = (JSObject *)&js_rom_obj[0] },
@@ -690,7 +690,7 @@ static const ROM_SHAPE_T(4, 2) js_rom_sh_2 = {
 ROM_SHAPE_CHECK(js_rom_sh_2, 4);
 
 static const ROM_SHAPE_T(32, 26) js_rom_sh_3 = {
-    .hash = { [ROM_HPAD(32) - 1 - 1] = 7, [ROM_HPAD(32) - 1 - 2] = 19, [ROM_HPAD(32) - 1 - 4] = 3, [ROM_HPAD(32) - 1 - 6] = 18, [ROM_HPAD(32) - 1 - 7] = 21, [ROM_HPAD(32) - 1 - 8] = 14, [ROM_HPAD(32) - 1 - 9] = 15, [ROM_HPAD(32) - 1 - 11] = 24, [ROM_HPAD(32) - 1 - 12] = 6, [ROM_HPAD(32) - 1 - 13] = 23, [ROM_HPAD(32) - 1 - 17] = 11, [ROM_HPAD(32) - 1 - 18] = 13, [ROM_HPAD(32) - 1 - 19] = 1, [ROM_HPAD(32) - 1 - 21] = 22, [ROM_HPAD(32) - 1 - 24] = 10, [ROM_HPAD(32) - 1 - 26] = 2, [ROM_HPAD(32) - 1 - 29] = 25, [ROM_HPAD(32) - 1 - 31] = 26, },
+    .hash = { [ROM_HPAD(32) - 1 - 1] = 7, [ROM_HPAD(32) - 1 - 2] = 26, [ROM_HPAD(32) - 1 - 3] = 15, [ROM_HPAD(32) - 1 - 4] = 2, [ROM_HPAD(32) - 1 - 5] = 9, [ROM_HPAD(32) - 1 - 6] = 25, [ROM_HPAD(32) - 1 - 8] = 6, [ROM_HPAD(32) - 1 - 9] = 23, [ROM_HPAD(32) - 1 - 10] = 13, [ROM_HPAD(32) - 1 - 11] = 22, [ROM_HPAD(32) - 1 - 13] = 17, [ROM_HPAD(32) - 1 - 15] = 1, [ROM_HPAD(32) - 1 - 17] = 12, [ROM_HPAD(32) - 1 - 20] = 18, [ROM_HPAD(32) - 1 - 22] = 11, [ROM_HPAD(32) - 1 - 23] = 14, [ROM_HPAD(32) - 1 - 25] = 8, [ROM_HPAD(32) - 1 - 28] = 24, [ROM_HPAD(32) - 1 - 30] = 4, [ROM_HPAD(32) - 1 - 31] = 20, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 31, .prop_size = 26, .prop_count = 26,
             .proto = (JSObject *)&js_rom_obj[0] },
@@ -702,23 +702,23 @@ static const ROM_SHAPE_T(32, 26) js_rom_sh_3 = {
         { .hash_next = 0, .flags = 0x00, .atom = 103 }, /* setPrototypeOf */
         { .hash_next = 0, .flags = 0x00, .atom = 108 }, /* defineProperty */
         { .hash_next = 0, .flags = 0x00, .atom = 97 }, /* defineProperties */
-        { .hash_next = 5, .flags = 0x00, .atom = 455 }, /* getOwnPropertyNames */
+        { .hash_next = 0, .flags = 0x00, .atom = 455 }, /* getOwnPropertyNames */
         { .hash_next = 0, .flags = 0x00, .atom = 456 }, /* getOwnPropertySymbols */
         { .hash_next = 0, .flags = 0x00, .atom = 472 }, /* groupBy */
         { .hash_next = 0, .flags = 0x00, .atom = 49 }, /* keys */
         { .hash_next = 0, .flags = 0x00, .atom = 114 }, /* values */
-        { .hash_next = 12, .flags = 0x00, .atom = 370 }, /* entries */
-        { .hash_next = 9, .flags = 0x00, .atom = 104 }, /* isExtensible */
+        { .hash_next = 5, .flags = 0x00, .atom = 370 }, /* entries */
+        { .hash_next = 0, .flags = 0x00, .atom = 104 }, /* isExtensible */
         { .hash_next = 0, .flags = 0x00, .atom = 105 }, /* preventExtensions */
         { .hash_next = 0, .flags = 0x00, .atom = 109 }, /* getOwnPropertyDescriptor */
-        { .hash_next = 4, .flags = 0x00, .atom = 454 }, /* getOwnPropertyDescriptors */
-        { .hash_next = 17, .flags = 0x00, .atom = 486 }, /* is */
-        { .hash_next = 0, .flags = 0x00, .atom = 322 }, /* assign */
-        { .hash_next = 0, .flags = 0x00, .atom = 555 }, /* seal */
-        { .hash_next = 8, .flags = 0x00, .atom = 391 }, /* freeze */
-        { .hash_next = 0, .flags = 0x00, .atom = 501 }, /* isSealed */
-        { .hash_next = 16, .flags = 0x00, .atom = 493 }, /* isFrozen */
-        { .hash_next = 20, .flags = 0x00, .atom = 395 }, /* fromEntries */
+        { .hash_next = 0, .flags = 0x00, .atom = 454 }, /* getOwnPropertyDescriptors */
+        { .hash_next = 16, .flags = 0x00, .atom = 486 }, /* is */
+        { .hash_next = 3, .flags = 0x00, .atom = 322 }, /* assign */
+        { .hash_next = 19, .flags = 0x00, .atom = 555 }, /* seal */
+        { .hash_next = 0, .flags = 0x00, .atom = 391 }, /* freeze */
+        { .hash_next = 21, .flags = 0x00, .atom = 501 }, /* isSealed */
+        { .hash_next = 10, .flags = 0x00, .atom = 493 }, /* isFrozen */
+        { .hash_next = 0, .flags = 0x00, .atom = 395 }, /* fromEntries */
         { .hash_next = 0, .flags = 0x00, .atom = 477 }, /* hasOwn */
         { .hash_next = 0, .flags = 0x00, .atom = 63 }, /* prototype */
     },
@@ -726,7 +726,7 @@ static const ROM_SHAPE_T(32, 26) js_rom_sh_3 = {
 ROM_SHAPE_CHECK(js_rom_sh_3, 32);
 
 static const ROM_SHAPE_T(4, 2) js_rom_sh_4 = {
-    .hash = { [ROM_HPAD(4) - 1 - 2] = 2, [ROM_HPAD(4) - 1 - 3] = 1, },
+    .hash = { [ROM_HPAD(4) - 1 - 0] = 2, [ROM_HPAD(4) - 1 - 1] = 1, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 3, .prop_size = 2, .prop_count = 2,
             .proto = (JSObject *)&js_rom_obj[0] },
@@ -738,20 +738,20 @@ static const ROM_SHAPE_T(4, 2) js_rom_sh_4 = {
 ROM_SHAPE_CHECK(js_rom_sh_4, 4);
 
 static const ROM_SHAPE_T(4, 3) js_rom_sh_5 = {
-    .hash = { [ROM_HPAD(4) - 1 - 2] = 2, [ROM_HPAD(4) - 1 - 3] = 3, },
+    .hash = { [ROM_HPAD(4) - 1 - 0] = 3, [ROM_HPAD(4) - 1 - 1] = 1, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 3, .prop_size = 3, .prop_count = 3,
             .proto = (JSObject *)&js_rom_obj[0] },
     .prop = {
         { .hash_next = 0, .flags = 0x00, .atom = 51 }, /* length */
         { .hash_next = 0, .flags = 0x00, .atom = 58 }, /* name */
-        { .hash_next = 1, .flags = 0x00, .atom = 63 }, /* prototype */
+        { .hash_next = 2, .flags = 0x00, .atom = 63 }, /* prototype */
     },
 };
 ROM_SHAPE_CHECK(js_rom_sh_5, 4);
 
 static const ROM_SHAPE_T(16, 8) js_rom_sh_6 = {
-    .hash = { [ROM_HPAD(16) - 1 - 1] = 7, [ROM_HPAD(16) - 1 - 2] = 4, [ROM_HPAD(16) - 1 - 3] = 5, [ROM_HPAD(16) - 1 - 7] = 6, [ROM_HPAD(16) - 1 - 10] = 2, [ROM_HPAD(16) - 1 - 15] = 8, },
+    .hash = { [ROM_HPAD(16) - 1 - 0] = 7, [ROM_HPAD(16) - 1 - 1] = 8, [ROM_HPAD(16) - 1 - 2] = 2, [ROM_HPAD(16) - 1 - 7] = 1, [ROM_HPAD(16) - 1 - 10] = 4, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 15, .prop_size = 8, .prop_count = 8,
             .proto = (JSObject *)&js_rom_obj[0] },
@@ -760,16 +760,16 @@ static const ROM_SHAPE_T(16, 8) js_rom_sh_6 = {
         { .hash_next = 0, .flags = 0x00, .atom = 58 }, /* name */
         { .hash_next = 0, .flags = 0x00, .atom = 487 }, /* isArray */
         { .hash_next = 0, .flags = 0x00, .atom = 130 }, /* from */
-        { .hash_next = 1, .flags = 0x00, .atom = 131 }, /* fromAsync */
-        { .hash_next = 3, .flags = 0x00, .atom = 71 }, /* of */
-        { .hash_next = 0, .flags = 0x10, .atom = 241 }, /* Symbol.species */
-        { .hash_next = 0, .flags = 0x00, .atom = 63 }, /* prototype */
+        { .hash_next = 3, .flags = 0x00, .atom = 131 }, /* fromAsync */
+        { .hash_next = 0, .flags = 0x00, .atom = 71 }, /* of */
+        { .hash_next = 5, .flags = 0x10, .atom = 241 }, /* Symbol.species */
+        { .hash_next = 6, .flags = 0x00, .atom = 63 }, /* prototype */
     },
 };
 ROM_SHAPE_CHECK(js_rom_sh_6, 16);
 
 static const ROM_SHAPE_T(64, 42) js_rom_sh_7 = {
-    .hash = { [ROM_HPAD(64) - 1 - 0] = 42, [ROM_HPAD(64) - 1 - 1] = 36, [ROM_HPAD(64) - 1 - 2] = 35, [ROM_HPAD(64) - 1 - 5] = 2, [ROM_HPAD(64) - 1 - 6] = 8, [ROM_HPAD(64) - 1 - 15] = 25, [ROM_HPAD(64) - 1 - 18] = 26, [ROM_HPAD(64) - 1 - 19] = 31, [ROM_HPAD(64) - 1 - 22] = 6, [ROM_HPAD(64) - 1 - 23] = 29, [ROM_HPAD(64) - 1 - 24] = 23, [ROM_HPAD(64) - 1 - 25] = 32, [ROM_HPAD(64) - 1 - 28] = 24, [ROM_HPAD(64) - 1 - 29] = 3, [ROM_HPAD(64) - 1 - 32] = 10, [ROM_HPAD(64) - 1 - 33] = 34, [ROM_HPAD(64) - 1 - 35] = 20, [ROM_HPAD(64) - 1 - 36] = 17, [ROM_HPAD(64) - 1 - 40] = 38, [ROM_HPAD(64) - 1 - 49] = 39, [ROM_HPAD(64) - 1 - 50] = 41, [ROM_HPAD(64) - 1 - 51] = 1, [ROM_HPAD(64) - 1 - 52] = 5, [ROM_HPAD(64) - 1 - 58] = 12, [ROM_HPAD(64) - 1 - 59] = 21, [ROM_HPAD(64) - 1 - 60] = 28, [ROM_HPAD(64) - 1 - 61] = 30, [ROM_HPAD(64) - 1 - 62] = 33, [ROM_HPAD(64) - 1 - 63] = 16, },
+    .hash = { [ROM_HPAD(64) - 1 - 3] = 36, [ROM_HPAD(64) - 1 - 4] = 3, [ROM_HPAD(64) - 1 - 5] = 5, [ROM_HPAD(64) - 1 - 8] = 2, [ROM_HPAD(64) - 1 - 9] = 13, [ROM_HPAD(64) - 1 - 10] = 11, [ROM_HPAD(64) - 1 - 16] = 24, [ROM_HPAD(64) - 1 - 17] = 31, [ROM_HPAD(64) - 1 - 18] = 16, [ROM_HPAD(64) - 1 - 19] = 30, [ROM_HPAD(64) - 1 - 20] = 40, [ROM_HPAD(64) - 1 - 21] = 26, [ROM_HPAD(64) - 1 - 24] = 12, [ROM_HPAD(64) - 1 - 26] = 18, [ROM_HPAD(64) - 1 - 27] = 41, [ROM_HPAD(64) - 1 - 28] = 42, [ROM_HPAD(64) - 1 - 30] = 1, [ROM_HPAD(64) - 1 - 31] = 19, [ROM_HPAD(64) - 1 - 33] = 14, [ROM_HPAD(64) - 1 - 34] = 37, [ROM_HPAD(64) - 1 - 35] = 32, [ROM_HPAD(64) - 1 - 39] = 38, [ROM_HPAD(64) - 1 - 44] = 33, [ROM_HPAD(64) - 1 - 45] = 39, [ROM_HPAD(64) - 1 - 46] = 23, [ROM_HPAD(64) - 1 - 47] = 25, [ROM_HPAD(64) - 1 - 48] = 9, [ROM_HPAD(64) - 1 - 50] = 10, [ROM_HPAD(64) - 1 - 51] = 29, [ROM_HPAD(64) - 1 - 52] = 20, [ROM_HPAD(64) - 1 - 53] = 34, [ROM_HPAD(64) - 1 - 54] = 27, [ROM_HPAD(64) - 1 - 55] = 17, [ROM_HPAD(64) - 1 - 58] = 22, [ROM_HPAD(64) - 1 - 59] = 28, [ROM_HPAD(64) - 1 - 61] = 7, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 63, .prop_size = 42, .prop_count = 42,
             .proto = (JSObject *)&js_rom_obj[1] },
@@ -781,9 +781,9 @@ static const ROM_SHAPE_T(64, 42) js_rom_sh_7 = {
         { .hash_next = 0, .flags = 0x00, .atom = 372 }, /* every */
         { .hash_next = 0, .flags = 0x00, .atom = 598 }, /* some */
         { .hash_next = 0, .flags = 0x00, .atom = 390 }, /* forEach */
-        { .hash_next = 7, .flags = 0x00, .atom = 518 }, /* map */
+        { .hash_next = 0, .flags = 0x00, .atom = 518 }, /* map */
         { .hash_next = 0, .flags = 0x00, .atom = 379 }, /* filter */
-        { .hash_next = 4, .flags = 0x00, .atom = 544 }, /* reduce */
+        { .hash_next = 0, .flags = 0x00, .atom = 544 }, /* reduce */
         { .hash_next = 0, .flags = 0x00, .atom = 545 }, /* reduceRight */
         { .hash_next = 0, .flags = 0x00, .atom = 378 }, /* fill */
         { .hash_next = 0, .flags = 0x00, .atom = 380 }, /* find */
@@ -791,37 +791,37 @@ static const ROM_SHAPE_T(64, 42) js_rom_sh_7 = {
         { .hash_next = 0, .flags = 0x00, .atom = 382 }, /* findLast */
         { .hash_next = 0, .flags = 0x00, .atom = 383 }, /* findLastIndex */
         { .hash_next = 0, .flags = 0x00, .atom = 484 }, /* indexOf */
-        { .hash_next = 14, .flags = 0x00, .atom = 509 }, /* lastIndexOf */
+        { .hash_next = 6, .flags = 0x00, .atom = 509 }, /* lastIndexOf */
         { .hash_next = 0, .flags = 0x00, .atom = 483 }, /* includes */
-        { .hash_next = 19, .flags = 0x00, .atom = 99 }, /* join */
-        { .hash_next = 9, .flags = 0x00, .atom = 59 }, /* toString */
-        { .hash_next = 13, .flags = 0x00, .atom = 60 }, /* toLocaleString */
+        { .hash_next = 0, .flags = 0x00, .atom = 99 }, /* join */
+        { .hash_next = 0, .flags = 0x00, .atom = 59 }, /* toString */
+        { .hash_next = 15, .flags = 0x00, .atom = 60 }, /* toLocaleString */
         { .hash_next = 0, .flags = 0x00, .atom = 536 }, /* pop */
         { .hash_next = 0, .flags = 0x00, .atom = 540 }, /* push */
         { .hash_next = 0, .flags = 0x00, .atom = 591 }, /* shift */
         { .hash_next = 0, .flags = 0x00, .atom = 658 }, /* unshift */
-        { .hash_next = 0, .flags = 0x00, .atom = 552 }, /* reverse */
-        { .hash_next = 22, .flags = 0x00, .atom = 636 }, /* toReversed */
+        { .hash_next = 8, .flags = 0x00, .atom = 552 }, /* reverse */
+        { .hash_next = 0, .flags = 0x00, .atom = 636 }, /* toReversed */
         { .hash_next = 0, .flags = 0x00, .atom = 599 }, /* sort */
-        { .hash_next = 18, .flags = 0x00, .atom = 637 }, /* toSorted */
+        { .hash_next = 0, .flags = 0x00, .atom = 637 }, /* toSorted */
         { .hash_next = 0, .flags = 0x00, .atom = 595 }, /* slice */
         { .hash_next = 0, .flags = 0x00, .atom = 601 }, /* splice */
-        { .hash_next = 15, .flags = 0x00, .atom = 638 }, /* toSpliced */
-        { .hash_next = 11, .flags = 0x00, .atom = 353 }, /* copyWithin */
-        { .hash_next = 0, .flags = 0x00, .atom = 386 }, /* flatMap */
+        { .hash_next = 0, .flags = 0x00, .atom = 638 }, /* toSpliced */
+        { .hash_next = 0, .flags = 0x00, .atom = 353 }, /* copyWithin */
+        { .hash_next = 4, .flags = 0x00, .atom = 386 }, /* flatMap */
         { .hash_next = 0, .flags = 0x00, .atom = 385 }, /* flat */
-        { .hash_next = 0, .flags = 0x00, .atom = 114 }, /* values */
-        { .hash_next = 27, .flags = 0x00, .atom = 232 }, /* Symbol.iterator */
+        { .hash_next = 21, .flags = 0x00, .atom = 114 }, /* values */
+        { .hash_next = 0, .flags = 0x00, .atom = 232 }, /* Symbol.iterator */
         { .hash_next = 0, .flags = 0x00, .atom = 49 }, /* keys */
-        { .hash_next = 37, .flags = 0x00, .atom = 370 }, /* entries */
-        { .hash_next = 40, .flags = 0x00, .atom = 242 }, /* Symbol.unscopables */
-        { .hash_next = 0, .flags = 0x00, .atom = 64 }, /* constructor */
+        { .hash_next = 0, .flags = 0x00, .atom = 370 }, /* entries */
+        { .hash_next = 0, .flags = 0x00, .atom = 242 }, /* Symbol.unscopables */
+        { .hash_next = 35, .flags = 0x00, .atom = 64 }, /* constructor */
     },
 };
 ROM_SHAPE_CHECK(js_rom_sh_7, 64);
 
 static const ROM_SHAPE_T(32, 16) js_rom_sh_8 = {
-    .hash = { [ROM_HPAD(32) - 1 - 1] = 9, [ROM_HPAD(32) - 1 - 2] = 10, [ROM_HPAD(32) - 1 - 3] = 11, [ROM_HPAD(32) - 1 - 5] = 1, [ROM_HPAD(32) - 1 - 17] = 12, [ROM_HPAD(32) - 1 - 18] = 16, [ROM_HPAD(32) - 1 - 26] = 4, [ROM_HPAD(32) - 1 - 28] = 13, [ROM_HPAD(32) - 1 - 29] = 14, [ROM_HPAD(32) - 1 - 30] = 15, [ROM_HPAD(32) - 1 - 31] = 8, },
+    .hash = { [ROM_HPAD(32) - 1 - 1] = 9, [ROM_HPAD(32) - 1 - 4] = 5, [ROM_HPAD(32) - 1 - 9] = 14, [ROM_HPAD(32) - 1 - 10] = 3, [ROM_HPAD(32) - 1 - 12] = 4, [ROM_HPAD(32) - 1 - 14] = 10, [ROM_HPAD(32) - 1 - 15] = 11, [ROM_HPAD(32) - 1 - 16] = 6, [ROM_HPAD(32) - 1 - 17] = 16, [ROM_HPAD(32) - 1 - 22] = 15, [ROM_HPAD(32) - 1 - 26] = 2, [ROM_HPAD(32) - 1 - 29] = 13, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 31, .prop_size = 16, .prop_count = 16,
             .proto = NULL },
@@ -830,24 +830,24 @@ static const ROM_SHAPE_T(32, 16) js_rom_sh_8 = {
         { .hash_next = 0, .flags = 0x04, .atom = 353 }, /* copyWithin */
         { .hash_next = 0, .flags = 0x04, .atom = 370 }, /* entries */
         { .hash_next = 0, .flags = 0x04, .atom = 378 }, /* fill */
-        { .hash_next = 0, .flags = 0x04, .atom = 380 }, /* find */
+        { .hash_next = 1, .flags = 0x04, .atom = 380 }, /* find */
         { .hash_next = 0, .flags = 0x04, .atom = 381 }, /* findIndex */
         { .hash_next = 0, .flags = 0x04, .atom = 382 }, /* findLast */
         { .hash_next = 0, .flags = 0x04, .atom = 383 }, /* findLastIndex */
-        { .hash_next = 2, .flags = 0x04, .atom = 385 }, /* flat */
+        { .hash_next = 0, .flags = 0x04, .atom = 385 }, /* flat */
         { .hash_next = 0, .flags = 0x04, .atom = 386 }, /* flatMap */
         { .hash_next = 0, .flags = 0x04, .atom = 483 }, /* includes */
         { .hash_next = 0, .flags = 0x04, .atom = 49 }, /* keys */
-        { .hash_next = 5, .flags = 0x04, .atom = 636 }, /* toReversed */
-        { .hash_next = 6, .flags = 0x04, .atom = 637 }, /* toSorted */
-        { .hash_next = 7, .flags = 0x04, .atom = 638 }, /* toSpliced */
-        { .hash_next = 3, .flags = 0x04, .atom = 114 }, /* values */
+        { .hash_next = 7, .flags = 0x04, .atom = 636 }, /* toReversed */
+        { .hash_next = 8, .flags = 0x04, .atom = 637 }, /* toSorted */
+        { .hash_next = 12, .flags = 0x04, .atom = 638 }, /* toSpliced */
+        { .hash_next = 0, .flags = 0x04, .atom = 114 }, /* values */
     },
 };
 ROM_SHAPE_CHECK(js_rom_sh_8, 32);
 
 static const ROM_SHAPE_T(8, 5) js_rom_sh_9 = {
-    .hash = { [ROM_HPAD(8) - 1 - 1] = 5, [ROM_HPAD(8) - 1 - 2] = 2, [ROM_HPAD(8) - 1 - 3] = 4, [ROM_HPAD(8) - 1 - 7] = 3, },
+    .hash = { [ROM_HPAD(8) - 1 - 0] = 5, [ROM_HPAD(8) - 1 - 1] = 2, [ROM_HPAD(8) - 1 - 3] = 1, [ROM_HPAD(8) - 1 - 5] = 4, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 7, .prop_size = 5, .prop_count = 5,
             .proto = (JSObject *)&js_rom_obj[0] },
@@ -855,14 +855,14 @@ static const ROM_SHAPE_T(8, 5) js_rom_sh_9 = {
         { .hash_next = 0, .flags = 0x00, .atom = 51 }, /* length */
         { .hash_next = 0, .flags = 0x00, .atom = 58 }, /* name */
         { .hash_next = 0, .flags = 0x00, .atom = 63 }, /* prototype */
-        { .hash_next = 1, .flags = 0x00, .atom = 371 }, /* escape */
-        { .hash_next = 0, .flags = 0x10, .atom = 241 }, /* Symbol.species */
+        { .hash_next = 0, .flags = 0x00, .atom = 371 }, /* escape */
+        { .hash_next = 3, .flags = 0x10, .atom = 241 }, /* Symbol.species */
     },
 };
 ROM_SHAPE_CHECK(js_rom_sh_9, 8);
 
 static const ROM_SHAPE_T(32, 20) js_rom_sh_10 = {
-    .hash = { [ROM_HPAD(32) - 1 - 0] = 20, [ROM_HPAD(32) - 1 - 9] = 16, [ROM_HPAD(32) - 1 - 10] = 17, [ROM_HPAD(32) - 1 - 11] = 15, [ROM_HPAD(32) - 1 - 12] = 18, [ROM_HPAD(32) - 1 - 13] = 19, [ROM_HPAD(32) - 1 - 14] = 8, [ROM_HPAD(32) - 1 - 15] = 11, [ROM_HPAD(32) - 1 - 19] = 2, [ROM_HPAD(32) - 1 - 20] = 1, [ROM_HPAD(32) - 1 - 21] = 3, [ROM_HPAD(32) - 1 - 22] = 7, [ROM_HPAD(32) - 1 - 27] = 14, [ROM_HPAD(32) - 1 - 29] = 9, [ROM_HPAD(32) - 1 - 31] = 12, },
+    .hash = { [ROM_HPAD(32) - 1 - 2] = 12, [ROM_HPAD(32) - 1 - 4] = 18, [ROM_HPAD(32) - 1 - 9] = 1, [ROM_HPAD(32) - 1 - 10] = 4, [ROM_HPAD(32) - 1 - 12] = 17, [ROM_HPAD(32) - 1 - 13] = 13, [ROM_HPAD(32) - 1 - 14] = 20, [ROM_HPAD(32) - 1 - 16] = 19, [ROM_HPAD(32) - 1 - 17] = 14, [ROM_HPAD(32) - 1 - 19] = 11, [ROM_HPAD(32) - 1 - 22] = 3, [ROM_HPAD(32) - 1 - 24] = 15, [ROM_HPAD(32) - 1 - 25] = 8, [ROM_HPAD(32) - 1 - 29] = 2, [ROM_HPAD(32) - 1 - 31] = 16, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 31, .prop_size = 20, .prop_count = 20,
             .proto = (JSObject *)&js_rom_obj[1] },
@@ -875,24 +875,24 @@ static const ROM_SHAPE_T(32, 20) js_rom_sh_10 = {
         { .hash_next = 0, .flags = 0x10, .atom = 365 }, /* dotAll */
         { .hash_next = 0, .flags = 0x10, .atom = 118 }, /* unicode */
         { .hash_next = 0, .flags = 0x10, .atom = 654 }, /* unicodeSets */
-        { .hash_next = 0, .flags = 0x10, .atom = 605 }, /* sticky */
-        { .hash_next = 0, .flags = 0x10, .atom = 475 }, /* hasIndices */
+        { .hash_next = 7, .flags = 0x10, .atom = 605 }, /* sticky */
+        { .hash_next = 6, .flags = 0x10, .atom = 475 }, /* hasIndices */
         { .hash_next = 0, .flags = 0x00, .atom = 143 }, /* exec */
-        { .hash_next = 0, .flags = 0x00, .atom = 351 }, /* compile */
-        { .hash_next = 0, .flags = 0x00, .atom = 619 }, /* test */
-        { .hash_next = 10, .flags = 0x00, .atom = 59 }, /* toString */
-        { .hash_next = 13, .flags = 0x00, .atom = 235 }, /* Symbol.replace */
+        { .hash_next = 9, .flags = 0x00, .atom = 351 }, /* compile */
+        { .hash_next = 10, .flags = 0x00, .atom = 619 }, /* test */
+        { .hash_next = 0, .flags = 0x00, .atom = 59 }, /* toString */
+        { .hash_next = 0, .flags = 0x00, .atom = 235 }, /* Symbol.replace */
         { .hash_next = 0, .flags = 0x00, .atom = 233 }, /* Symbol.match */
         { .hash_next = 0, .flags = 0x00, .atom = 234 }, /* Symbol.matchAll */
         { .hash_next = 5, .flags = 0x00, .atom = 236 }, /* Symbol.search */
-        { .hash_next = 6, .flags = 0x00, .atom = 237 }, /* Symbol.split */
-        { .hash_next = 4, .flags = 0x00, .atom = 64 }, /* constructor */
+        { .hash_next = 0, .flags = 0x00, .atom = 237 }, /* Symbol.split */
+        { .hash_next = 0, .flags = 0x00, .atom = 64 }, /* constructor */
     },
 };
 ROM_SHAPE_CHECK(js_rom_sh_10, 32);
 
 static const ROM_SHAPE_T(16, 12) js_rom_sh_11 = {
-    .hash = { [ROM_HPAD(16) - 1 - 1] = 11, [ROM_HPAD(16) - 1 - 3] = 1, [ROM_HPAD(16) - 1 - 5] = 10, [ROM_HPAD(16) - 1 - 8] = 8, [ROM_HPAD(16) - 1 - 9] = 5, [ROM_HPAD(16) - 1 - 10] = 6, [ROM_HPAD(16) - 1 - 13] = 7, [ROM_HPAD(16) - 1 - 14] = 9, [ROM_HPAD(16) - 1 - 15] = 12, },
+    .hash = { [ROM_HPAD(16) - 1 - 0] = 11, [ROM_HPAD(16) - 1 - 1] = 12, [ROM_HPAD(16) - 1 - 2] = 8, [ROM_HPAD(16) - 1 - 5] = 3, [ROM_HPAD(16) - 1 - 7] = 10, [ROM_HPAD(16) - 1 - 8] = 5, [ROM_HPAD(16) - 1 - 11] = 4, [ROM_HPAD(16) - 1 - 14] = 6, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 15, .prop_size = 12, .prop_count = 12,
             .proto = (JSObject *)&js_rom_obj[0] },
@@ -900,36 +900,36 @@ static const ROM_SHAPE_T(16, 12) js_rom_sh_11 = {
         { .hash_next = 0, .flags = 0x00, .atom = 51 }, /* length */
         { .hash_next = 0, .flags = 0x00, .atom = 58 }, /* name */
         { .hash_next = 0, .flags = 0x00, .atom = 137 }, /* resolve */
-        { .hash_next = 2, .flags = 0x00, .atom = 138 }, /* reject */
-        { .hash_next = 3, .flags = 0x00, .atom = 313 }, /* all */
-        { .hash_next = 4, .flags = 0x00, .atom = 314 }, /* allSettled */
+        { .hash_next = 0, .flags = 0x00, .atom = 138 }, /* reject */
+        { .hash_next = 0, .flags = 0x00, .atom = 313 }, /* all */
+        { .hash_next = 0, .flags = 0x00, .atom = 314 }, /* allSettled */
         { .hash_next = 0, .flags = 0x00, .atom = 317 }, /* any */
-        { .hash_next = 0, .flags = 0x00, .atom = 24 }, /* try */
+        { .hash_next = 2, .flags = 0x00, .atom = 24 }, /* try */
         { .hash_next = 0, .flags = 0x00, .atom = 542 }, /* race */
-        { .hash_next = 0, .flags = 0x00, .atom = 661 }, /* withResolvers */
-        { .hash_next = 0, .flags = 0x10, .atom = 241 }, /* Symbol.species */
-        { .hash_next = 0, .flags = 0x00, .atom = 63 }, /* prototype */
+        { .hash_next = 1, .flags = 0x00, .atom = 661 }, /* withResolvers */
+        { .hash_next = 9, .flags = 0x10, .atom = 241 }, /* Symbol.species */
+        { .hash_next = 7, .flags = 0x00, .atom = 63 }, /* prototype */
     },
 };
 ROM_SHAPE_CHECK(js_rom_sh_11, 16);
 
 static const ROM_SHAPE_T(8, 5) js_rom_sh_12 = {
-    .hash = { [ROM_HPAD(8) - 1 - 0] = 5, [ROM_HPAD(8) - 1 - 1] = 2, [ROM_HPAD(8) - 1 - 2] = 3, [ROM_HPAD(8) - 1 - 6] = 4, },
+    .hash = { [ROM_HPAD(8) - 1 - 3] = 5, [ROM_HPAD(8) - 1 - 4] = 2, [ROM_HPAD(8) - 1 - 7] = 4, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 7, .prop_size = 5, .prop_count = 5,
             .proto = (JSObject *)&js_rom_obj[1] },
     .prop = {
         { .hash_next = 0, .flags = 0x00, .atom = 136 }, /* then */
         { .hash_next = 0, .flags = 0x00, .atom = 25 }, /* catch */
-        { .hash_next = 0, .flags = 0x00, .atom = 26 }, /* finally */
-        { .hash_next = 0, .flags = 0x00, .atom = 238 }, /* Symbol.toStringTag */
-        { .hash_next = 1, .flags = 0x00, .atom = 64 }, /* constructor */
+        { .hash_next = 1, .flags = 0x00, .atom = 26 }, /* finally */
+        { .hash_next = 3, .flags = 0x00, .atom = 238 }, /* Symbol.toStringTag */
+        { .hash_next = 0, .flags = 0x00, .atom = 64 }, /* constructor */
     },
 };
 ROM_SHAPE_CHECK(js_rom_sh_12, 8);
 
 static const ROM_SHAPE_T(16, 7) js_rom_sh_13 = {
-    .hash = { [ROM_HPAD(16) - 1 - 3] = 5, [ROM_HPAD(16) - 1 - 10] = 7, [ROM_HPAD(16) - 1 - 11] = 6, [ROM_HPAD(16) - 1 - 15] = 3, },
+    .hash = { [ROM_HPAD(16) - 1 - 1] = 3, [ROM_HPAD(16) - 1 - 2] = 2, [ROM_HPAD(16) - 1 - 5] = 6, [ROM_HPAD(16) - 1 - 7] = 7, [ROM_HPAD(16) - 1 - 8] = 4, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 15, .prop_size = 7, .prop_count = 7,
             .proto = (JSObject *)&js_rom_obj[0] },
@@ -939,14 +939,14 @@ static const ROM_SHAPE_T(16, 7) js_rom_sh_13 = {
         { .hash_next = 0, .flags = 0x00, .atom = 63 }, /* prototype */
         { .hash_next = 0, .flags = 0x00, .atom = 491 }, /* isError */
         { .hash_next = 1, .flags = 0x00, .atom = 339 }, /* captureStackTrace */
-        { .hash_next = 4, .flags = 0x10, .atom = 603 }, /* stackTraceLimit */
-        { .hash_next = 2, .flags = 0x10, .atom = 538 }, /* prepareStackTrace */
+        { .hash_next = 0, .flags = 0x10, .atom = 603 }, /* stackTraceLimit */
+        { .hash_next = 5, .flags = 0x10, .atom = 538 }, /* prepareStackTrace */
     },
 };
 ROM_SHAPE_CHECK(js_rom_sh_13, 16);
 
 static const ROM_SHAPE_T(8, 5) js_rom_sh_14 = {
-    .hash = { [ROM_HPAD(8) - 1 - 0] = 5, [ROM_HPAD(8) - 1 - 1] = 4, [ROM_HPAD(8) - 1 - 2] = 2, [ROM_HPAD(8) - 1 - 3] = 1, [ROM_HPAD(8) - 1 - 4] = 3, },
+    .hash = { [ROM_HPAD(8) - 1 - 1] = 2, [ROM_HPAD(8) - 1 - 3] = 5, [ROM_HPAD(8) - 1 - 4] = 1, [ROM_HPAD(8) - 1 - 6] = 4, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 7, .prop_size = 5, .prop_count = 5,
             .proto = (JSObject *)&js_rom_obj[1] },
@@ -954,21 +954,21 @@ static const ROM_SHAPE_T(8, 5) js_rom_sh_14 = {
         { .hash_next = 0, .flags = 0x00, .atom = 59 }, /* toString */
         { .hash_next = 0, .flags = 0x00, .atom = 58 }, /* name */
         { .hash_next = 0, .flags = 0x00, .atom = 52 }, /* message */
-        { .hash_next = 0, .flags = 0x10, .atom = 57 }, /* stack */
+        { .hash_next = 3, .flags = 0x10, .atom = 57 }, /* stack */
         { .hash_next = 0, .flags = 0x00, .atom = 64 }, /* constructor */
     },
 };
 ROM_SHAPE_CHECK(js_rom_sh_14, 8);
 
 static const ROM_SHAPE_T(16, 7) js_rom_sh_15 = {
-    .hash = { [ROM_HPAD(16) - 1 - 0] = 3, [ROM_HPAD(16) - 1 - 2] = 4, [ROM_HPAD(16) - 1 - 3] = 1, [ROM_HPAD(16) - 1 - 10] = 2, [ROM_HPAD(16) - 1 - 11] = 5, [ROM_HPAD(16) - 1 - 12] = 6, [ROM_HPAD(16) - 1 - 15] = 7, },
+    .hash = { [ROM_HPAD(16) - 1 - 1] = 7, [ROM_HPAD(16) - 1 - 2] = 2, [ROM_HPAD(16) - 1 - 3] = 5, [ROM_HPAD(16) - 1 - 7] = 3, [ROM_HPAD(16) - 1 - 9] = 6, [ROM_HPAD(16) - 1 - 10] = 4, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 15, .prop_size = 7, .prop_count = 7,
             .proto = (JSObject *)&js_rom_obj[0] },
     .prop = {
         { .hash_next = 0, .flags = 0x00, .atom = 51 }, /* length */
         { .hash_next = 0, .flags = 0x00, .atom = 58 }, /* name */
-        { .hash_next = 0, .flags = 0x00, .atom = 352 }, /* concat */
+        { .hash_next = 1, .flags = 0x00, .atom = 352 }, /* concat */
         { .hash_next = 0, .flags = 0x00, .atom = 130 }, /* from */
         { .hash_next = 0, .flags = 0x00, .atom = 155 }, /* zip */
         { .hash_next = 0, .flags = 0x00, .atom = 156 }, /* zipKeyed */
@@ -978,7 +978,7 @@ static const ROM_SHAPE_T(16, 7) js_rom_sh_15 = {
 ROM_SHAPE_CHECK(js_rom_sh_15, 16);
 
 static const ROM_SHAPE_T(32, 19) js_rom_sh_16 = {
-    .hash = { [ROM_HPAD(32) - 1 - 0] = 19, [ROM_HPAD(32) - 1 - 2] = 4, [ROM_HPAD(32) - 1 - 3] = 13, [ROM_HPAD(32) - 1 - 6] = 10, [ROM_HPAD(32) - 1 - 8] = 17, [ROM_HPAD(32) - 1 - 13] = 15, [ROM_HPAD(32) - 1 - 14] = 18, [ROM_HPAD(32) - 1 - 20] = 16, [ROM_HPAD(32) - 1 - 22] = 11, [ROM_HPAD(32) - 1 - 24] = 1, [ROM_HPAD(32) - 1 - 27] = 3, [ROM_HPAD(32) - 1 - 28] = 9, },
+    .hash = { [ROM_HPAD(32) - 1 - 2] = 8, [ROM_HPAD(32) - 1 - 3] = 7, [ROM_HPAD(32) - 1 - 4] = 9, [ROM_HPAD(32) - 1 - 6] = 16, [ROM_HPAD(32) - 1 - 9] = 6, [ROM_HPAD(32) - 1 - 12] = 1, [ROM_HPAD(32) - 1 - 13] = 11, [ROM_HPAD(32) - 1 - 14] = 19, [ROM_HPAD(32) - 1 - 15] = 12, [ROM_HPAD(32) - 1 - 19] = 17, [ROM_HPAD(32) - 1 - 24] = 3, [ROM_HPAD(32) - 1 - 25] = 14, [ROM_HPAD(32) - 1 - 26] = 13, [ROM_HPAD(32) - 1 - 27] = 5, [ROM_HPAD(32) - 1 - 29] = 18, [ROM_HPAD(32) - 1 - 30] = 10, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 31, .prop_size = 19, .prop_count = 19,
             .proto = (JSObject *)&js_rom_obj[1] },
@@ -990,24 +990,24 @@ static const ROM_SHAPE_T(32, 19) js_rom_sh_16 = {
         { .hash_next = 0, .flags = 0x00, .atom = 518 }, /* map */
         { .hash_next = 0, .flags = 0x00, .atom = 616 }, /* take */
         { .hash_next = 0, .flags = 0x00, .atom = 660 }, /* windows */
-        { .hash_next = 7, .flags = 0x00, .atom = 372 }, /* every */
+        { .hash_next = 0, .flags = 0x00, .atom = 372 }, /* every */
         { .hash_next = 0, .flags = 0x00, .atom = 380 }, /* find */
-        { .hash_next = 5, .flags = 0x00, .atom = 390 }, /* forEach */
+        { .hash_next = 0, .flags = 0x00, .atom = 390 }, /* forEach */
         { .hash_next = 0, .flags = 0x00, .atom = 598 }, /* some */
         { .hash_next = 0, .flags = 0x00, .atom = 483 }, /* includes */
-        { .hash_next = 12, .flags = 0x00, .atom = 99 }, /* join */
-        { .hash_next = 0, .flags = 0x00, .atom = 544 }, /* reduce */
+        { .hash_next = 0, .flags = 0x00, .atom = 99 }, /* join */
+        { .hash_next = 2, .flags = 0x00, .atom = 544 }, /* reduce */
         { .hash_next = 0, .flags = 0x00, .atom = 621 }, /* toArray */
-        { .hash_next = 8, .flags = 0x00, .atom = 244 }, /* Symbol.dispose */
-        { .hash_next = 6, .flags = 0x00, .atom = 232 }, /* Symbol.iterator */
-        { .hash_next = 2, .flags = 0x10, .atom = 238 }, /* Symbol.toStringTag */
-        { .hash_next = 14, .flags = 0x10, .atom = 64 }, /* constructor */
+        { .hash_next = 15, .flags = 0x00, .atom = 244 }, /* Symbol.dispose */
+        { .hash_next = 0, .flags = 0x00, .atom = 232 }, /* Symbol.iterator */
+        { .hash_next = 0, .flags = 0x10, .atom = 238 }, /* Symbol.toStringTag */
+        { .hash_next = 4, .flags = 0x10, .atom = 64 }, /* constructor */
     },
 };
 ROM_SHAPE_CHECK(js_rom_sh_16, 32);
 
 static const ROM_SHAPE_T(4, 2) js_rom_sh_17 = {
-    .hash = { [ROM_HPAD(4) - 1 - 1] = 2, [ROM_HPAD(4) - 1 - 3] = 1, },
+    .hash = { [ROM_HPAD(4) - 1 - 2] = 2, [ROM_HPAD(4) - 1 - 3] = 1, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 3, .prop_size = 2, .prop_count = 2,
             .proto = (JSObject *)&js_rom_obj[1] },
@@ -1019,23 +1019,23 @@ static const ROM_SHAPE_T(4, 2) js_rom_sh_17 = {
 ROM_SHAPE_CHECK(js_rom_sh_17, 4);
 
 static const ROM_SHAPE_T(8, 6) js_rom_sh_18 = {
-    .hash = { [ROM_HPAD(8) - 1 - 1] = 5, [ROM_HPAD(8) - 1 - 2] = 3, [ROM_HPAD(8) - 1 - 3] = 1, [ROM_HPAD(8) - 1 - 7] = 6, },
+    .hash = { [ROM_HPAD(8) - 1 - 0] = 6, [ROM_HPAD(8) - 1 - 1] = 2, [ROM_HPAD(8) - 1 - 3] = 1, [ROM_HPAD(8) - 1 - 5] = 3, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 7, .prop_size = 6, .prop_count = 6,
             .proto = (JSObject *)&js_rom_obj[0] },
     .prop = {
         { .hash_next = 0, .flags = 0x00, .atom = 51 }, /* length */
         { .hash_next = 0, .flags = 0x00, .atom = 58 }, /* name */
-        { .hash_next = 2, .flags = 0x00, .atom = 130 }, /* from */
+        { .hash_next = 0, .flags = 0x00, .atom = 130 }, /* from */
         { .hash_next = 0, .flags = 0x00, .atom = 71 }, /* of */
-        { .hash_next = 0, .flags = 0x10, .atom = 241 }, /* Symbol.species */
-        { .hash_next = 4, .flags = 0x00, .atom = 63 }, /* prototype */
+        { .hash_next = 4, .flags = 0x10, .atom = 241 }, /* Symbol.species */
+        { .hash_next = 5, .flags = 0x00, .atom = 63 }, /* prototype */
     },
 };
 ROM_SHAPE_CHECK(js_rom_sh_18, 8);
 
 static const ROM_SHAPE_T(64, 38) js_rom_sh_19 = {
-    .hash = { [ROM_HPAD(64) - 1 - 0] = 37, [ROM_HPAD(64) - 1 - 5] = 2, [ROM_HPAD(64) - 1 - 6] = 17, [ROM_HPAD(64) - 1 - 15] = 4, [ROM_HPAD(64) - 1 - 16] = 5, [ROM_HPAD(64) - 1 - 17] = 6, [ROM_HPAD(64) - 1 - 19] = 28, [ROM_HPAD(64) - 1 - 22] = 15, [ROM_HPAD(64) - 1 - 23] = 30, [ROM_HPAD(64) - 1 - 29] = 3, [ROM_HPAD(64) - 1 - 32] = 19, [ROM_HPAD(64) - 1 - 33] = 20, [ROM_HPAD(64) - 1 - 34] = 29, [ROM_HPAD(64) - 1 - 35] = 36, [ROM_HPAD(64) - 1 - 36] = 34, [ROM_HPAD(64) - 1 - 40] = 26, [ROM_HPAD(64) - 1 - 46] = 12, [ROM_HPAD(64) - 1 - 49] = 10, [ROM_HPAD(64) - 1 - 50] = 11, [ROM_HPAD(64) - 1 - 51] = 1, [ROM_HPAD(64) - 1 - 52] = 14, [ROM_HPAD(64) - 1 - 58] = 21, [ROM_HPAD(64) - 1 - 59] = 38, [ROM_HPAD(64) - 1 - 60] = 33, [ROM_HPAD(64) - 1 - 61] = 35, [ROM_HPAD(64) - 1 - 62] = 24, [ROM_HPAD(64) - 1 - 63] = 25, },
+    .hash = { [ROM_HPAD(64) - 1 - 4] = 3, [ROM_HPAD(64) - 1 - 5] = 14, [ROM_HPAD(64) - 1 - 8] = 2, [ROM_HPAD(64) - 1 - 9] = 22, [ROM_HPAD(64) - 1 - 10] = 20, [ROM_HPAD(64) - 1 - 17] = 28, [ROM_HPAD(64) - 1 - 18] = 25, [ROM_HPAD(64) - 1 - 19] = 31, [ROM_HPAD(64) - 1 - 20] = 11, [ROM_HPAD(64) - 1 - 21] = 5, [ROM_HPAD(64) - 1 - 24] = 21, [ROM_HPAD(64) - 1 - 26] = 35, [ROM_HPAD(64) - 1 - 28] = 37, [ROM_HPAD(64) - 1 - 30] = 1, [ROM_HPAD(64) - 1 - 31] = 36, [ROM_HPAD(64) - 1 - 33] = 23, [ROM_HPAD(64) - 1 - 34] = 38, [ROM_HPAD(64) - 1 - 39] = 9, [ROM_HPAD(64) - 1 - 45] = 10, [ROM_HPAD(64) - 1 - 46] = 6, [ROM_HPAD(64) - 1 - 47] = 7, [ROM_HPAD(64) - 1 - 48] = 18, [ROM_HPAD(64) - 1 - 50] = 19, [ROM_HPAD(64) - 1 - 51] = 30, [ROM_HPAD(64) - 1 - 52] = 32, [ROM_HPAD(64) - 1 - 53] = 13, [ROM_HPAD(64) - 1 - 54] = 26, [ROM_HPAD(64) - 1 - 55] = 34, [ROM_HPAD(64) - 1 - 58] = 33, [ROM_HPAD(64) - 1 - 59] = 27, [ROM_HPAD(64) - 1 - 61] = 16, [ROM_HPAD(64) - 1 - 63] = 29, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 63, .prop_size = 38, .prop_count = 38,
             .proto = (JSObject *)&js_rom_obj[1] },
@@ -1050,66 +1050,66 @@ static const ROM_SHAPE_T(64, 38) js_rom_sh_19 = {
         { .hash_next = 0, .flags = 0x00, .atom = 114 }, /* values */
         { .hash_next = 0, .flags = 0x00, .atom = 232 }, /* Symbol.iterator */
         { .hash_next = 0, .flags = 0x00, .atom = 49 }, /* keys */
-        { .hash_next = 8, .flags = 0x00, .atom = 370 }, /* entries */
+        { .hash_next = 0, .flags = 0x00, .atom = 370 }, /* entries */
         { .hash_next = 0, .flags = 0x10, .atom = 238 }, /* Symbol.toStringTag */
         { .hash_next = 0, .flags = 0x00, .atom = 353 }, /* copyWithin */
         { .hash_next = 0, .flags = 0x00, .atom = 372 }, /* every */
         { .hash_next = 0, .flags = 0x00, .atom = 598 }, /* some */
-        { .hash_next = 7, .flags = 0x00, .atom = 390 }, /* forEach */
-        { .hash_next = 16, .flags = 0x00, .atom = 518 }, /* map */
+        { .hash_next = 4, .flags = 0x00, .atom = 390 }, /* forEach */
+        { .hash_next = 0, .flags = 0x00, .atom = 518 }, /* map */
         { .hash_next = 0, .flags = 0x00, .atom = 379 }, /* filter */
         { .hash_next = 0, .flags = 0x00, .atom = 544 }, /* reduce */
-        { .hash_next = 13, .flags = 0x00, .atom = 545 }, /* reduceRight */
+        { .hash_next = 0, .flags = 0x00, .atom = 545 }, /* reduceRight */
         { .hash_next = 0, .flags = 0x00, .atom = 378 }, /* fill */
         { .hash_next = 0, .flags = 0x00, .atom = 380 }, /* find */
         { .hash_next = 0, .flags = 0x00, .atom = 381 }, /* findIndex */
-        { .hash_next = 0, .flags = 0x00, .atom = 382 }, /* findLast */
+        { .hash_next = 12, .flags = 0x00, .atom = 382 }, /* findLast */
         { .hash_next = 0, .flags = 0x00, .atom = 383 }, /* findLastIndex */
-        { .hash_next = 9, .flags = 0x00, .atom = 552 }, /* reverse */
-        { .hash_next = 22, .flags = 0x00, .atom = 636 }, /* toReversed */
+        { .hash_next = 17, .flags = 0x00, .atom = 552 }, /* reverse */
+        { .hash_next = 0, .flags = 0x00, .atom = 636 }, /* toReversed */
         { .hash_next = 0, .flags = 0x00, .atom = 595 }, /* slice */
         { .hash_next = 0, .flags = 0x00, .atom = 610 }, /* subarray */
         { .hash_next = 0, .flags = 0x00, .atom = 599 }, /* sort */
-        { .hash_next = 23, .flags = 0x00, .atom = 637 }, /* toSorted */
+        { .hash_next = 0, .flags = 0x00, .atom = 637 }, /* toSorted */
         { .hash_next = 0, .flags = 0x00, .atom = 99 }, /* join */
-        { .hash_next = 27, .flags = 0x00, .atom = 60 }, /* toLocaleString */
+        { .hash_next = 24, .flags = 0x00, .atom = 60 }, /* toLocaleString */
         { .hash_next = 0, .flags = 0x00, .atom = 484 }, /* indexOf */
-        { .hash_next = 31, .flags = 0x00, .atom = 509 }, /* lastIndexOf */
-        { .hash_next = 32, .flags = 0x00, .atom = 483 }, /* includes */
+        { .hash_next = 15, .flags = 0x00, .atom = 509 }, /* lastIndexOf */
+        { .hash_next = 0, .flags = 0x00, .atom = 483 }, /* includes */
         { .hash_next = 0, .flags = 0x00, .atom = 64 }, /* constructor */
-        { .hash_next = 18, .flags = 0x00, .atom = 59 }, /* toString */
+        { .hash_next = 8, .flags = 0x00, .atom = 59 }, /* toString */
     },
 };
 ROM_SHAPE_CHECK(js_rom_sh_19, 64);
 
 static const ROM_SHAPE_T(4, 3) js_rom_sh_20 = {
-    .hash = { [ROM_HPAD(4) - 1 - 0] = 3, [ROM_HPAD(4) - 1 - 2] = 1, },
+    .hash = { [ROM_HPAD(4) - 1 - 0] = 1, [ROM_HPAD(4) - 1 - 1] = 3, [ROM_HPAD(4) - 1 - 3] = 2, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 3, .prop_size = 3, .prop_count = 3,
             .proto = (JSObject *)&js_rom_obj[132] },
     .prop = {
         { .hash_next = 0, .flags = 0x00, .atom = 58 }, /* name */
         { .hash_next = 0, .flags = 0x00, .atom = 52 }, /* message */
-        { .hash_next = 2, .flags = 0x00, .atom = 64 }, /* constructor */
+        { .hash_next = 0, .flags = 0x00, .atom = 64 }, /* constructor */
     },
 };
 ROM_SHAPE_CHECK(js_rom_sh_20, 4);
 
 static const ROM_SHAPE_T(4, 3) js_rom_sh_21 = {
-    .hash = { [ROM_HPAD(4) - 1 - 2] = 2, [ROM_HPAD(4) - 1 - 3] = 3, },
+    .hash = { [ROM_HPAD(4) - 1 - 0] = 3, [ROM_HPAD(4) - 1 - 1] = 1, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 3, .prop_size = 3, .prop_count = 3,
             .proto = (JSObject *)&js_rom_obj[131] },
     .prop = {
         { .hash_next = 0, .flags = 0x00, .atom = 51 }, /* length */
         { .hash_next = 0, .flags = 0x00, .atom = 58 }, /* name */
-        { .hash_next = 1, .flags = 0x00, .atom = 63 }, /* prototype */
+        { .hash_next = 2, .flags = 0x00, .atom = 63 }, /* prototype */
     },
 };
 ROM_SHAPE_CHECK(js_rom_sh_21, 4);
 
 static const ROM_SHAPE_T(16, 7) js_rom_sh_22 = {
-    .hash = { [ROM_HPAD(16) - 1 - 0] = 7, [ROM_HPAD(16) - 1 - 1] = 2, [ROM_HPAD(16) - 1 - 10] = 3, [ROM_HPAD(16) - 1 - 11] = 4, [ROM_HPAD(16) - 1 - 12] = 5, [ROM_HPAD(16) - 1 - 13] = 6, },
+    .hash = { [ROM_HPAD(16) - 1 - 2] = 3, [ROM_HPAD(16) - 1 - 4] = 6, [ROM_HPAD(16) - 1 - 5] = 1, [ROM_HPAD(16) - 1 - 7] = 7, [ROM_HPAD(16) - 1 - 8] = 4, [ROM_HPAD(16) - 1 - 11] = 2, [ROM_HPAD(16) - 1 - 14] = 5, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 15, .prop_size = 7, .prop_count = 7,
             .proto = (JSObject *)&js_rom_obj[1] },
@@ -1120,13 +1120,13 @@ static const ROM_SHAPE_T(16, 7) js_rom_sh_22 = {
         { .hash_next = 0, .flags = 0x00, .atom = 59 }, /* toString */
         { .hash_next = 0, .flags = 0x00, .atom = 60 }, /* toLocaleString */
         { .hash_next = 0, .flags = 0x00, .atom = 61 }, /* valueOf */
-        { .hash_next = 1, .flags = 0x00, .atom = 64 }, /* constructor */
+        { .hash_next = 0, .flags = 0x00, .atom = 64 }, /* constructor */
     },
 };
 ROM_SHAPE_CHECK(js_rom_sh_22, 16);
 
 static const ROM_SHAPE_T(32, 17) js_rom_sh_23 = {
-    .hash = { [ROM_HPAD(32) - 1 - 11] = 12, [ROM_HPAD(32) - 1 - 12] = 9, [ROM_HPAD(32) - 1 - 13] = 13, [ROM_HPAD(32) - 1 - 14] = 10, [ROM_HPAD(32) - 1 - 16] = 15, [ROM_HPAD(32) - 1 - 19] = 1, [ROM_HPAD(32) - 1 - 20] = 8, [ROM_HPAD(32) - 1 - 21] = 3, [ROM_HPAD(32) - 1 - 22] = 14, [ROM_HPAD(32) - 1 - 24] = 16, [ROM_HPAD(32) - 1 - 26] = 2, [ROM_HPAD(32) - 1 - 29] = 11, [ROM_HPAD(32) - 1 - 31] = 17, },
+    .hash = { [ROM_HPAD(32) - 1 - 2] = 17, [ROM_HPAD(32) - 1 - 4] = 10, [ROM_HPAD(32) - 1 - 5] = 14, [ROM_HPAD(32) - 1 - 6] = 4, [ROM_HPAD(32) - 1 - 11] = 9, [ROM_HPAD(32) - 1 - 14] = 5, [ROM_HPAD(32) - 1 - 15] = 1, [ROM_HPAD(32) - 1 - 18] = 3, [ROM_HPAD(32) - 1 - 20] = 11, [ROM_HPAD(32) - 1 - 22] = 7, [ROM_HPAD(32) - 1 - 23] = 13, [ROM_HPAD(32) - 1 - 28] = 15, [ROM_HPAD(32) - 1 - 29] = 6, [ROM_HPAD(32) - 1 - 30] = 16, [ROM_HPAD(32) - 1 - 31] = 12, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 31, .prop_size = 17, .prop_count = 17,
             .proto = (JSObject *)&js_rom_obj[0] },
@@ -1138,14 +1138,14 @@ static const ROM_SHAPE_T(32, 17) js_rom_sh_23 = {
         { .hash_next = 0, .flags = 0x00, .atom = 496 }, /* isNaN */
         { .hash_next = 0, .flags = 0x00, .atom = 492 }, /* isFinite */
         { .hash_next = 0, .flags = 0x00, .atom = 494 }, /* isInteger */
-        { .hash_next = 4, .flags = 0x00, .atom = 500 }, /* isSafeInteger */
-        { .hash_next = 6, .flags = 0x00, .atom = 268 }, /* MAX_VALUE */
-        { .hash_next = 7, .flags = 0x00, .atom = 270 }, /* MIN_VALUE */
+        { .hash_next = 0, .flags = 0x00, .atom = 500 }, /* isSafeInteger */
+        { .hash_next = 0, .flags = 0x00, .atom = 268 }, /* MAX_VALUE */
+        { .hash_next = 2, .flags = 0x00, .atom = 270 }, /* MIN_VALUE */
         { .hash_next = 0, .flags = 0x00, .atom = 253 }, /* EPSILON */
-        { .hash_next = 0, .flags = 0x00, .atom = 267 }, /* MAX_SAFE_INTEGER */
+        { .hash_next = 8, .flags = 0x00, .atom = 267 }, /* MAX_SAFE_INTEGER */
         { .hash_next = 0, .flags = 0x00, .atom = 269 }, /* MIN_SAFE_INTEGER */
         { .hash_next = 0, .flags = 0x00, .atom = 278 }, /* NaN */
-        { .hash_next = 5, .flags = 0x00, .atom = 272 }, /* NEGATIVE_INFINITY */
+        { .hash_next = 0, .flags = 0x00, .atom = 272 }, /* NEGATIVE_INFINITY */
         { .hash_next = 0, .flags = 0x00, .atom = 280 }, /* POSITIVE_INFINITY */
         { .hash_next = 0, .flags = 0x00, .atom = 63 }, /* prototype */
     },
@@ -1153,7 +1153,7 @@ static const ROM_SHAPE_T(32, 17) js_rom_sh_23 = {
 ROM_SHAPE_CHECK(js_rom_sh_23, 32);
 
 static const ROM_SHAPE_T(64, 53) js_rom_sh_24 = {
-    .hash = { [ROM_HPAD(64) - 1 - 0] = 53, [ROM_HPAD(64) - 1 - 1] = 33, [ROM_HPAD(64) - 1 - 2] = 36, [ROM_HPAD(64) - 1 - 3] = 8, [ROM_HPAD(64) - 1 - 4] = 45, [ROM_HPAD(64) - 1 - 5] = 46, [ROM_HPAD(64) - 1 - 7] = 26, [ROM_HPAD(64) - 1 - 8] = 27, [ROM_HPAD(64) - 1 - 9] = 30, [ROM_HPAD(64) - 1 - 10] = 41, [ROM_HPAD(64) - 1 - 11] = 29, [ROM_HPAD(64) - 1 - 12] = 42, [ROM_HPAD(64) - 1 - 13] = 43, [ROM_HPAD(64) - 1 - 17] = 24, [ROM_HPAD(64) - 1 - 18] = 25, [ROM_HPAD(64) - 1 - 19] = 20, [ROM_HPAD(64) - 1 - 21] = 49, [ROM_HPAD(64) - 1 - 22] = 4, [ROM_HPAD(64) - 1 - 23] = 3, [ROM_HPAD(64) - 1 - 28] = 13, [ROM_HPAD(64) - 1 - 31] = 50, [ROM_HPAD(64) - 1 - 32] = 5, [ROM_HPAD(64) - 1 - 33] = 51, [ROM_HPAD(64) - 1 - 35] = 21, [ROM_HPAD(64) - 1 - 36] = 22, [ROM_HPAD(64) - 1 - 37] = 23, [ROM_HPAD(64) - 1 - 38] = 52, [ROM_HPAD(64) - 1 - 40] = 39, [ROM_HPAD(64) - 1 - 44] = 16, [ROM_HPAD(64) - 1 - 49] = 12, [ROM_HPAD(64) - 1 - 51] = 1, [ROM_HPAD(64) - 1 - 54] = 37, [ROM_HPAD(64) - 1 - 56] = 38, [ROM_HPAD(64) - 1 - 57] = 35, [ROM_HPAD(64) - 1 - 58] = 47, [ROM_HPAD(64) - 1 - 59] = 40, [ROM_HPAD(64) - 1 - 61] = 32, [ROM_HPAD(64) - 1 - 63] = 48, },
+    .hash = { [ROM_HPAD(64) - 1 - 0] = 3, [ROM_HPAD(64) - 1 - 2] = 49, [ROM_HPAD(64) - 1 - 3] = 41, [ROM_HPAD(64) - 1 - 8] = 26, [ROM_HPAD(64) - 1 - 11] = 48, [ROM_HPAD(64) - 1 - 12] = 45, [ROM_HPAD(64) - 1 - 14] = 36, [ROM_HPAD(64) - 1 - 15] = 14, [ROM_HPAD(64) - 1 - 17] = 47, [ROM_HPAD(64) - 1 - 19] = 32, [ROM_HPAD(64) - 1 - 20] = 40, [ROM_HPAD(64) - 1 - 23] = 16, [ROM_HPAD(64) - 1 - 24] = 19, [ROM_HPAD(64) - 1 - 25] = 38, [ROM_HPAD(64) - 1 - 26] = 10, [ROM_HPAD(64) - 1 - 28] = 53, [ROM_HPAD(64) - 1 - 30] = 1, [ROM_HPAD(64) - 1 - 31] = 11, [ROM_HPAD(64) - 1 - 32] = 27, [ROM_HPAD(64) - 1 - 33] = 52, [ROM_HPAD(64) - 1 - 34] = 34, [ROM_HPAD(64) - 1 - 37] = 46, [ROM_HPAD(64) - 1 - 38] = 8, [ROM_HPAD(64) - 1 - 39] = 51, [ROM_HPAD(64) - 1 - 40] = 37, [ROM_HPAD(64) - 1 - 42] = 29, [ROM_HPAD(64) - 1 - 43] = 44, [ROM_HPAD(64) - 1 - 44] = 23, [ROM_HPAD(64) - 1 - 45] = 13, [ROM_HPAD(64) - 1 - 48] = 18, [ROM_HPAD(64) - 1 - 50] = 35, [ROM_HPAD(64) - 1 - 52] = 42, [ROM_HPAD(64) - 1 - 54] = 50, [ROM_HPAD(64) - 1 - 55] = 9, [ROM_HPAD(64) - 1 - 57] = 30, [ROM_HPAD(64) - 1 - 59] = 21, [ROM_HPAD(64) - 1 - 60] = 33, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 63, .prop_size = 53, .prop_count = 53,
             .proto = (JSObject *)&js_rom_obj[1] },
@@ -1170,53 +1170,53 @@ static const ROM_SHAPE_T(64, 53) js_rom_sh_24 = {
         { .hash_next = 0, .flags = 0x00, .atom = 509 }, /* lastIndexOf */
         { .hash_next = 0, .flags = 0x00, .atom = 483 }, /* includes */
         { .hash_next = 0, .flags = 0x00, .atom = 369 }, /* endsWith */
-        { .hash_next = 6, .flags = 0x00, .atom = 604 }, /* startsWith */
+        { .hash_next = 0, .flags = 0x00, .atom = 604 }, /* startsWith */
         { .hash_next = 0, .flags = 0x00, .atom = 519 }, /* match */
         { .hash_next = 0, .flags = 0x00, .atom = 520 }, /* matchAll */
         { .hash_next = 0, .flags = 0x00, .atom = 556 }, /* search */
-        { .hash_next = 9, .flags = 0x00, .atom = 100 }, /* split */
-        { .hash_next = 17, .flags = 0x00, .atom = 612 }, /* substring */
-        { .hash_next = 11, .flags = 0x00, .atom = 611 }, /* substr */
+        { .hash_next = 0, .flags = 0x00, .atom = 100 }, /* split */
+        { .hash_next = 0, .flags = 0x00, .atom = 612 }, /* substring */
+        { .hash_next = 0, .flags = 0x00, .atom = 611 }, /* substr */
         { .hash_next = 0, .flags = 0x00, .atom = 595 }, /* slice */
-        { .hash_next = 19, .flags = 0x00, .atom = 547 }, /* repeat */
-        { .hash_next = 18, .flags = 0x00, .atom = 548 }, /* replace */
+        { .hash_next = 6, .flags = 0x00, .atom = 547 }, /* repeat */
+        { .hash_next = 0, .flags = 0x00, .atom = 548 }, /* replace */
         { .hash_next = 0, .flags = 0x00, .atom = 549 }, /* replaceAll */
         { .hash_next = 0, .flags = 0x00, .atom = 529 }, /* padEnd */
-        { .hash_next = 0, .flags = 0x00, .atom = 530 }, /* padStart */
-        { .hash_next = 14, .flags = 0x00, .atom = 647 }, /* trim */
-        { .hash_next = 15, .flags = 0x00, .atom = 648 }, /* trimEnd */
-        { .hash_next = 0, .flags = 0x00, .atom = 650 }, /* trimRight */
+        { .hash_next = 5, .flags = 0x00, .atom = 530 }, /* padStart */
+        { .hash_next = 2, .flags = 0x00, .atom = 647 }, /* trim */
+        { .hash_next = 0, .flags = 0x00, .atom = 648 }, /* trimEnd */
+        { .hash_next = 20, .flags = 0x00, .atom = 650 }, /* trimRight */
         { .hash_next = 0, .flags = 0x00, .atom = 651 }, /* trimStart */
-        { .hash_next = 0, .flags = 0x00, .atom = 649 }, /* trimLeft */
+        { .hash_next = 7, .flags = 0x00, .atom = 649 }, /* trimLeft */
         { .hash_next = 0, .flags = 0x00, .atom = 59 }, /* toString */
-        { .hash_next = 10, .flags = 0x00, .atom = 61 }, /* valueOf */
-        { .hash_next = 0, .flags = 0x00, .atom = 513 }, /* localeCompare */
-        { .hash_next = 0, .flags = 0x00, .atom = 525 }, /* normalize */
-        { .hash_next = 7, .flags = 0x00, .atom = 633 }, /* toLowerCase */
+        { .hash_next = 0, .flags = 0x00, .atom = 61 }, /* valueOf */
+        { .hash_next = 12, .flags = 0x00, .atom = 513 }, /* localeCompare */
+        { .hash_next = 31, .flags = 0x00, .atom = 525 }, /* normalize */
+        { .hash_next = 0, .flags = 0x00, .atom = 633 }, /* toLowerCase */
         { .hash_next = 0, .flags = 0x00, .atom = 642 }, /* toUpperCase */
-        { .hash_next = 0, .flags = 0x00, .atom = 630 }, /* toLocaleLowerCase */
+        { .hash_next = 4, .flags = 0x00, .atom = 630 }, /* toLocaleLowerCase */
         { .hash_next = 0, .flags = 0x00, .atom = 632 }, /* toLocaleUpperCase */
-        { .hash_next = 0, .flags = 0x00, .atom = 232 }, /* Symbol.iterator */
-        { .hash_next = 31, .flags = 0x00, .atom = 315 }, /* anchor */
-        { .hash_next = 28, .flags = 0x00, .atom = 330 }, /* big */
+        { .hash_next = 15, .flags = 0x00, .atom = 232 }, /* Symbol.iterator */
+        { .hash_next = 22, .flags = 0x00, .atom = 315 }, /* anchor */
+        { .hash_next = 24, .flags = 0x00, .atom = 330 }, /* big */
         { .hash_next = 0, .flags = 0x00, .atom = 332 }, /* blink */
-        { .hash_next = 34, .flags = 0x00, .atom = 333 }, /* bold */
+        { .hash_next = 17, .flags = 0x00, .atom = 333 }, /* bold */
         { .hash_next = 0, .flags = 0x00, .atom = 384 }, /* fixed */
-        { .hash_next = 0, .flags = 0x00, .atom = 388 }, /* fontcolor */
-        { .hash_next = 2, .flags = 0x00, .atom = 389 }, /* fontsize */
-        { .hash_next = 0, .flags = 0x00, .atom = 506 }, /* italics */
+        { .hash_next = 43, .flags = 0x00, .atom = 388 }, /* fontcolor */
+        { .hash_next = 0, .flags = 0x00, .atom = 389 }, /* fontsize */
+        { .hash_next = 28, .flags = 0x00, .atom = 506 }, /* italics */
         { .hash_next = 0, .flags = 0x00, .atom = 511 }, /* link */
         { .hash_next = 0, .flags = 0x00, .atom = 597 }, /* small */
         { .hash_next = 0, .flags = 0x00, .atom = 607 }, /* strike */
-        { .hash_next = 0, .flags = 0x00, .atom = 609 }, /* sub */
+        { .hash_next = 39, .flags = 0x00, .atom = 609 }, /* sub */
         { .hash_next = 0, .flags = 0x00, .atom = 614 }, /* sup */
-        { .hash_next = 44, .flags = 0x00, .atom = 64 }, /* constructor */
+        { .hash_next = 25, .flags = 0x00, .atom = 64 }, /* constructor */
     },
 };
 ROM_SHAPE_CHECK(js_rom_sh_24, 64);
 
 static const ROM_SHAPE_T(8, 6) js_rom_sh_25 = {
-    .hash = { [ROM_HPAD(8) - 1 - 1] = 3, [ROM_HPAD(8) - 1 - 2] = 4, [ROM_HPAD(8) - 1 - 3] = 1, [ROM_HPAD(8) - 1 - 7] = 6, },
+    .hash = { [ROM_HPAD(8) - 1 - 0] = 6, [ROM_HPAD(8) - 1 - 1] = 2, [ROM_HPAD(8) - 1 - 3] = 5, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 7, .prop_size = 6, .prop_count = 6,
             .proto = (JSObject *)&js_rom_obj[0] },
@@ -1224,41 +1224,41 @@ static const ROM_SHAPE_T(8, 6) js_rom_sh_25 = {
         { .hash_next = 0, .flags = 0x00, .atom = 51 }, /* length */
         { .hash_next = 0, .flags = 0x00, .atom = 58 }, /* name */
         { .hash_next = 0, .flags = 0x00, .atom = 393 }, /* fromCharCode */
-        { .hash_next = 2, .flags = 0x00, .atom = 394 }, /* fromCodePoint */
-        { .hash_next = 0, .flags = 0x00, .atom = 119 }, /* raw */
-        { .hash_next = 5, .flags = 0x00, .atom = 63 }, /* prototype */
+        { .hash_next = 1, .flags = 0x00, .atom = 394 }, /* fromCodePoint */
+        { .hash_next = 4, .flags = 0x00, .atom = 119 }, /* raw */
+        { .hash_next = 3, .flags = 0x00, .atom = 63 }, /* prototype */
     },
 };
 ROM_SHAPE_CHECK(js_rom_sh_25, 8);
 
 static const ROM_SHAPE_T(4, 3) js_rom_sh_26 = {
-    .hash = { [ROM_HPAD(4) - 1 - 0] = 3, [ROM_HPAD(4) - 1 - 1] = 2, [ROM_HPAD(4) - 1 - 3] = 1, },
+    .hash = { [ROM_HPAD(4) - 1 - 1] = 3, [ROM_HPAD(4) - 1 - 2] = 1, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 3, .prop_size = 3, .prop_count = 3,
             .proto = (JSObject *)&js_rom_obj[1] },
     .prop = {
         { .hash_next = 0, .flags = 0x00, .atom = 59 }, /* toString */
         { .hash_next = 0, .flags = 0x00, .atom = 61 }, /* valueOf */
-        { .hash_next = 0, .flags = 0x00, .atom = 64 }, /* constructor */
+        { .hash_next = 2, .flags = 0x00, .atom = 64 }, /* constructor */
     },
 };
 ROM_SHAPE_CHECK(js_rom_sh_26, 4);
 
 static const ROM_SHAPE_T(4, 3) js_rom_sh_27 = {
-    .hash = { [ROM_HPAD(4) - 1 - 2] = 2, [ROM_HPAD(4) - 1 - 3] = 3, },
+    .hash = { [ROM_HPAD(4) - 1 - 0] = 3, [ROM_HPAD(4) - 1 - 1] = 1, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 3, .prop_size = 3, .prop_count = 3,
             .proto = (JSObject *)&js_rom_obj[0] },
     .prop = {
         { .hash_next = 0, .flags = 0x00, .atom = 51 }, /* length */
         { .hash_next = 0, .flags = 0x00, .atom = 58 }, /* name */
-        { .hash_next = 1, .flags = 0x00, .atom = 63 }, /* prototype */
+        { .hash_next = 2, .flags = 0x00, .atom = 63 }, /* prototype */
     },
 };
 ROM_SHAPE_CHECK(js_rom_sh_27, 4);
 
 static const ROM_SHAPE_T(8, 6) js_rom_sh_28 = {
-    .hash = { [ROM_HPAD(8) - 1 - 0] = 6, [ROM_HPAD(8) - 1 - 1] = 5, [ROM_HPAD(8) - 1 - 3] = 1, [ROM_HPAD(8) - 1 - 5] = 2, [ROM_HPAD(8) - 1 - 6] = 4, [ROM_HPAD(8) - 1 - 7] = 3, },
+    .hash = { [ROM_HPAD(8) - 1 - 1] = 3, [ROM_HPAD(8) - 1 - 2] = 2, [ROM_HPAD(8) - 1 - 3] = 6, [ROM_HPAD(8) - 1 - 4] = 1, [ROM_HPAD(8) - 1 - 7] = 5, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 7, .prop_size = 6, .prop_count = 6,
             .proto = (JSObject *)&js_rom_obj[1] },
@@ -1267,44 +1267,44 @@ static const ROM_SHAPE_T(8, 6) js_rom_sh_28 = {
         { .hash_next = 0, .flags = 0x00, .atom = 61 }, /* valueOf */
         { .hash_next = 0, .flags = 0x00, .atom = 231 }, /* Symbol.toPrimitive */
         { .hash_next = 0, .flags = 0x00, .atom = 238 }, /* Symbol.toStringTag */
-        { .hash_next = 0, .flags = 0x10, .atom = 361 }, /* description */
+        { .hash_next = 4, .flags = 0x10, .atom = 361 }, /* description */
         { .hash_next = 0, .flags = 0x00, .atom = 64 }, /* constructor */
     },
 };
 ROM_SHAPE_CHECK(js_rom_sh_28, 8);
 
 static const ROM_SHAPE_T(32, 20) js_rom_sh_29 = {
-    .hash = { [ROM_HPAD(32) - 1 - 3] = 19, [ROM_HPAD(32) - 1 - 4] = 17, [ROM_HPAD(32) - 1 - 7] = 7, [ROM_HPAD(32) - 1 - 8] = 13, [ROM_HPAD(32) - 1 - 12] = 10, [ROM_HPAD(32) - 1 - 17] = 16, [ROM_HPAD(32) - 1 - 19] = 1, [ROM_HPAD(32) - 1 - 24] = 15, [ROM_HPAD(32) - 1 - 26] = 2, [ROM_HPAD(32) - 1 - 27] = 18, [ROM_HPAD(32) - 1 - 28] = 14, [ROM_HPAD(32) - 1 - 31] = 20, },
+    .hash = { [ROM_HPAD(32) - 1 - 1] = 4, [ROM_HPAD(32) - 1 - 2] = 20, [ROM_HPAD(32) - 1 - 4] = 2, [ROM_HPAD(32) - 1 - 5] = 15, [ROM_HPAD(32) - 1 - 6] = 11, [ROM_HPAD(32) - 1 - 7] = 7, [ROM_HPAD(32) - 1 - 10] = 9, [ROM_HPAD(32) - 1 - 11] = 10, [ROM_HPAD(32) - 1 - 12] = 19, [ROM_HPAD(32) - 1 - 15] = 3, [ROM_HPAD(32) - 1 - 17] = 5, [ROM_HPAD(32) - 1 - 19] = 8, [ROM_HPAD(32) - 1 - 21] = 6, [ROM_HPAD(32) - 1 - 24] = 18, [ROM_HPAD(32) - 1 - 26] = 14, [ROM_HPAD(32) - 1 - 30] = 16, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 31, .prop_size = 20, .prop_count = 20,
             .proto = (JSObject *)&js_rom_obj[0] },
     .prop = {
         { .hash_next = 0, .flags = 0x00, .atom = 51 }, /* length */
         { .hash_next = 0, .flags = 0x00, .atom = 58 }, /* name */
-        { .hash_next = 0, .flags = 0x00, .atom = 17 }, /* for */
+        { .hash_next = 1, .flags = 0x00, .atom = 17 }, /* for */
         { .hash_next = 0, .flags = 0x00, .atom = 508 }, /* keyFor */
         { .hash_next = 0, .flags = 0x00, .atom = 635 }, /* toPrimitive */
-        { .hash_next = 5, .flags = 0x00, .atom = 507 }, /* iterator */
+        { .hash_next = 0, .flags = 0x00, .atom = 507 }, /* iterator */
         { .hash_next = 0, .flags = 0x00, .atom = 519 }, /* match */
         { .hash_next = 0, .flags = 0x00, .atom = 520 }, /* matchAll */
         { .hash_next = 0, .flags = 0x00, .atom = 548 }, /* replace */
         { .hash_next = 0, .flags = 0x00, .atom = 556 }, /* search */
-        { .hash_next = 9, .flags = 0x00, .atom = 100 }, /* split */
+        { .hash_next = 0, .flags = 0x00, .atom = 100 }, /* split */
         { .hash_next = 0, .flags = 0x00, .atom = 639 }, /* toStringTag */
-        { .hash_next = 8, .flags = 0x00, .atom = 488 }, /* isConcatSpreadable */
-        { .hash_next = 4, .flags = 0x00, .atom = 476 }, /* hasInstance */
+        { .hash_next = 0, .flags = 0x00, .atom = 488 }, /* isConcatSpreadable */
+        { .hash_next = 0, .flags = 0x00, .atom = 476 }, /* hasInstance */
         { .hash_next = 0, .flags = 0x00, .atom = 600 }, /* species */
-        { .hash_next = 3, .flags = 0x00, .atom = 657 }, /* unscopables */
-        { .hash_next = 11, .flags = 0x00, .atom = 324 }, /* asyncIterator */
-        { .hash_next = 6, .flags = 0x00, .atom = 91 }, /* dispose */
-        { .hash_next = 0, .flags = 0x00, .atom = 323 }, /* asyncDispose */
+        { .hash_next = 0, .flags = 0x00, .atom = 657 }, /* unscopables */
+        { .hash_next = 0, .flags = 0x00, .atom = 324 }, /* asyncIterator */
+        { .hash_next = 17, .flags = 0x00, .atom = 91 }, /* dispose */
+        { .hash_next = 13, .flags = 0x00, .atom = 323 }, /* asyncDispose */
         { .hash_next = 12, .flags = 0x00, .atom = 63 }, /* prototype */
     },
 };
 ROM_SHAPE_CHECK(js_rom_sh_29, 32);
 
 static const ROM_SHAPE_T(64, 48) js_rom_sh_30 = {
-    .hash = { [ROM_HPAD(64) - 1 - 0] = 48, [ROM_HPAD(64) - 1 - 1] = 42, [ROM_HPAD(64) - 1 - 2] = 34, [ROM_HPAD(64) - 1 - 3] = 31, [ROM_HPAD(64) - 1 - 4] = 41, [ROM_HPAD(64) - 1 - 5] = 46, [ROM_HPAD(64) - 1 - 6] = 39, [ROM_HPAD(64) - 1 - 7] = 33, [ROM_HPAD(64) - 1 - 8] = 37, [ROM_HPAD(64) - 1 - 9] = 43, [ROM_HPAD(64) - 1 - 10] = 35, [ROM_HPAD(64) - 1 - 11] = 12, [ROM_HPAD(64) - 1 - 12] = 20, [ROM_HPAD(64) - 1 - 13] = 30, [ROM_HPAD(64) - 1 - 14] = 44, [ROM_HPAD(64) - 1 - 15] = 22, [ROM_HPAD(64) - 1 - 16] = 28, [ROM_HPAD(64) - 1 - 17] = 24, [ROM_HPAD(64) - 1 - 18] = 18, [ROM_HPAD(64) - 1 - 19] = 26, [ROM_HPAD(64) - 1 - 23] = 14, [ROM_HPAD(64) - 1 - 25] = 47, [ROM_HPAD(64) - 1 - 39] = 3, [ROM_HPAD(64) - 1 - 47] = 7, [ROM_HPAD(64) - 1 - 50] = 5, [ROM_HPAD(64) - 1 - 51] = 19, [ROM_HPAD(64) - 1 - 52] = 40, [ROM_HPAD(64) - 1 - 53] = 10, [ROM_HPAD(64) - 1 - 55] = 11, [ROM_HPAD(64) - 1 - 57] = 15, [ROM_HPAD(64) - 1 - 58] = 45, [ROM_HPAD(64) - 1 - 59] = 38, [ROM_HPAD(64) - 1 - 60] = 21, [ROM_HPAD(64) - 1 - 61] = 1, [ROM_HPAD(64) - 1 - 63] = 32, },
+    .hash = { [ROM_HPAD(64) - 1 - 0] = 36, [ROM_HPAD(64) - 1 - 1] = 11, [ROM_HPAD(64) - 1 - 4] = 37, [ROM_HPAD(64) - 1 - 5] = 30, [ROM_HPAD(64) - 1 - 6] = 38, [ROM_HPAD(64) - 1 - 7] = 5, [ROM_HPAD(64) - 1 - 9] = 19, [ROM_HPAD(64) - 1 - 10] = 31, [ROM_HPAD(64) - 1 - 14] = 28, [ROM_HPAD(64) - 1 - 16] = 10, [ROM_HPAD(64) - 1 - 17] = 17, [ROM_HPAD(64) - 1 - 19] = 39, [ROM_HPAD(64) - 1 - 20] = 12, [ROM_HPAD(64) - 1 - 23] = 44, [ROM_HPAD(64) - 1 - 24] = 26, [ROM_HPAD(64) - 1 - 25] = 42, [ROM_HPAD(64) - 1 - 27] = 40, [ROM_HPAD(64) - 1 - 28] = 48, [ROM_HPAD(64) - 1 - 29] = 16, [ROM_HPAD(64) - 1 - 32] = 27, [ROM_HPAD(64) - 1 - 34] = 41, [ROM_HPAD(64) - 1 - 35] = 25, [ROM_HPAD(64) - 1 - 37] = 21, [ROM_HPAD(64) - 1 - 39] = 24, [ROM_HPAD(64) - 1 - 40] = 32, [ROM_HPAD(64) - 1 - 43] = 33, [ROM_HPAD(64) - 1 - 45] = 20, [ROM_HPAD(64) - 1 - 46] = 45, [ROM_HPAD(64) - 1 - 49] = 34, [ROM_HPAD(64) - 1 - 53] = 35, [ROM_HPAD(64) - 1 - 54] = 22, [ROM_HPAD(64) - 1 - 55] = 6, [ROM_HPAD(64) - 1 - 56] = 23, [ROM_HPAD(64) - 1 - 57] = 14, [ROM_HPAD(64) - 1 - 58] = 9, [ROM_HPAD(64) - 1 - 59] = 46, [ROM_HPAD(64) - 1 - 60] = 13, [ROM_HPAD(64) - 1 - 61] = 7, [ROM_HPAD(64) - 1 - 63] = 18, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 63, .prop_size = 48, .prop_count = 48,
             .proto = (JSObject *)&js_rom_obj[1] },
@@ -1324,45 +1324,45 @@ static const ROM_SHAPE_T(64, 48) js_rom_sh_30 = {
         { .hash_next = 0, .flags = 0x00, .atom = 458 }, /* getTime */
         { .hash_next = 0, .flags = 0x00, .atom = 471 }, /* getYear */
         { .hash_next = 0, .flags = 0x00, .atom = 441 }, /* getFullYear */
-        { .hash_next = 0, .flags = 0x00, .atom = 462 }, /* getUTCFullYear */
+        { .hash_next = 8, .flags = 0x00, .atom = 462 }, /* getUTCFullYear */
         { .hash_next = 0, .flags = 0x00, .atom = 451 }, /* getMonth */
         { .hash_next = 0, .flags = 0x00, .atom = 466 }, /* getUTCMonth */
         { .hash_next = 0, .flags = 0x00, .atom = 435 }, /* getDate */
         { .hash_next = 0, .flags = 0x00, .atom = 460 }, /* getUTCDate */
-        { .hash_next = 9, .flags = 0x00, .atom = 444 }, /* getHours */
+        { .hash_next = 0, .flags = 0x00, .atom = 444 }, /* getHours */
         { .hash_next = 0, .flags = 0x00, .atom = 463 }, /* getUTCHours */
         { .hash_next = 0, .flags = 0x00, .atom = 450 }, /* getMinutes */
         { .hash_next = 0, .flags = 0x00, .atom = 465 }, /* getUTCMinutes */
         { .hash_next = 0, .flags = 0x00, .atom = 457 }, /* getSeconds */
         { .hash_next = 0, .flags = 0x00, .atom = 467 }, /* getUTCSeconds */
-        { .hash_next = 4, .flags = 0x00, .atom = 449 }, /* getMilliseconds */
-        { .hash_next = 0, .flags = 0x00, .atom = 464 }, /* getUTCMilliseconds */
-        { .hash_next = 6, .flags = 0x00, .atom = 436 }, /* getDay */
+        { .hash_next = 0, .flags = 0x00, .atom = 449 }, /* getMilliseconds */
+        { .hash_next = 3, .flags = 0x00, .atom = 464 }, /* getUTCMilliseconds */
+        { .hash_next = 2, .flags = 0x00, .atom = 436 }, /* getDay */
         { .hash_next = 0, .flags = 0x00, .atom = 461 }, /* getUTCDay */
-        { .hash_next = 17, .flags = 0x00, .atom = 579 }, /* setTime */
+        { .hash_next = 0, .flags = 0x00, .atom = 579 }, /* setTime */
         { .hash_next = 0, .flags = 0x00, .atom = 575 }, /* setMilliseconds */
         { .hash_next = 0, .flags = 0x00, .atom = 583 }, /* setUTCMilliseconds */
-        { .hash_next = 23, .flags = 0x00, .atom = 578 }, /* setSeconds */
-        { .hash_next = 13, .flags = 0x00, .atom = 586 }, /* setUTCSeconds */
-        { .hash_next = 8, .flags = 0x00, .atom = 576 }, /* setMinutes */
+        { .hash_next = 0, .flags = 0x00, .atom = 578 }, /* setSeconds */
+        { .hash_next = 4, .flags = 0x00, .atom = 586 }, /* setUTCSeconds */
+        { .hash_next = 0, .flags = 0x00, .atom = 576 }, /* setMinutes */
         { .hash_next = 0, .flags = 0x00, .atom = 584 }, /* setUTCMinutes */
-        { .hash_next = 2, .flags = 0x00, .atom = 571 }, /* setHours */
-        { .hash_next = 0, .flags = 0x00, .atom = 582 }, /* setUTCHours */
-        { .hash_next = 29, .flags = 0x00, .atom = 564 }, /* setDate */
-        { .hash_next = 0, .flags = 0x00, .atom = 580 }, /* setUTCDate */
-        { .hash_next = 27, .flags = 0x00, .atom = 577 }, /* setMonth */
-        { .hash_next = 25, .flags = 0x00, .atom = 585 }, /* setUTCMonth */
-        { .hash_next = 16, .flags = 0x00, .atom = 590 }, /* setYear */
+        { .hash_next = 0, .flags = 0x00, .atom = 571 }, /* setHours */
+        { .hash_next = 1, .flags = 0x00, .atom = 582 }, /* setUTCHours */
+        { .hash_next = 0, .flags = 0x00, .atom = 564 }, /* setDate */
+        { .hash_next = 29, .flags = 0x00, .atom = 580 }, /* setUTCDate */
+        { .hash_next = 0, .flags = 0x00, .atom = 577 }, /* setMonth */
+        { .hash_next = 15, .flags = 0x00, .atom = 585 }, /* setUTCMonth */
+        { .hash_next = 0, .flags = 0x00, .atom = 590 }, /* setYear */
         { .hash_next = 0, .flags = 0x00, .atom = 570 }, /* setFullYear */
         { .hash_next = 0, .flags = 0x00, .atom = 581 }, /* setUTCFullYear */
-        { .hash_next = 0, .flags = 0x00, .atom = 153 }, /* toJSON */
-        { .hash_next = 36, .flags = 0x00, .atom = 64 }, /* constructor */
+        { .hash_next = 43, .flags = 0x00, .atom = 153 }, /* toJSON */
+        { .hash_next = 47, .flags = 0x00, .atom = 64 }, /* constructor */
     },
 };
 ROM_SHAPE_CHECK(js_rom_sh_30, 64);
 
 static const ROM_SHAPE_T(8, 6) js_rom_sh_31 = {
-    .hash = { [ROM_HPAD(8) - 1 - 2] = 2, [ROM_HPAD(8) - 1 - 3] = 5, [ROM_HPAD(8) - 1 - 7] = 6, },
+    .hash = { [ROM_HPAD(8) - 1 - 0] = 6, [ROM_HPAD(8) - 1 - 1] = 5, [ROM_HPAD(8) - 1 - 2] = 3, [ROM_HPAD(8) - 1 - 3] = 1, [ROM_HPAD(8) - 1 - 6] = 4, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 7, .prop_size = 6, .prop_count = 6,
             .proto = (JSObject *)&js_rom_obj[0] },
@@ -1370,15 +1370,15 @@ static const ROM_SHAPE_T(8, 6) js_rom_sh_31 = {
         { .hash_next = 0, .flags = 0x00, .atom = 51 }, /* length */
         { .hash_next = 0, .flags = 0x00, .atom = 58 }, /* name */
         { .hash_next = 0, .flags = 0x00, .atom = 527 }, /* now */
-        { .hash_next = 1, .flags = 0x00, .atom = 531 }, /* parse */
-        { .hash_next = 4, .flags = 0x00, .atom = 291 }, /* UTC */
-        { .hash_next = 3, .flags = 0x00, .atom = 63 }, /* prototype */
+        { .hash_next = 0, .flags = 0x00, .atom = 531 }, /* parse */
+        { .hash_next = 2, .flags = 0x00, .atom = 291 }, /* UTC */
+        { .hash_next = 0, .flags = 0x00, .atom = 63 }, /* prototype */
     },
 };
 ROM_SHAPE_CHECK(js_rom_sh_31, 8);
 
 static const ROM_SHAPE_T(4, 3) js_rom_sh_32 = {
-    .hash = { [ROM_HPAD(4) - 1 - 0] = 2, [ROM_HPAD(4) - 1 - 2] = 1, [ROM_HPAD(4) - 1 - 3] = 3, },
+    .hash = { [ROM_HPAD(4) - 1 - 0] = 3, [ROM_HPAD(4) - 1 - 1] = 2, [ROM_HPAD(4) - 1 - 3] = 1, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 3, .prop_size = 3, .prop_count = 3,
             .proto = (JSObject *)&js_rom_obj[0] },
@@ -1391,20 +1391,20 @@ static const ROM_SHAPE_T(4, 3) js_rom_sh_32 = {
 ROM_SHAPE_CHECK(js_rom_sh_32, 4);
 
 static const ROM_SHAPE_T(4, 3) js_rom_sh_33 = {
-    .hash = { [ROM_HPAD(4) - 1 - 2] = 2, [ROM_HPAD(4) - 1 - 3] = 3, },
+    .hash = { [ROM_HPAD(4) - 1 - 0] = 3, [ROM_HPAD(4) - 1 - 1] = 1, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 3, .prop_size = 3, .prop_count = 3,
             .proto = (JSObject *)&js_rom_obj[47] },
     .prop = {
         { .hash_next = 0, .flags = 0x00, .atom = 51 }, /* length */
         { .hash_next = 0, .flags = 0x00, .atom = 58 }, /* name */
-        { .hash_next = 1, .flags = 0x00, .atom = 63 }, /* prototype */
+        { .hash_next = 2, .flags = 0x00, .atom = 63 }, /* prototype */
     },
 };
 ROM_SHAPE_CHECK(js_rom_sh_33, 4);
 
 static const ROM_SHAPE_T(8, 5) js_rom_sh_34 = {
-    .hash = { [ROM_HPAD(8) - 1 - 0] = 5, [ROM_HPAD(8) - 1 - 1] = 1, [ROM_HPAD(8) - 1 - 6] = 4, [ROM_HPAD(8) - 1 - 7] = 3, },
+    .hash = { [ROM_HPAD(8) - 1 - 1] = 1, [ROM_HPAD(8) - 1 - 2] = 2, [ROM_HPAD(8) - 1 - 3] = 5, [ROM_HPAD(8) - 1 - 6] = 3, [ROM_HPAD(8) - 1 - 7] = 4, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 7, .prop_size = 5, .prop_count = 5,
             .proto = (JSObject *)&js_rom_obj[147] },
@@ -1412,14 +1412,14 @@ static const ROM_SHAPE_T(8, 5) js_rom_sh_34 = {
         { .hash_next = 0, .flags = 0x00, .atom = 113 }, /* next */
         { .hash_next = 0, .flags = 0x00, .atom = 6 }, /* return */
         { .hash_next = 0, .flags = 0x00, .atom = 23 }, /* throw */
-        { .hash_next = 2, .flags = 0x00, .atom = 238 }, /* Symbol.toStringTag */
+        { .hash_next = 0, .flags = 0x00, .atom = 238 }, /* Symbol.toStringTag */
         { .hash_next = 0, .flags = 0x00, .atom = 64 }, /* constructor */
     },
 };
 ROM_SHAPE_CHECK(js_rom_sh_34, 8);
 
 static const ROM_SHAPE_T(16, 13) js_rom_sh_35 = {
-    .hash = { [ROM_HPAD(16) - 1 - 0] = 13, [ROM_HPAD(16) - 1 - 1] = 5, [ROM_HPAD(16) - 1 - 3] = 7, [ROM_HPAD(16) - 1 - 4] = 9, [ROM_HPAD(16) - 1 - 5] = 11, [ROM_HPAD(16) - 1 - 6] = 10, [ROM_HPAD(16) - 1 - 7] = 6, [ROM_HPAD(16) - 1 - 10] = 4, [ROM_HPAD(16) - 1 - 14] = 12, },
+    .hash = { [ROM_HPAD(16) - 1 - 1] = 3, [ROM_HPAD(16) - 1 - 4] = 7, [ROM_HPAD(16) - 1 - 5] = 11, [ROM_HPAD(16) - 1 - 7] = 13, [ROM_HPAD(16) - 1 - 10] = 8, [ROM_HPAD(16) - 1 - 11] = 5, [ROM_HPAD(16) - 1 - 12] = 10, [ROM_HPAD(16) - 1 - 13] = 2, [ROM_HPAD(16) - 1 - 14] = 12, [ROM_HPAD(16) - 1 - 15] = 9, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 15, .prop_size = 13, .prop_count = 13,
             .proto = (JSObject *)&js_rom_obj[1] },
@@ -1427,22 +1427,22 @@ static const ROM_SHAPE_T(16, 13) js_rom_sh_35 = {
         { .hash_next = 0, .flags = 0x10, .atom = 336 }, /* byteLength */
         { .hash_next = 0, .flags = 0x10, .atom = 154 }, /* maxByteLength */
         { .hash_next = 0, .flags = 0x10, .atom = 550 }, /* resizable */
-        { .hash_next = 2, .flags = 0x10, .atom = 362 }, /* detached */
+        { .hash_next = 0, .flags = 0x10, .atom = 362 }, /* detached */
         { .hash_next = 0, .flags = 0x10, .atom = 481 }, /* immutable */
         { .hash_next = 0, .flags = 0x00, .atom = 551 }, /* resize */
-        { .hash_next = 0, .flags = 0x00, .atom = 595 }, /* slice */
+        { .hash_next = 4, .flags = 0x00, .atom = 595 }, /* slice */
         { .hash_next = 0, .flags = 0x00, .atom = 596 }, /* sliceToImmutable */
-        { .hash_next = 8, .flags = 0x00, .atom = 644 }, /* transfer */
-        { .hash_next = 3, .flags = 0x00, .atom = 646 }, /* transferToImmutable */
-        { .hash_next = 0, .flags = 0x00, .atom = 645 }, /* transferToFixedLength */
+        { .hash_next = 0, .flags = 0x00, .atom = 644 }, /* transfer */
+        { .hash_next = 0, .flags = 0x00, .atom = 646 }, /* transferToImmutable */
+        { .hash_next = 1, .flags = 0x00, .atom = 645 }, /* transferToFixedLength */
         { .hash_next = 0, .flags = 0x00, .atom = 238 }, /* Symbol.toStringTag */
-        { .hash_next = 1, .flags = 0x00, .atom = 64 }, /* constructor */
+        { .hash_next = 6, .flags = 0x00, .atom = 64 }, /* constructor */
     },
 };
 ROM_SHAPE_CHECK(js_rom_sh_35, 16);
 
 static const ROM_SHAPE_T(8, 5) js_rom_sh_36 = {
-    .hash = { [ROM_HPAD(8) - 1 - 0] = 3, [ROM_HPAD(8) - 1 - 1] = 4, [ROM_HPAD(8) - 1 - 2] = 2, [ROM_HPAD(8) - 1 - 3] = 1, [ROM_HPAD(8) - 1 - 7] = 5, },
+    .hash = { [ROM_HPAD(8) - 1 - 0] = 5, [ROM_HPAD(8) - 1 - 1] = 2, [ROM_HPAD(8) - 1 - 3] = 1, [ROM_HPAD(8) - 1 - 4] = 3, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 7, .prop_size = 5, .prop_count = 5,
             .proto = (JSObject *)&js_rom_obj[0] },
@@ -1451,44 +1451,44 @@ static const ROM_SHAPE_T(8, 5) js_rom_sh_36 = {
         { .hash_next = 0, .flags = 0x00, .atom = 58 }, /* name */
         { .hash_next = 0, .flags = 0x00, .atom = 504 }, /* isView */
         { .hash_next = 0, .flags = 0x10, .atom = 241 }, /* Symbol.species */
-        { .hash_next = 0, .flags = 0x00, .atom = 63 }, /* prototype */
+        { .hash_next = 4, .flags = 0x00, .atom = 63 }, /* prototype */
     },
 };
 ROM_SHAPE_CHECK(js_rom_sh_36, 8);
 
 static const ROM_SHAPE_T(16, 7) js_rom_sh_37 = {
-    .hash = { [ROM_HPAD(16) - 1 - 0] = 7, [ROM_HPAD(16) - 1 - 3] = 5, [ROM_HPAD(16) - 1 - 9] = 4, [ROM_HPAD(16) - 1 - 10] = 3, [ROM_HPAD(16) - 1 - 14] = 6, },
+    .hash = { [ROM_HPAD(16) - 1 - 0] = 3, [ROM_HPAD(16) - 1 - 4] = 5, [ROM_HPAD(16) - 1 - 5] = 1, [ROM_HPAD(16) - 1 - 7] = 7, [ROM_HPAD(16) - 1 - 10] = 4, [ROM_HPAD(16) - 1 - 13] = 2, [ROM_HPAD(16) - 1 - 14] = 6, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 15, .prop_size = 7, .prop_count = 7,
             .proto = (JSObject *)&js_rom_obj[1] },
     .prop = {
         { .hash_next = 0, .flags = 0x10, .atom = 336 }, /* byteLength */
         { .hash_next = 0, .flags = 0x10, .atom = 154 }, /* maxByteLength */
-        { .hash_next = 2, .flags = 0x10, .atom = 474 }, /* growable */
+        { .hash_next = 0, .flags = 0x10, .atom = 474 }, /* growable */
         { .hash_next = 0, .flags = 0x00, .atom = 473 }, /* grow */
         { .hash_next = 0, .flags = 0x00, .atom = 595 }, /* slice */
         { .hash_next = 0, .flags = 0x00, .atom = 238 }, /* Symbol.toStringTag */
-        { .hash_next = 1, .flags = 0x00, .atom = 64 }, /* constructor */
+        { .hash_next = 0, .flags = 0x00, .atom = 64 }, /* constructor */
     },
 };
 ROM_SHAPE_CHECK(js_rom_sh_37, 16);
 
 static const ROM_SHAPE_T(4, 4) js_rom_sh_38 = {
-    .hash = { [ROM_HPAD(4) - 1 - 1] = 3, [ROM_HPAD(4) - 1 - 2] = 2, [ROM_HPAD(4) - 1 - 3] = 4, },
+    .hash = { [ROM_HPAD(4) - 1 - 0] = 4, [ROM_HPAD(4) - 1 - 1] = 1, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 3, .prop_size = 4, .prop_count = 4,
             .proto = (JSObject *)&js_rom_obj[0] },
     .prop = {
         { .hash_next = 0, .flags = 0x00, .atom = 51 }, /* length */
         { .hash_next = 0, .flags = 0x00, .atom = 58 }, /* name */
-        { .hash_next = 0, .flags = 0x10, .atom = 241 }, /* Symbol.species */
-        { .hash_next = 1, .flags = 0x00, .atom = 63 }, /* prototype */
+        { .hash_next = 2, .flags = 0x10, .atom = 241 }, /* Symbol.species */
+        { .hash_next = 3, .flags = 0x00, .atom = 63 }, /* prototype */
     },
 };
 ROM_SHAPE_CHECK(js_rom_sh_38, 4);
 
 static const ROM_SHAPE_T(4, 2) js_rom_sh_39 = {
-    .hash = { [ROM_HPAD(4) - 1 - 0] = 2, [ROM_HPAD(4) - 1 - 1] = 1, },
+    .hash = { [ROM_HPAD(4) - 1 - 0] = 1, [ROM_HPAD(4) - 1 - 1] = 2, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 3, .prop_size = 2, .prop_count = 2,
             .proto = (JSObject *)&js_rom_obj[177] },
@@ -1500,21 +1500,21 @@ static const ROM_SHAPE_T(4, 2) js_rom_sh_39 = {
 ROM_SHAPE_CHECK(js_rom_sh_39, 4);
 
 static const ROM_SHAPE_T(4, 4) js_rom_sh_40 = {
-    .hash = { [ROM_HPAD(4) - 1 - 1] = 3, [ROM_HPAD(4) - 1 - 2] = 2, [ROM_HPAD(4) - 1 - 3] = 4, },
+    .hash = { [ROM_HPAD(4) - 1 - 0] = 4, [ROM_HPAD(4) - 1 - 1] = 1, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 3, .prop_size = 4, .prop_count = 4,
             .proto = (JSObject *)&js_rom_obj[173] },
     .prop = {
         { .hash_next = 0, .flags = 0x00, .atom = 51 }, /* length */
         { .hash_next = 0, .flags = 0x00, .atom = 58 }, /* name */
-        { .hash_next = 0, .flags = 0x00, .atom = 249 }, /* BYTES_PER_ELEMENT */
-        { .hash_next = 1, .flags = 0x00, .atom = 63 }, /* prototype */
+        { .hash_next = 2, .flags = 0x00, .atom = 249 }, /* BYTES_PER_ELEMENT */
+        { .hash_next = 3, .flags = 0x00, .atom = 63 }, /* prototype */
     },
 };
 ROM_SHAPE_CHECK(js_rom_sh_40, 4);
 
 static const ROM_SHAPE_T(4, 2) js_rom_sh_41 = {
-    .hash = { [ROM_HPAD(4) - 1 - 0] = 2, [ROM_HPAD(4) - 1 - 1] = 1, },
+    .hash = { [ROM_HPAD(4) - 1 - 0] = 1, [ROM_HPAD(4) - 1 - 1] = 2, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 3, .prop_size = 2, .prop_count = 2,
             .proto = (JSObject *)&js_rom_obj[177] },
@@ -1526,21 +1526,21 @@ static const ROM_SHAPE_T(4, 2) js_rom_sh_41 = {
 ROM_SHAPE_CHECK(js_rom_sh_41, 4);
 
 static const ROM_SHAPE_T(4, 4) js_rom_sh_42 = {
-    .hash = { [ROM_HPAD(4) - 1 - 1] = 3, [ROM_HPAD(4) - 1 - 2] = 2, [ROM_HPAD(4) - 1 - 3] = 4, },
+    .hash = { [ROM_HPAD(4) - 1 - 0] = 4, [ROM_HPAD(4) - 1 - 1] = 1, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 3, .prop_size = 4, .prop_count = 4,
             .proto = (JSObject *)&js_rom_obj[173] },
     .prop = {
         { .hash_next = 0, .flags = 0x00, .atom = 51 }, /* length */
         { .hash_next = 0, .flags = 0x00, .atom = 58 }, /* name */
-        { .hash_next = 0, .flags = 0x00, .atom = 249 }, /* BYTES_PER_ELEMENT */
-        { .hash_next = 1, .flags = 0x00, .atom = 63 }, /* prototype */
+        { .hash_next = 2, .flags = 0x00, .atom = 249 }, /* BYTES_PER_ELEMENT */
+        { .hash_next = 3, .flags = 0x00, .atom = 63 }, /* prototype */
     },
 };
 ROM_SHAPE_CHECK(js_rom_sh_42, 4);
 
 static const ROM_SHAPE_T(8, 6) js_rom_sh_43 = {
-    .hash = { [ROM_HPAD(8) - 1 - 0] = 5, [ROM_HPAD(8) - 1 - 1] = 6, [ROM_HPAD(8) - 1 - 3] = 4, [ROM_HPAD(8) - 1 - 6] = 3, },
+    .hash = { [ROM_HPAD(8) - 1 - 0] = 1, [ROM_HPAD(8) - 1 - 2] = 6, [ROM_HPAD(8) - 1 - 3] = 4, [ROM_HPAD(8) - 1 - 4] = 3, [ROM_HPAD(8) - 1 - 7] = 5, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 7, .prop_size = 6, .prop_count = 6,
             .proto = (JSObject *)&js_rom_obj[177] },
@@ -1548,15 +1548,15 @@ static const ROM_SHAPE_T(8, 6) js_rom_sh_43 = {
         { .hash_next = 0, .flags = 0x00, .atom = 249 }, /* BYTES_PER_ELEMENT */
         { .hash_next = 0, .flags = 0x00, .atom = 64 }, /* constructor */
         { .hash_next = 0, .flags = 0x00, .atom = 622 }, /* toBase64 */
-        { .hash_next = 0, .flags = 0x00, .atom = 627 }, /* toHex */
-        { .hash_next = 2, .flags = 0x00, .atom = 568 }, /* setFromBase64 */
-        { .hash_next = 1, .flags = 0x00, .atom = 569 }, /* setFromHex */
+        { .hash_next = 2, .flags = 0x00, .atom = 627 }, /* toHex */
+        { .hash_next = 0, .flags = 0x00, .atom = 568 }, /* setFromBase64 */
+        { .hash_next = 0, .flags = 0x00, .atom = 569 }, /* setFromHex */
     },
 };
 ROM_SHAPE_CHECK(js_rom_sh_43, 8);
 
 static const ROM_SHAPE_T(8, 6) js_rom_sh_44 = {
-    .hash = { [ROM_HPAD(8) - 1 - 0] = 5, [ROM_HPAD(8) - 1 - 1] = 3, [ROM_HPAD(8) - 1 - 2] = 2, [ROM_HPAD(8) - 1 - 3] = 1, [ROM_HPAD(8) - 1 - 4] = 6, [ROM_HPAD(8) - 1 - 7] = 4, },
+    .hash = { [ROM_HPAD(8) - 1 - 0] = 4, [ROM_HPAD(8) - 1 - 1] = 2, [ROM_HPAD(8) - 1 - 2] = 6, [ROM_HPAD(8) - 1 - 3] = 1, [ROM_HPAD(8) - 1 - 5] = 5, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 7, .prop_size = 6, .prop_count = 6,
             .proto = (JSObject *)&js_rom_obj[173] },
@@ -1564,7 +1564,7 @@ static const ROM_SHAPE_T(8, 6) js_rom_sh_44 = {
         { .hash_next = 0, .flags = 0x00, .atom = 51 }, /* length */
         { .hash_next = 0, .flags = 0x00, .atom = 58 }, /* name */
         { .hash_next = 0, .flags = 0x00, .atom = 249 }, /* BYTES_PER_ELEMENT */
-        { .hash_next = 0, .flags = 0x00, .atom = 63 }, /* prototype */
+        { .hash_next = 3, .flags = 0x00, .atom = 63 }, /* prototype */
         { .hash_next = 0, .flags = 0x00, .atom = 392 }, /* fromBase64 */
         { .hash_next = 0, .flags = 0x00, .atom = 396 }, /* fromHex */
     },
@@ -1572,7 +1572,7 @@ static const ROM_SHAPE_T(8, 6) js_rom_sh_44 = {
 ROM_SHAPE_CHECK(js_rom_sh_44, 8);
 
 static const ROM_SHAPE_T(4, 2) js_rom_sh_45 = {
-    .hash = { [ROM_HPAD(4) - 1 - 0] = 2, [ROM_HPAD(4) - 1 - 1] = 1, },
+    .hash = { [ROM_HPAD(4) - 1 - 0] = 1, [ROM_HPAD(4) - 1 - 1] = 2, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 3, .prop_size = 2, .prop_count = 2,
             .proto = (JSObject *)&js_rom_obj[177] },
@@ -1584,21 +1584,21 @@ static const ROM_SHAPE_T(4, 2) js_rom_sh_45 = {
 ROM_SHAPE_CHECK(js_rom_sh_45, 4);
 
 static const ROM_SHAPE_T(4, 4) js_rom_sh_46 = {
-    .hash = { [ROM_HPAD(4) - 1 - 1] = 3, [ROM_HPAD(4) - 1 - 2] = 2, [ROM_HPAD(4) - 1 - 3] = 4, },
+    .hash = { [ROM_HPAD(4) - 1 - 0] = 4, [ROM_HPAD(4) - 1 - 1] = 1, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 3, .prop_size = 4, .prop_count = 4,
             .proto = (JSObject *)&js_rom_obj[173] },
     .prop = {
         { .hash_next = 0, .flags = 0x00, .atom = 51 }, /* length */
         { .hash_next = 0, .flags = 0x00, .atom = 58 }, /* name */
-        { .hash_next = 0, .flags = 0x00, .atom = 249 }, /* BYTES_PER_ELEMENT */
-        { .hash_next = 1, .flags = 0x00, .atom = 63 }, /* prototype */
+        { .hash_next = 2, .flags = 0x00, .atom = 249 }, /* BYTES_PER_ELEMENT */
+        { .hash_next = 3, .flags = 0x00, .atom = 63 }, /* prototype */
     },
 };
 ROM_SHAPE_CHECK(js_rom_sh_46, 4);
 
 static const ROM_SHAPE_T(4, 2) js_rom_sh_47 = {
-    .hash = { [ROM_HPAD(4) - 1 - 0] = 2, [ROM_HPAD(4) - 1 - 1] = 1, },
+    .hash = { [ROM_HPAD(4) - 1 - 0] = 1, [ROM_HPAD(4) - 1 - 1] = 2, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 3, .prop_size = 2, .prop_count = 2,
             .proto = (JSObject *)&js_rom_obj[177] },
@@ -1610,21 +1610,21 @@ static const ROM_SHAPE_T(4, 2) js_rom_sh_47 = {
 ROM_SHAPE_CHECK(js_rom_sh_47, 4);
 
 static const ROM_SHAPE_T(4, 4) js_rom_sh_48 = {
-    .hash = { [ROM_HPAD(4) - 1 - 1] = 3, [ROM_HPAD(4) - 1 - 2] = 2, [ROM_HPAD(4) - 1 - 3] = 4, },
+    .hash = { [ROM_HPAD(4) - 1 - 0] = 4, [ROM_HPAD(4) - 1 - 1] = 1, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 3, .prop_size = 4, .prop_count = 4,
             .proto = (JSObject *)&js_rom_obj[173] },
     .prop = {
         { .hash_next = 0, .flags = 0x00, .atom = 51 }, /* length */
         { .hash_next = 0, .flags = 0x00, .atom = 58 }, /* name */
-        { .hash_next = 0, .flags = 0x00, .atom = 249 }, /* BYTES_PER_ELEMENT */
-        { .hash_next = 1, .flags = 0x00, .atom = 63 }, /* prototype */
+        { .hash_next = 2, .flags = 0x00, .atom = 249 }, /* BYTES_PER_ELEMENT */
+        { .hash_next = 3, .flags = 0x00, .atom = 63 }, /* prototype */
     },
 };
 ROM_SHAPE_CHECK(js_rom_sh_48, 4);
 
 static const ROM_SHAPE_T(4, 2) js_rom_sh_49 = {
-    .hash = { [ROM_HPAD(4) - 1 - 0] = 2, [ROM_HPAD(4) - 1 - 1] = 1, },
+    .hash = { [ROM_HPAD(4) - 1 - 0] = 1, [ROM_HPAD(4) - 1 - 1] = 2, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 3, .prop_size = 2, .prop_count = 2,
             .proto = (JSObject *)&js_rom_obj[177] },
@@ -1636,21 +1636,21 @@ static const ROM_SHAPE_T(4, 2) js_rom_sh_49 = {
 ROM_SHAPE_CHECK(js_rom_sh_49, 4);
 
 static const ROM_SHAPE_T(4, 4) js_rom_sh_50 = {
-    .hash = { [ROM_HPAD(4) - 1 - 1] = 3, [ROM_HPAD(4) - 1 - 2] = 2, [ROM_HPAD(4) - 1 - 3] = 4, },
+    .hash = { [ROM_HPAD(4) - 1 - 0] = 4, [ROM_HPAD(4) - 1 - 1] = 1, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 3, .prop_size = 4, .prop_count = 4,
             .proto = (JSObject *)&js_rom_obj[173] },
     .prop = {
         { .hash_next = 0, .flags = 0x00, .atom = 51 }, /* length */
         { .hash_next = 0, .flags = 0x00, .atom = 58 }, /* name */
-        { .hash_next = 0, .flags = 0x00, .atom = 249 }, /* BYTES_PER_ELEMENT */
-        { .hash_next = 1, .flags = 0x00, .atom = 63 }, /* prototype */
+        { .hash_next = 2, .flags = 0x00, .atom = 249 }, /* BYTES_PER_ELEMENT */
+        { .hash_next = 3, .flags = 0x00, .atom = 63 }, /* prototype */
     },
 };
 ROM_SHAPE_CHECK(js_rom_sh_50, 4);
 
 static const ROM_SHAPE_T(4, 2) js_rom_sh_51 = {
-    .hash = { [ROM_HPAD(4) - 1 - 0] = 2, [ROM_HPAD(4) - 1 - 1] = 1, },
+    .hash = { [ROM_HPAD(4) - 1 - 0] = 1, [ROM_HPAD(4) - 1 - 1] = 2, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 3, .prop_size = 2, .prop_count = 2,
             .proto = (JSObject *)&js_rom_obj[177] },
@@ -1662,21 +1662,21 @@ static const ROM_SHAPE_T(4, 2) js_rom_sh_51 = {
 ROM_SHAPE_CHECK(js_rom_sh_51, 4);
 
 static const ROM_SHAPE_T(4, 4) js_rom_sh_52 = {
-    .hash = { [ROM_HPAD(4) - 1 - 1] = 3, [ROM_HPAD(4) - 1 - 2] = 2, [ROM_HPAD(4) - 1 - 3] = 4, },
+    .hash = { [ROM_HPAD(4) - 1 - 0] = 4, [ROM_HPAD(4) - 1 - 1] = 1, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 3, .prop_size = 4, .prop_count = 4,
             .proto = (JSObject *)&js_rom_obj[173] },
     .prop = {
         { .hash_next = 0, .flags = 0x00, .atom = 51 }, /* length */
         { .hash_next = 0, .flags = 0x00, .atom = 58 }, /* name */
-        { .hash_next = 0, .flags = 0x00, .atom = 249 }, /* BYTES_PER_ELEMENT */
-        { .hash_next = 1, .flags = 0x00, .atom = 63 }, /* prototype */
+        { .hash_next = 2, .flags = 0x00, .atom = 249 }, /* BYTES_PER_ELEMENT */
+        { .hash_next = 3, .flags = 0x00, .atom = 63 }, /* prototype */
     },
 };
 ROM_SHAPE_CHECK(js_rom_sh_52, 4);
 
 static const ROM_SHAPE_T(4, 2) js_rom_sh_53 = {
-    .hash = { [ROM_HPAD(4) - 1 - 0] = 2, [ROM_HPAD(4) - 1 - 1] = 1, },
+    .hash = { [ROM_HPAD(4) - 1 - 0] = 1, [ROM_HPAD(4) - 1 - 1] = 2, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 3, .prop_size = 2, .prop_count = 2,
             .proto = (JSObject *)&js_rom_obj[177] },
@@ -1688,21 +1688,21 @@ static const ROM_SHAPE_T(4, 2) js_rom_sh_53 = {
 ROM_SHAPE_CHECK(js_rom_sh_53, 4);
 
 static const ROM_SHAPE_T(4, 4) js_rom_sh_54 = {
-    .hash = { [ROM_HPAD(4) - 1 - 1] = 3, [ROM_HPAD(4) - 1 - 2] = 2, [ROM_HPAD(4) - 1 - 3] = 4, },
+    .hash = { [ROM_HPAD(4) - 1 - 0] = 4, [ROM_HPAD(4) - 1 - 1] = 1, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 3, .prop_size = 4, .prop_count = 4,
             .proto = (JSObject *)&js_rom_obj[173] },
     .prop = {
         { .hash_next = 0, .flags = 0x00, .atom = 51 }, /* length */
         { .hash_next = 0, .flags = 0x00, .atom = 58 }, /* name */
-        { .hash_next = 0, .flags = 0x00, .atom = 249 }, /* BYTES_PER_ELEMENT */
-        { .hash_next = 1, .flags = 0x00, .atom = 63 }, /* prototype */
+        { .hash_next = 2, .flags = 0x00, .atom = 249 }, /* BYTES_PER_ELEMENT */
+        { .hash_next = 3, .flags = 0x00, .atom = 63 }, /* prototype */
     },
 };
 ROM_SHAPE_CHECK(js_rom_sh_54, 4);
 
 static const ROM_SHAPE_T(4, 2) js_rom_sh_55 = {
-    .hash = { [ROM_HPAD(4) - 1 - 0] = 2, [ROM_HPAD(4) - 1 - 1] = 1, },
+    .hash = { [ROM_HPAD(4) - 1 - 0] = 1, [ROM_HPAD(4) - 1 - 1] = 2, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 3, .prop_size = 2, .prop_count = 2,
             .proto = (JSObject *)&js_rom_obj[177] },
@@ -1714,21 +1714,21 @@ static const ROM_SHAPE_T(4, 2) js_rom_sh_55 = {
 ROM_SHAPE_CHECK(js_rom_sh_55, 4);
 
 static const ROM_SHAPE_T(4, 4) js_rom_sh_56 = {
-    .hash = { [ROM_HPAD(4) - 1 - 1] = 3, [ROM_HPAD(4) - 1 - 2] = 2, [ROM_HPAD(4) - 1 - 3] = 4, },
+    .hash = { [ROM_HPAD(4) - 1 - 0] = 4, [ROM_HPAD(4) - 1 - 1] = 1, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 3, .prop_size = 4, .prop_count = 4,
             .proto = (JSObject *)&js_rom_obj[173] },
     .prop = {
         { .hash_next = 0, .flags = 0x00, .atom = 51 }, /* length */
         { .hash_next = 0, .flags = 0x00, .atom = 58 }, /* name */
-        { .hash_next = 0, .flags = 0x00, .atom = 249 }, /* BYTES_PER_ELEMENT */
-        { .hash_next = 1, .flags = 0x00, .atom = 63 }, /* prototype */
+        { .hash_next = 2, .flags = 0x00, .atom = 249 }, /* BYTES_PER_ELEMENT */
+        { .hash_next = 3, .flags = 0x00, .atom = 63 }, /* prototype */
     },
 };
 ROM_SHAPE_CHECK(js_rom_sh_56, 4);
 
 static const ROM_SHAPE_T(4, 2) js_rom_sh_57 = {
-    .hash = { [ROM_HPAD(4) - 1 - 0] = 2, [ROM_HPAD(4) - 1 - 1] = 1, },
+    .hash = { [ROM_HPAD(4) - 1 - 0] = 1, [ROM_HPAD(4) - 1 - 1] = 2, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 3, .prop_size = 2, .prop_count = 2,
             .proto = (JSObject *)&js_rom_obj[177] },
@@ -1740,21 +1740,21 @@ static const ROM_SHAPE_T(4, 2) js_rom_sh_57 = {
 ROM_SHAPE_CHECK(js_rom_sh_57, 4);
 
 static const ROM_SHAPE_T(4, 4) js_rom_sh_58 = {
-    .hash = { [ROM_HPAD(4) - 1 - 1] = 3, [ROM_HPAD(4) - 1 - 2] = 2, [ROM_HPAD(4) - 1 - 3] = 4, },
+    .hash = { [ROM_HPAD(4) - 1 - 0] = 4, [ROM_HPAD(4) - 1 - 1] = 1, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 3, .prop_size = 4, .prop_count = 4,
             .proto = (JSObject *)&js_rom_obj[173] },
     .prop = {
         { .hash_next = 0, .flags = 0x00, .atom = 51 }, /* length */
         { .hash_next = 0, .flags = 0x00, .atom = 58 }, /* name */
-        { .hash_next = 0, .flags = 0x00, .atom = 249 }, /* BYTES_PER_ELEMENT */
-        { .hash_next = 1, .flags = 0x00, .atom = 63 }, /* prototype */
+        { .hash_next = 2, .flags = 0x00, .atom = 249 }, /* BYTES_PER_ELEMENT */
+        { .hash_next = 3, .flags = 0x00, .atom = 63 }, /* prototype */
     },
 };
 ROM_SHAPE_CHECK(js_rom_sh_58, 4);
 
 static const ROM_SHAPE_T(4, 2) js_rom_sh_59 = {
-    .hash = { [ROM_HPAD(4) - 1 - 0] = 2, [ROM_HPAD(4) - 1 - 1] = 1, },
+    .hash = { [ROM_HPAD(4) - 1 - 0] = 1, [ROM_HPAD(4) - 1 - 1] = 2, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 3, .prop_size = 2, .prop_count = 2,
             .proto = (JSObject *)&js_rom_obj[177] },
@@ -1766,21 +1766,21 @@ static const ROM_SHAPE_T(4, 2) js_rom_sh_59 = {
 ROM_SHAPE_CHECK(js_rom_sh_59, 4);
 
 static const ROM_SHAPE_T(4, 4) js_rom_sh_60 = {
-    .hash = { [ROM_HPAD(4) - 1 - 1] = 3, [ROM_HPAD(4) - 1 - 2] = 2, [ROM_HPAD(4) - 1 - 3] = 4, },
+    .hash = { [ROM_HPAD(4) - 1 - 0] = 4, [ROM_HPAD(4) - 1 - 1] = 1, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 3, .prop_size = 4, .prop_count = 4,
             .proto = (JSObject *)&js_rom_obj[173] },
     .prop = {
         { .hash_next = 0, .flags = 0x00, .atom = 51 }, /* length */
         { .hash_next = 0, .flags = 0x00, .atom = 58 }, /* name */
-        { .hash_next = 0, .flags = 0x00, .atom = 249 }, /* BYTES_PER_ELEMENT */
-        { .hash_next = 1, .flags = 0x00, .atom = 63 }, /* prototype */
+        { .hash_next = 2, .flags = 0x00, .atom = 249 }, /* BYTES_PER_ELEMENT */
+        { .hash_next = 3, .flags = 0x00, .atom = 63 }, /* prototype */
     },
 };
 ROM_SHAPE_CHECK(js_rom_sh_60, 4);
 
 static const ROM_SHAPE_T(4, 2) js_rom_sh_61 = {
-    .hash = { [ROM_HPAD(4) - 1 - 0] = 2, [ROM_HPAD(4) - 1 - 1] = 1, },
+    .hash = { [ROM_HPAD(4) - 1 - 0] = 1, [ROM_HPAD(4) - 1 - 1] = 2, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 3, .prop_size = 2, .prop_count = 2,
             .proto = (JSObject *)&js_rom_obj[177] },
@@ -1792,21 +1792,21 @@ static const ROM_SHAPE_T(4, 2) js_rom_sh_61 = {
 ROM_SHAPE_CHECK(js_rom_sh_61, 4);
 
 static const ROM_SHAPE_T(4, 4) js_rom_sh_62 = {
-    .hash = { [ROM_HPAD(4) - 1 - 1] = 3, [ROM_HPAD(4) - 1 - 2] = 2, [ROM_HPAD(4) - 1 - 3] = 4, },
+    .hash = { [ROM_HPAD(4) - 1 - 0] = 4, [ROM_HPAD(4) - 1 - 1] = 1, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 3, .prop_size = 4, .prop_count = 4,
             .proto = (JSObject *)&js_rom_obj[173] },
     .prop = {
         { .hash_next = 0, .flags = 0x00, .atom = 51 }, /* length */
         { .hash_next = 0, .flags = 0x00, .atom = 58 }, /* name */
-        { .hash_next = 0, .flags = 0x00, .atom = 249 }, /* BYTES_PER_ELEMENT */
-        { .hash_next = 1, .flags = 0x00, .atom = 63 }, /* prototype */
+        { .hash_next = 2, .flags = 0x00, .atom = 249 }, /* BYTES_PER_ELEMENT */
+        { .hash_next = 3, .flags = 0x00, .atom = 63 }, /* prototype */
     },
 };
 ROM_SHAPE_CHECK(js_rom_sh_62, 4);
 
 static const ROM_SHAPE_T(32, 27) js_rom_sh_63 = {
-    .hash = { [ROM_HPAD(32) - 1 - 0] = 27, [ROM_HPAD(32) - 1 - 11] = 18, [ROM_HPAD(32) - 1 - 12] = 20, [ROM_HPAD(32) - 1 - 13] = 16, [ROM_HPAD(32) - 1 - 14] = 26, [ROM_HPAD(32) - 1 - 15] = 1, [ROM_HPAD(32) - 1 - 16] = 10, [ROM_HPAD(32) - 1 - 17] = 11, [ROM_HPAD(32) - 1 - 18] = 21, [ROM_HPAD(32) - 1 - 19] = 22, [ROM_HPAD(32) - 1 - 20] = 7, [ROM_HPAD(32) - 1 - 21] = 23, [ROM_HPAD(32) - 1 - 22] = 24, [ROM_HPAD(32) - 1 - 23] = 25, [ROM_HPAD(32) - 1 - 24] = 14, [ROM_HPAD(32) - 1 - 28] = 17, [ROM_HPAD(32) - 1 - 29] = 19, [ROM_HPAD(32) - 1 - 30] = 15, [ROM_HPAD(32) - 1 - 31] = 4, },
+    .hash = { [ROM_HPAD(32) - 1 - 0] = 10, [ROM_HPAD(32) - 1 - 1] = 22, [ROM_HPAD(32) - 1 - 2] = 14, [ROM_HPAD(32) - 1 - 4] = 9, [ROM_HPAD(32) - 1 - 6] = 24, [ROM_HPAD(32) - 1 - 7] = 15, [ROM_HPAD(32) - 1 - 9] = 12, [ROM_HPAD(32) - 1 - 10] = 2, [ROM_HPAD(32) - 1 - 11] = 8, [ROM_HPAD(32) - 1 - 12] = 11, [ROM_HPAD(32) - 1 - 14] = 27, [ROM_HPAD(32) - 1 - 15] = 17, [ROM_HPAD(32) - 1 - 16] = 5, [ROM_HPAD(32) - 1 - 18] = 25, [ROM_HPAD(32) - 1 - 19] = 20, [ROM_HPAD(32) - 1 - 21] = 21, [ROM_HPAD(32) - 1 - 23] = 4, [ROM_HPAD(32) - 1 - 24] = 7, [ROM_HPAD(32) - 1 - 25] = 23, [ROM_HPAD(32) - 1 - 27] = 19, [ROM_HPAD(32) - 1 - 29] = 26, [ROM_HPAD(32) - 1 - 30] = 1, [ROM_HPAD(32) - 1 - 31] = 16, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 31, .prop_size = 27, .prop_count = 27,
             .proto = (JSObject *)&js_rom_obj[1] },
@@ -1814,28 +1814,28 @@ static const ROM_SHAPE_T(32, 27) js_rom_sh_63 = {
         { .hash_next = 0, .flags = 0x10, .atom = 335 }, /* buffer */
         { .hash_next = 0, .flags = 0x10, .atom = 336 }, /* byteLength */
         { .hash_next = 0, .flags = 0x10, .atom = 337 }, /* byteOffset */
-        { .hash_next = 0, .flags = 0x00, .atom = 447 }, /* getInt8 */
+        { .hash_next = 3, .flags = 0x00, .atom = 447 }, /* getInt8 */
         { .hash_next = 0, .flags = 0x00, .atom = 470 }, /* getUint8 */
         { .hash_next = 0, .flags = 0x00, .atom = 445 }, /* getInt16 */
         { .hash_next = 0, .flags = 0x00, .atom = 468 }, /* getUint16 */
         { .hash_next = 0, .flags = 0x00, .atom = 446 }, /* getInt32 */
         { .hash_next = 0, .flags = 0x00, .atom = 469 }, /* getUint32 */
-        { .hash_next = 2, .flags = 0x00, .atom = 432 }, /* getBigInt64 */
-        { .hash_next = 3, .flags = 0x00, .atom = 433 }, /* getBigUint64 */
-        { .hash_next = 5, .flags = 0x00, .atom = 438 }, /* getFloat16 */
+        { .hash_next = 0, .flags = 0x00, .atom = 432 }, /* getBigInt64 */
+        { .hash_next = 0, .flags = 0x00, .atom = 433 }, /* getBigUint64 */
+        { .hash_next = 0, .flags = 0x00, .atom = 438 }, /* getFloat16 */
         { .hash_next = 0, .flags = 0x00, .atom = 439 }, /* getFloat32 */
         { .hash_next = 0, .flags = 0x00, .atom = 440 }, /* getFloat64 */
-        { .hash_next = 8, .flags = 0x00, .atom = 574 }, /* setInt8 */
-        { .hash_next = 0, .flags = 0x00, .atom = 589 }, /* setUint8 */
+        { .hash_next = 0, .flags = 0x00, .atom = 574 }, /* setInt8 */
+        { .hash_next = 6, .flags = 0x00, .atom = 589 }, /* setUint8 */
         { .hash_next = 0, .flags = 0x00, .atom = 572 }, /* setInt16 */
         { .hash_next = 0, .flags = 0x00, .atom = 587 }, /* setUint16 */
-        { .hash_next = 6, .flags = 0x00, .atom = 573 }, /* setInt32 */
+        { .hash_next = 0, .flags = 0x00, .atom = 573 }, /* setInt32 */
         { .hash_next = 0, .flags = 0x00, .atom = 588 }, /* setUint32 */
-        { .hash_next = 0, .flags = 0x00, .atom = 562 }, /* setBigInt64 */
+        { .hash_next = 13, .flags = 0x00, .atom = 562 }, /* setBigInt64 */
         { .hash_next = 0, .flags = 0x00, .atom = 563 }, /* setBigUint64 */
-        { .hash_next = 9, .flags = 0x00, .atom = 565 }, /* setFloat16 */
-        { .hash_next = 12, .flags = 0x00, .atom = 566 }, /* setFloat32 */
-        { .hash_next = 13, .flags = 0x00, .atom = 567 }, /* setFloat64 */
+        { .hash_next = 0, .flags = 0x00, .atom = 565 }, /* setFloat16 */
+        { .hash_next = 18, .flags = 0x00, .atom = 566 }, /* setFloat32 */
+        { .hash_next = 0, .flags = 0x00, .atom = 567 }, /* setFloat64 */
         { .hash_next = 0, .flags = 0x00, .atom = 238 }, /* Symbol.toStringTag */
         { .hash_next = 0, .flags = 0x00, .atom = 64 }, /* constructor */
     },
@@ -1843,20 +1843,20 @@ static const ROM_SHAPE_T(32, 27) js_rom_sh_63 = {
 ROM_SHAPE_CHECK(js_rom_sh_63, 32);
 
 static const ROM_SHAPE_T(4, 3) js_rom_sh_64 = {
-    .hash = { [ROM_HPAD(4) - 1 - 2] = 2, [ROM_HPAD(4) - 1 - 3] = 3, },
+    .hash = { [ROM_HPAD(4) - 1 - 0] = 3, [ROM_HPAD(4) - 1 - 1] = 1, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 3, .prop_size = 3, .prop_count = 3,
             .proto = (JSObject *)&js_rom_obj[0] },
     .prop = {
         { .hash_next = 0, .flags = 0x00, .atom = 51 }, /* length */
         { .hash_next = 0, .flags = 0x00, .atom = 58 }, /* name */
-        { .hash_next = 1, .flags = 0x00, .atom = 63 }, /* prototype */
+        { .hash_next = 2, .flags = 0x00, .atom = 63 }, /* prototype */
     },
 };
 ROM_SHAPE_CHECK(js_rom_sh_64, 4);
 
 static const ROM_SHAPE_T(4, 4) js_rom_sh_65 = {
-    .hash = { [ROM_HPAD(4) - 1 - 0] = 4, [ROM_HPAD(4) - 1 - 1] = 2, [ROM_HPAD(4) - 1 - 2] = 3, [ROM_HPAD(4) - 1 - 3] = 1, },
+    .hash = { [ROM_HPAD(4) - 1 - 1] = 4, [ROM_HPAD(4) - 1 - 2] = 1, [ROM_HPAD(4) - 1 - 3] = 3, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 3, .prop_size = 4, .prop_count = 4,
             .proto = (JSObject *)&js_rom_obj[1] },
@@ -1864,13 +1864,13 @@ static const ROM_SHAPE_T(4, 4) js_rom_sh_65 = {
         { .hash_next = 0, .flags = 0x00, .atom = 59 }, /* toString */
         { .hash_next = 0, .flags = 0x00, .atom = 61 }, /* valueOf */
         { .hash_next = 0, .flags = 0x00, .atom = 238 }, /* Symbol.toStringTag */
-        { .hash_next = 0, .flags = 0x00, .atom = 64 }, /* constructor */
+        { .hash_next = 2, .flags = 0x00, .atom = 64 }, /* constructor */
     },
 };
 ROM_SHAPE_CHECK(js_rom_sh_65, 4);
 
 static const ROM_SHAPE_T(8, 5) js_rom_sh_66 = {
-    .hash = { [ROM_HPAD(8) - 1 - 2] = 2, [ROM_HPAD(8) - 1 - 3] = 1, [ROM_HPAD(8) - 1 - 6] = 4, [ROM_HPAD(8) - 1 - 7] = 5, },
+    .hash = { [ROM_HPAD(8) - 1 - 0] = 5, [ROM_HPAD(8) - 1 - 1] = 2, [ROM_HPAD(8) - 1 - 3] = 4, [ROM_HPAD(8) - 1 - 6] = 3, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 7, .prop_size = 5, .prop_count = 5,
             .proto = (JSObject *)&js_rom_obj[0] },
@@ -1878,14 +1878,14 @@ static const ROM_SHAPE_T(8, 5) js_rom_sh_66 = {
         { .hash_next = 0, .flags = 0x00, .atom = 51 }, /* length */
         { .hash_next = 0, .flags = 0x00, .atom = 58 }, /* name */
         { .hash_next = 0, .flags = 0x00, .atom = 319 }, /* asUintN */
-        { .hash_next = 0, .flags = 0x00, .atom = 318 }, /* asIntN */
-        { .hash_next = 3, .flags = 0x00, .atom = 63 }, /* prototype */
+        { .hash_next = 1, .flags = 0x00, .atom = 318 }, /* asIntN */
+        { .hash_next = 0, .flags = 0x00, .atom = 63 }, /* prototype */
     },
 };
 ROM_SHAPE_CHECK(js_rom_sh_66, 8);
 
 static const ROM_SHAPE_T(32, 15) js_rom_sh_67 = {
-    .hash = { [ROM_HPAD(32) - 1 - 0] = 15, [ROM_HPAD(32) - 1 - 4] = 3, [ROM_HPAD(32) - 1 - 5] = 4, [ROM_HPAD(32) - 1 - 6] = 9, [ROM_HPAD(32) - 1 - 8] = 13, [ROM_HPAD(32) - 1 - 9] = 6, [ROM_HPAD(32) - 1 - 10] = 5, [ROM_HPAD(32) - 1 - 14] = 14, [ROM_HPAD(32) - 1 - 17] = 11, [ROM_HPAD(32) - 1 - 18] = 12, [ROM_HPAD(32) - 1 - 25] = 7, },
+    .hash = { [ROM_HPAD(32) - 1 - 0] = 4, [ROM_HPAD(32) - 1 - 3] = 8, [ROM_HPAD(32) - 1 - 10] = 12, [ROM_HPAD(32) - 1 - 11] = 2, [ROM_HPAD(32) - 1 - 14] = 15, [ROM_HPAD(32) - 1 - 15] = 5, [ROM_HPAD(32) - 1 - 17] = 10, [ROM_HPAD(32) - 1 - 19] = 13, [ROM_HPAD(32) - 1 - 20] = 3, [ROM_HPAD(32) - 1 - 22] = 11, [ROM_HPAD(32) - 1 - 23] = 1, [ROM_HPAD(32) - 1 - 24] = 7, [ROM_HPAD(32) - 1 - 29] = 14, [ROM_HPAD(32) - 1 - 30] = 9, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 31, .prop_size = 15, .prop_count = 15,
             .proto = (JSObject *)&js_rom_obj[1] },
@@ -1893,24 +1893,24 @@ static const ROM_SHAPE_T(32, 15) js_rom_sh_67 = {
         { .hash_next = 0, .flags = 0x00, .atom = 70 }, /* set */
         { .hash_next = 0, .flags = 0x00, .atom = 69 }, /* get */
         { .hash_next = 0, .flags = 0x00, .atom = 452 }, /* getOrInsert */
-        { .hash_next = 2, .flags = 0x00, .atom = 453 }, /* getOrInsertComputed */
+        { .hash_next = 0, .flags = 0x00, .atom = 453 }, /* getOrInsertComputed */
         { .hash_next = 0, .flags = 0x00, .atom = 106 }, /* has */
         { .hash_next = 0, .flags = 0x00, .atom = 9 }, /* delete */
         { .hash_next = 0, .flags = 0x00, .atom = 345 }, /* clear */
         { .hash_next = 0, .flags = 0x10, .atom = 50 }, /* size */
-        { .hash_next = 1, .flags = 0x00, .atom = 390 }, /* forEach */
-        { .hash_next = 8, .flags = 0x00, .atom = 114 }, /* values */
+        { .hash_next = 0, .flags = 0x00, .atom = 390 }, /* forEach */
+        { .hash_next = 0, .flags = 0x00, .atom = 114 }, /* values */
         { .hash_next = 0, .flags = 0x00, .atom = 49 }, /* keys */
-        { .hash_next = 10, .flags = 0x00, .atom = 370 }, /* entries */
+        { .hash_next = 0, .flags = 0x00, .atom = 370 }, /* entries */
         { .hash_next = 0, .flags = 0x00, .atom = 232 }, /* Symbol.iterator */
         { .hash_next = 0, .flags = 0x00, .atom = 238 }, /* Symbol.toStringTag */
-        { .hash_next = 0, .flags = 0x00, .atom = 64 }, /* constructor */
+        { .hash_next = 6, .flags = 0x00, .atom = 64 }, /* constructor */
     },
 };
 ROM_SHAPE_CHECK(js_rom_sh_67, 32);
 
 static const ROM_SHAPE_T(8, 5) js_rom_sh_68 = {
-    .hash = { [ROM_HPAD(8) - 1 - 0] = 3, [ROM_HPAD(8) - 1 - 1] = 4, [ROM_HPAD(8) - 1 - 2] = 2, [ROM_HPAD(8) - 1 - 3] = 1, [ROM_HPAD(8) - 1 - 7] = 5, },
+    .hash = { [ROM_HPAD(8) - 1 - 0] = 5, [ROM_HPAD(8) - 1 - 1] = 2, [ROM_HPAD(8) - 1 - 2] = 3, [ROM_HPAD(8) - 1 - 3] = 1, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 7, .prop_size = 5, .prop_count = 5,
             .proto = (JSObject *)&js_rom_obj[0] },
@@ -1919,13 +1919,13 @@ static const ROM_SHAPE_T(8, 5) js_rom_sh_68 = {
         { .hash_next = 0, .flags = 0x00, .atom = 58 }, /* name */
         { .hash_next = 0, .flags = 0x00, .atom = 472 }, /* groupBy */
         { .hash_next = 0, .flags = 0x10, .atom = 241 }, /* Symbol.species */
-        { .hash_next = 0, .flags = 0x00, .atom = 63 }, /* prototype */
+        { .hash_next = 4, .flags = 0x00, .atom = 63 }, /* prototype */
     },
 };
 ROM_SHAPE_CHECK(js_rom_sh_68, 8);
 
 static const ROM_SHAPE_T(32, 19) js_rom_sh_69 = {
-    .hash = { [ROM_HPAD(32) - 1 - 0] = 19, [ROM_HPAD(32) - 1 - 5] = 10, [ROM_HPAD(32) - 1 - 6] = 6, [ROM_HPAD(32) - 1 - 7] = 12, [ROM_HPAD(32) - 1 - 8] = 16, [ROM_HPAD(32) - 1 - 9] = 3, [ROM_HPAD(32) - 1 - 10] = 7, [ROM_HPAD(32) - 1 - 11] = 11, [ROM_HPAD(32) - 1 - 14] = 18, [ROM_HPAD(32) - 1 - 15] = 13, [ROM_HPAD(32) - 1 - 17] = 15, [ROM_HPAD(32) - 1 - 18] = 17, [ROM_HPAD(32) - 1 - 22] = 8, [ROM_HPAD(32) - 1 - 23] = 9, [ROM_HPAD(32) - 1 - 25] = 4, },
+    .hash = { [ROM_HPAD(32) - 1 - 3] = 5, [ROM_HPAD(32) - 1 - 4] = 9, [ROM_HPAD(32) - 1 - 5] = 7, [ROM_HPAD(32) - 1 - 6] = 13, [ROM_HPAD(32) - 1 - 8] = 10, [ROM_HPAD(32) - 1 - 10] = 17, [ROM_HPAD(32) - 1 - 12] = 1, [ROM_HPAD(32) - 1 - 14] = 19, [ROM_HPAD(32) - 1 - 15] = 2, [ROM_HPAD(32) - 1 - 17] = 14, [ROM_HPAD(32) - 1 - 19] = 16, [ROM_HPAD(32) - 1 - 20] = 11, [ROM_HPAD(32) - 1 - 22] = 15, [ROM_HPAD(32) - 1 - 23] = 8, [ROM_HPAD(32) - 1 - 24] = 4, [ROM_HPAD(32) - 1 - 29] = 18, [ROM_HPAD(32) - 1 - 30] = 6, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 31, .prop_size = 19, .prop_count = 19,
             .proto = (JSObject *)&js_rom_obj[1] },
@@ -1936,39 +1936,39 @@ static const ROM_SHAPE_T(32, 19) js_rom_sh_69 = {
         { .hash_next = 0, .flags = 0x00, .atom = 345 }, /* clear */
         { .hash_next = 0, .flags = 0x10, .atom = 50 }, /* size */
         { .hash_next = 0, .flags = 0x00, .atom = 390 }, /* forEach */
-        { .hash_next = 2, .flags = 0x00, .atom = 490 }, /* isDisjointFrom */
+        { .hash_next = 0, .flags = 0x00, .atom = 490 }, /* isDisjointFrom */
         { .hash_next = 0, .flags = 0x00, .atom = 502 }, /* isSubsetOf */
         { .hash_next = 0, .flags = 0x00, .atom = 503 }, /* isSupersetOf */
         { .hash_next = 0, .flags = 0x00, .atom = 485 }, /* intersection */
         { .hash_next = 0, .flags = 0x00, .atom = 363 }, /* difference */
         { .hash_next = 0, .flags = 0x00, .atom = 615 }, /* symmetricDifference */
-        { .hash_next = 1, .flags = 0x00, .atom = 655 }, /* union */
-        { .hash_next = 5, .flags = 0x00, .atom = 114 }, /* values */
+        { .hash_next = 0, .flags = 0x00, .atom = 655 }, /* union */
+        { .hash_next = 0, .flags = 0x00, .atom = 114 }, /* values */
         { .hash_next = 0, .flags = 0x00, .atom = 49 }, /* keys */
         { .hash_next = 0, .flags = 0x00, .atom = 232 }, /* Symbol.iterator */
-        { .hash_next = 14, .flags = 0x00, .atom = 370 }, /* entries */
-        { .hash_next = 0, .flags = 0x00, .atom = 238 }, /* Symbol.toStringTag */
-        { .hash_next = 0, .flags = 0x00, .atom = 64 }, /* constructor */
+        { .hash_next = 0, .flags = 0x00, .atom = 370 }, /* entries */
+        { .hash_next = 12, .flags = 0x00, .atom = 238 }, /* Symbol.toStringTag */
+        { .hash_next = 3, .flags = 0x00, .atom = 64 }, /* constructor */
     },
 };
 ROM_SHAPE_CHECK(js_rom_sh_69, 32);
 
 static const ROM_SHAPE_T(4, 4) js_rom_sh_70 = {
-    .hash = { [ROM_HPAD(4) - 1 - 1] = 3, [ROM_HPAD(4) - 1 - 2] = 2, [ROM_HPAD(4) - 1 - 3] = 4, },
+    .hash = { [ROM_HPAD(4) - 1 - 0] = 4, [ROM_HPAD(4) - 1 - 1] = 1, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 3, .prop_size = 4, .prop_count = 4,
             .proto = (JSObject *)&js_rom_obj[0] },
     .prop = {
         { .hash_next = 0, .flags = 0x00, .atom = 51 }, /* length */
         { .hash_next = 0, .flags = 0x00, .atom = 58 }, /* name */
-        { .hash_next = 0, .flags = 0x10, .atom = 241 }, /* Symbol.species */
-        { .hash_next = 1, .flags = 0x00, .atom = 63 }, /* prototype */
+        { .hash_next = 2, .flags = 0x10, .atom = 241 }, /* Symbol.species */
+        { .hash_next = 3, .flags = 0x00, .atom = 63 }, /* prototype */
     },
 };
 ROM_SHAPE_CHECK(js_rom_sh_70, 4);
 
 static const ROM_SHAPE_T(16, 8) js_rom_sh_71 = {
-    .hash = { [ROM_HPAD(16) - 1 - 0] = 8, [ROM_HPAD(16) - 1 - 4] = 3, [ROM_HPAD(16) - 1 - 5] = 4, [ROM_HPAD(16) - 1 - 6] = 1, [ROM_HPAD(16) - 1 - 9] = 6, [ROM_HPAD(16) - 1 - 10] = 5, [ROM_HPAD(16) - 1 - 14] = 7, },
+    .hash = { [ROM_HPAD(16) - 1 - 0] = 4, [ROM_HPAD(16) - 1 - 5] = 2, [ROM_HPAD(16) - 1 - 7] = 8, [ROM_HPAD(16) - 1 - 10] = 3, [ROM_HPAD(16) - 1 - 11] = 1, [ROM_HPAD(16) - 1 - 14] = 7, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 15, .prop_size = 8, .prop_count = 8,
             .proto = (JSObject *)&js_rom_obj[1] },
@@ -1976,71 +1976,71 @@ static const ROM_SHAPE_T(16, 8) js_rom_sh_71 = {
         { .hash_next = 0, .flags = 0x00, .atom = 70 }, /* set */
         { .hash_next = 0, .flags = 0x00, .atom = 69 }, /* get */
         { .hash_next = 0, .flags = 0x00, .atom = 452 }, /* getOrInsert */
-        { .hash_next = 2, .flags = 0x00, .atom = 453 }, /* getOrInsertComputed */
+        { .hash_next = 0, .flags = 0x00, .atom = 453 }, /* getOrInsertComputed */
         { .hash_next = 0, .flags = 0x00, .atom = 106 }, /* has */
-        { .hash_next = 0, .flags = 0x00, .atom = 9 }, /* delete */
+        { .hash_next = 5, .flags = 0x00, .atom = 9 }, /* delete */
         { .hash_next = 0, .flags = 0x00, .atom = 238 }, /* Symbol.toStringTag */
-        { .hash_next = 0, .flags = 0x00, .atom = 64 }, /* constructor */
+        { .hash_next = 6, .flags = 0x00, .atom = 64 }, /* constructor */
     },
 };
 ROM_SHAPE_CHECK(js_rom_sh_71, 16);
 
 static const ROM_SHAPE_T(4, 3) js_rom_sh_72 = {
-    .hash = { [ROM_HPAD(4) - 1 - 2] = 2, [ROM_HPAD(4) - 1 - 3] = 3, },
+    .hash = { [ROM_HPAD(4) - 1 - 0] = 3, [ROM_HPAD(4) - 1 - 1] = 1, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 3, .prop_size = 3, .prop_count = 3,
             .proto = (JSObject *)&js_rom_obj[0] },
     .prop = {
         { .hash_next = 0, .flags = 0x00, .atom = 51 }, /* length */
         { .hash_next = 0, .flags = 0x00, .atom = 58 }, /* name */
-        { .hash_next = 1, .flags = 0x00, .atom = 63 }, /* prototype */
+        { .hash_next = 2, .flags = 0x00, .atom = 63 }, /* prototype */
     },
 };
 ROM_SHAPE_CHECK(js_rom_sh_72, 4);
 
 static const ROM_SHAPE_T(8, 5) js_rom_sh_73 = {
-    .hash = { [ROM_HPAD(8) - 1 - 0] = 5, [ROM_HPAD(8) - 1 - 1] = 3, [ROM_HPAD(8) - 1 - 2] = 2, [ROM_HPAD(8) - 1 - 6] = 4, [ROM_HPAD(8) - 1 - 7] = 1, },
+    .hash = { [ROM_HPAD(8) - 1 - 3] = 5, [ROM_HPAD(8) - 1 - 7] = 4, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 7, .prop_size = 5, .prop_count = 5,
             .proto = (JSObject *)&js_rom_obj[1] },
     .prop = {
         { .hash_next = 0, .flags = 0x00, .atom = 111 }, /* add */
-        { .hash_next = 0, .flags = 0x00, .atom = 106 }, /* has */
-        { .hash_next = 0, .flags = 0x00, .atom = 9 }, /* delete */
+        { .hash_next = 1, .flags = 0x00, .atom = 106 }, /* has */
+        { .hash_next = 2, .flags = 0x00, .atom = 9 }, /* delete */
         { .hash_next = 0, .flags = 0x00, .atom = 238 }, /* Symbol.toStringTag */
-        { .hash_next = 0, .flags = 0x00, .atom = 64 }, /* constructor */
+        { .hash_next = 3, .flags = 0x00, .atom = 64 }, /* constructor */
     },
 };
 ROM_SHAPE_CHECK(js_rom_sh_73, 8);
 
 static const ROM_SHAPE_T(4, 3) js_rom_sh_74 = {
-    .hash = { [ROM_HPAD(4) - 1 - 2] = 2, [ROM_HPAD(4) - 1 - 3] = 3, },
+    .hash = { [ROM_HPAD(4) - 1 - 0] = 3, [ROM_HPAD(4) - 1 - 1] = 1, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 3, .prop_size = 3, .prop_count = 3,
             .proto = (JSObject *)&js_rom_obj[0] },
     .prop = {
         { .hash_next = 0, .flags = 0x00, .atom = 51 }, /* length */
         { .hash_next = 0, .flags = 0x00, .atom = 58 }, /* name */
-        { .hash_next = 1, .flags = 0x00, .atom = 63 }, /* prototype */
+        { .hash_next = 2, .flags = 0x00, .atom = 63 }, /* prototype */
     },
 };
 ROM_SHAPE_CHECK(js_rom_sh_74, 4);
 
 static const ROM_SHAPE_T(4, 3) js_rom_sh_75 = {
-    .hash = { [ROM_HPAD(4) - 1 - 1] = 1, [ROM_HPAD(4) - 1 - 2] = 3, },
+    .hash = { [ROM_HPAD(4) - 1 - 0] = 1, [ROM_HPAD(4) - 1 - 1] = 2, [ROM_HPAD(4) - 1 - 3] = 3, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 3, .prop_size = 3, .prop_count = 3,
             .proto = (JSObject *)&js_rom_obj[147] },
     .prop = {
         { .hash_next = 0, .flags = 0x00, .atom = 113 }, /* next */
         { .hash_next = 0, .flags = 0x00, .atom = 6 }, /* return */
-        { .hash_next = 2, .flags = 0x00, .atom = 238 }, /* Symbol.toStringTag */
+        { .hash_next = 0, .flags = 0x00, .atom = 238 }, /* Symbol.toStringTag */
     },
 };
 ROM_SHAPE_CHECK(js_rom_sh_75, 4);
 
 static const ROM_SHAPE_T(4, 2) js_rom_sh_76 = {
-    .hash = { [ROM_HPAD(4) - 1 - 1] = 1, [ROM_HPAD(4) - 1 - 2] = 2, },
+    .hash = { [ROM_HPAD(4) - 1 - 0] = 1, [ROM_HPAD(4) - 1 - 1] = 2, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 3, .prop_size = 2, .prop_count = 2,
             .proto = (JSObject *)&js_rom_obj[147] },
@@ -2052,7 +2052,7 @@ static const ROM_SHAPE_T(4, 2) js_rom_sh_76 = {
 ROM_SHAPE_CHECK(js_rom_sh_76, 4);
 
 static const ROM_SHAPE_T(4, 2) js_rom_sh_77 = {
-    .hash = { [ROM_HPAD(4) - 1 - 1] = 1, [ROM_HPAD(4) - 1 - 2] = 2, },
+    .hash = { [ROM_HPAD(4) - 1 - 0] = 1, [ROM_HPAD(4) - 1 - 3] = 2, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 3, .prop_size = 2, .prop_count = 2,
             .proto = (JSObject *)&js_rom_obj[147] },
@@ -2064,7 +2064,7 @@ static const ROM_SHAPE_T(4, 2) js_rom_sh_77 = {
 ROM_SHAPE_CHECK(js_rom_sh_77, 4);
 
 static const ROM_SHAPE_T(4, 2) js_rom_sh_78 = {
-    .hash = { [ROM_HPAD(4) - 1 - 1] = 1, [ROM_HPAD(4) - 1 - 2] = 2, },
+    .hash = { [ROM_HPAD(4) - 1 - 0] = 1, [ROM_HPAD(4) - 1 - 3] = 2, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 3, .prop_size = 2, .prop_count = 2,
             .proto = (JSObject *)&js_rom_obj[147] },
@@ -2076,7 +2076,7 @@ static const ROM_SHAPE_T(4, 2) js_rom_sh_78 = {
 ROM_SHAPE_CHECK(js_rom_sh_78, 4);
 
 static const ROM_SHAPE_T(4, 2) js_rom_sh_79 = {
-    .hash = { [ROM_HPAD(4) - 1 - 1] = 1, [ROM_HPAD(4) - 1 - 2] = 2, },
+    .hash = { [ROM_HPAD(4) - 1 - 0] = 1, [ROM_HPAD(4) - 1 - 3] = 2, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 3, .prop_size = 2, .prop_count = 2,
             .proto = (JSObject *)&js_rom_obj[147] },
@@ -2088,7 +2088,7 @@ static const ROM_SHAPE_T(4, 2) js_rom_sh_79 = {
 ROM_SHAPE_CHECK(js_rom_sh_79, 4);
 
 static const ROM_SHAPE_T(4, 2) js_rom_sh_80 = {
-    .hash = { [ROM_HPAD(4) - 1 - 1] = 1, [ROM_HPAD(4) - 1 - 2] = 2, },
+    .hash = { [ROM_HPAD(4) - 1 - 0] = 1, [ROM_HPAD(4) - 1 - 3] = 2, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 3, .prop_size = 2, .prop_count = 2,
             .proto = (JSObject *)&js_rom_obj[147] },
@@ -2100,7 +2100,7 @@ static const ROM_SHAPE_T(4, 2) js_rom_sh_80 = {
 ROM_SHAPE_CHECK(js_rom_sh_80, 4);
 
 static const ROM_SHAPE_T(4, 2) js_rom_sh_81 = {
-    .hash = { [ROM_HPAD(4) - 1 - 1] = 1, [ROM_HPAD(4) - 1 - 2] = 2, },
+    .hash = { [ROM_HPAD(4) - 1 - 0] = 1, [ROM_HPAD(4) - 1 - 3] = 2, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 3, .prop_size = 2, .prop_count = 2,
             .proto = (JSObject *)&js_rom_obj[147] },
@@ -2112,13 +2112,13 @@ static const ROM_SHAPE_T(4, 2) js_rom_sh_81 = {
 ROM_SHAPE_CHECK(js_rom_sh_81, 4);
 
 static const ROM_SHAPE_T(16, 9) js_rom_sh_82 = {
-    .hash = { [ROM_HPAD(16) - 1 - 0] = 9, [ROM_HPAD(16) - 1 - 4] = 7, [ROM_HPAD(16) - 1 - 7] = 2, [ROM_HPAD(16) - 1 - 8] = 1, [ROM_HPAD(16) - 1 - 10] = 5, [ROM_HPAD(16) - 1 - 11] = 4, [ROM_HPAD(16) - 1 - 12] = 6, [ROM_HPAD(16) - 1 - 14] = 8, },
+    .hash = { [ROM_HPAD(16) - 1 - 0] = 6, [ROM_HPAD(16) - 1 - 2] = 2, [ROM_HPAD(16) - 1 - 3] = 7, [ROM_HPAD(16) - 1 - 6] = 5, [ROM_HPAD(16) - 1 - 7] = 9, [ROM_HPAD(16) - 1 - 12] = 4, [ROM_HPAD(16) - 1 - 14] = 8, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 15, .prop_size = 9, .prop_count = 9,
             .proto = (JSObject *)&js_rom_obj[1] },
     .prop = {
         { .hash_next = 0, .flags = 0x00, .atom = 312 }, /* adopt */
-        { .hash_next = 0, .flags = 0x00, .atom = 359 }, /* defer */
+        { .hash_next = 1, .flags = 0x00, .atom = 359 }, /* defer */
         { .hash_next = 0, .flags = 0x00, .atom = 91 }, /* dispose */
         { .hash_next = 3, .flags = 0x00, .atom = 523 }, /* move */
         { .hash_next = 0, .flags = 0x00, .atom = 90 }, /* use */
@@ -2131,20 +2131,20 @@ static const ROM_SHAPE_T(16, 9) js_rom_sh_82 = {
 ROM_SHAPE_CHECK(js_rom_sh_82, 16);
 
 static const ROM_SHAPE_T(4, 3) js_rom_sh_83 = {
-    .hash = { [ROM_HPAD(4) - 1 - 2] = 2, [ROM_HPAD(4) - 1 - 3] = 3, },
+    .hash = { [ROM_HPAD(4) - 1 - 0] = 3, [ROM_HPAD(4) - 1 - 1] = 1, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 3, .prop_size = 3, .prop_count = 3,
             .proto = (JSObject *)&js_rom_obj[0] },
     .prop = {
         { .hash_next = 0, .flags = 0x00, .atom = 51 }, /* length */
         { .hash_next = 0, .flags = 0x00, .atom = 58 }, /* name */
-        { .hash_next = 1, .flags = 0x00, .atom = 63 }, /* prototype */
+        { .hash_next = 2, .flags = 0x00, .atom = 63 }, /* prototype */
     },
 };
 ROM_SHAPE_CHECK(js_rom_sh_83, 4);
 
 static const ROM_SHAPE_T(4, 2) js_rom_sh_84 = {
-    .hash = { [ROM_HPAD(4) - 1 - 0] = 2, [ROM_HPAD(4) - 1 - 2] = 1, },
+    .hash = { [ROM_HPAD(4) - 1 - 1] = 2, [ROM_HPAD(4) - 1 - 3] = 1, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 3, .prop_size = 2, .prop_count = 2,
             .proto = (JSObject *)&js_rom_obj[0] },
@@ -2156,20 +2156,20 @@ static const ROM_SHAPE_T(4, 2) js_rom_sh_84 = {
 ROM_SHAPE_CHECK(js_rom_sh_84, 4);
 
 static const ROM_SHAPE_T(4, 3) js_rom_sh_85 = {
-    .hash = { [ROM_HPAD(4) - 1 - 2] = 2, [ROM_HPAD(4) - 1 - 3] = 3, },
+    .hash = { [ROM_HPAD(4) - 1 - 0] = 3, [ROM_HPAD(4) - 1 - 1] = 1, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 3, .prop_size = 3, .prop_count = 3,
             .proto = (JSObject *)&js_rom_obj[47] },
     .prop = {
         { .hash_next = 0, .flags = 0x00, .atom = 51 }, /* length */
         { .hash_next = 0, .flags = 0x00, .atom = 58 }, /* name */
-        { .hash_next = 1, .flags = 0x00, .atom = 63 }, /* prototype */
+        { .hash_next = 2, .flags = 0x00, .atom = 63 }, /* prototype */
     },
 };
 ROM_SHAPE_CHECK(js_rom_sh_85, 4);
 
 static const ROM_SHAPE_T(4, 3) js_rom_sh_86 = {
-    .hash = { [ROM_HPAD(4) - 1 - 1] = 1, [ROM_HPAD(4) - 1 - 2] = 2, [ROM_HPAD(4) - 1 - 3] = 3, },
+    .hash = { [ROM_HPAD(4) - 1 - 0] = 1, [ROM_HPAD(4) - 1 - 1] = 2, [ROM_HPAD(4) - 1 - 3] = 3, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 3, .prop_size = 3, .prop_count = 3,
             .proto = (JSObject *)&js_rom_obj[169] },
@@ -2182,7 +2182,7 @@ static const ROM_SHAPE_T(4, 3) js_rom_sh_86 = {
 ROM_SHAPE_CHECK(js_rom_sh_86, 4);
 
 static const ROM_SHAPE_T(4, 3) js_rom_sh_87 = {
-    .hash = { [ROM_HPAD(4) - 1 - 0] = 2, [ROM_HPAD(4) - 1 - 2] = 1, [ROM_HPAD(4) - 1 - 3] = 3, },
+    .hash = { [ROM_HPAD(4) - 1 - 0] = 3, [ROM_HPAD(4) - 1 - 1] = 2, [ROM_HPAD(4) - 1 - 3] = 1, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 3, .prop_size = 3, .prop_count = 3,
             .proto = (JSObject *)&js_rom_obj[0] },
@@ -2195,20 +2195,20 @@ static const ROM_SHAPE_T(4, 3) js_rom_sh_87 = {
 ROM_SHAPE_CHECK(js_rom_sh_87, 4);
 
 static const ROM_SHAPE_T(4, 3) js_rom_sh_88 = {
-    .hash = { [ROM_HPAD(4) - 1 - 2] = 2, [ROM_HPAD(4) - 1 - 3] = 3, },
+    .hash = { [ROM_HPAD(4) - 1 - 0] = 3, [ROM_HPAD(4) - 1 - 1] = 1, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 3, .prop_size = 3, .prop_count = 3,
             .proto = (JSObject *)&js_rom_obj[47] },
     .prop = {
         { .hash_next = 0, .flags = 0x00, .atom = 51 }, /* length */
         { .hash_next = 0, .flags = 0x00, .atom = 58 }, /* name */
-        { .hash_next = 1, .flags = 0x00, .atom = 63 }, /* prototype */
+        { .hash_next = 2, .flags = 0x00, .atom = 63 }, /* prototype */
     },
 };
 ROM_SHAPE_CHECK(js_rom_sh_88, 4);
 
 static const ROM_SHAPE_T(8, 5) js_rom_sh_89 = {
-    .hash = { [ROM_HPAD(8) - 1 - 0] = 5, [ROM_HPAD(8) - 1 - 1] = 1, [ROM_HPAD(8) - 1 - 6] = 4, [ROM_HPAD(8) - 1 - 7] = 3, },
+    .hash = { [ROM_HPAD(8) - 1 - 1] = 1, [ROM_HPAD(8) - 1 - 2] = 2, [ROM_HPAD(8) - 1 - 3] = 5, [ROM_HPAD(8) - 1 - 6] = 3, [ROM_HPAD(8) - 1 - 7] = 4, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 7, .prop_size = 5, .prop_count = 5,
             .proto = (JSObject *)&js_rom_obj[169] },
@@ -2216,24 +2216,24 @@ static const ROM_SHAPE_T(8, 5) js_rom_sh_89 = {
         { .hash_next = 0, .flags = 0x00, .atom = 113 }, /* next */
         { .hash_next = 0, .flags = 0x00, .atom = 6 }, /* return */
         { .hash_next = 0, .flags = 0x00, .atom = 23 }, /* throw */
-        { .hash_next = 2, .flags = 0x00, .atom = 238 }, /* Symbol.toStringTag */
+        { .hash_next = 0, .flags = 0x00, .atom = 238 }, /* Symbol.toStringTag */
         { .hash_next = 0, .flags = 0x00, .atom = 64 }, /* constructor */
     },
 };
 ROM_SHAPE_CHECK(js_rom_sh_89, 8);
 
 static const ROM_SHAPE_T(16, 9) js_rom_sh_90 = {
-    .hash = { [ROM_HPAD(16) - 1 - 0] = 9, [ROM_HPAD(16) - 1 - 5] = 7, [ROM_HPAD(16) - 1 - 7] = 2, [ROM_HPAD(16) - 1 - 8] = 1, [ROM_HPAD(16) - 1 - 10] = 5, [ROM_HPAD(16) - 1 - 11] = 4, [ROM_HPAD(16) - 1 - 12] = 6, [ROM_HPAD(16) - 1 - 14] = 8, },
+    .hash = { [ROM_HPAD(16) - 1 - 0] = 6, [ROM_HPAD(16) - 1 - 2] = 3, [ROM_HPAD(16) - 1 - 6] = 5, [ROM_HPAD(16) - 1 - 7] = 9, [ROM_HPAD(16) - 1 - 9] = 7, [ROM_HPAD(16) - 1 - 12] = 4, [ROM_HPAD(16) - 1 - 14] = 8, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 15, .prop_size = 9, .prop_count = 9,
             .proto = (JSObject *)&js_rom_obj[1] },
     .prop = {
         { .hash_next = 0, .flags = 0x00, .atom = 312 }, /* adopt */
-        { .hash_next = 0, .flags = 0x00, .atom = 359 }, /* defer */
-        { .hash_next = 0, .flags = 0x00, .atom = 92 }, /* disposeAsync */
+        { .hash_next = 1, .flags = 0x00, .atom = 359 }, /* defer */
+        { .hash_next = 2, .flags = 0x00, .atom = 92 }, /* disposeAsync */
         { .hash_next = 0, .flags = 0x00, .atom = 523 }, /* move */
         { .hash_next = 0, .flags = 0x00, .atom = 90 }, /* use */
-        { .hash_next = 3, .flags = 0x10, .atom = 364 }, /* disposed */
+        { .hash_next = 0, .flags = 0x10, .atom = 364 }, /* disposed */
         { .hash_next = 0, .flags = 0x00, .atom = 245 }, /* Symbol.asyncDispose */
         { .hash_next = 0, .flags = 0x00, .atom = 238 }, /* Symbol.toStringTag */
         { .hash_next = 0, .flags = 0x00, .atom = 64 }, /* constructor */
@@ -2242,60 +2242,60 @@ static const ROM_SHAPE_T(16, 9) js_rom_sh_90 = {
 ROM_SHAPE_CHECK(js_rom_sh_90, 16);
 
 static const ROM_SHAPE_T(4, 3) js_rom_sh_91 = {
-    .hash = { [ROM_HPAD(4) - 1 - 0] = 3, [ROM_HPAD(4) - 1 - 2] = 2, },
+    .hash = { [ROM_HPAD(4) - 1 - 1] = 3, [ROM_HPAD(4) - 1 - 2] = 1, [ROM_HPAD(4) - 1 - 3] = 2, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 3, .prop_size = 3, .prop_count = 3,
             .proto = (JSObject *)&js_rom_obj[1] },
     .prop = {
         { .hash_next = 0, .flags = 0x00, .atom = 360 }, /* deref */
         { .hash_next = 0, .flags = 0x00, .atom = 238 }, /* Symbol.toStringTag */
-        { .hash_next = 1, .flags = 0x00, .atom = 64 }, /* constructor */
+        { .hash_next = 0, .flags = 0x00, .atom = 64 }, /* constructor */
     },
 };
 ROM_SHAPE_CHECK(js_rom_sh_91, 4);
 
 static const ROM_SHAPE_T(4, 3) js_rom_sh_92 = {
-    .hash = { [ROM_HPAD(4) - 1 - 2] = 2, [ROM_HPAD(4) - 1 - 3] = 3, },
+    .hash = { [ROM_HPAD(4) - 1 - 0] = 3, [ROM_HPAD(4) - 1 - 1] = 1, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 3, .prop_size = 3, .prop_count = 3,
             .proto = (JSObject *)&js_rom_obj[0] },
     .prop = {
         { .hash_next = 0, .flags = 0x00, .atom = 51 }, /* length */
         { .hash_next = 0, .flags = 0x00, .atom = 58 }, /* name */
-        { .hash_next = 1, .flags = 0x00, .atom = 63 }, /* prototype */
+        { .hash_next = 2, .flags = 0x00, .atom = 63 }, /* prototype */
     },
 };
 ROM_SHAPE_CHECK(js_rom_sh_92, 4);
 
 static const ROM_SHAPE_T(4, 4) js_rom_sh_93 = {
-    .hash = { [ROM_HPAD(4) - 1 - 0] = 4, [ROM_HPAD(4) - 1 - 2] = 3, },
+    .hash = { [ROM_HPAD(4) - 1 - 1] = 4, [ROM_HPAD(4) - 1 - 2] = 2, [ROM_HPAD(4) - 1 - 3] = 3, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 3, .prop_size = 4, .prop_count = 4,
             .proto = (JSObject *)&js_rom_obj[1] },
     .prop = {
         { .hash_next = 0, .flags = 0x00, .atom = 546 }, /* register */
-        { .hash_next = 0, .flags = 0x00, .atom = 656 }, /* unregister */
-        { .hash_next = 1, .flags = 0x00, .atom = 238 }, /* Symbol.toStringTag */
-        { .hash_next = 2, .flags = 0x00, .atom = 64 }, /* constructor */
+        { .hash_next = 1, .flags = 0x00, .atom = 656 }, /* unregister */
+        { .hash_next = 0, .flags = 0x00, .atom = 238 }, /* Symbol.toStringTag */
+        { .hash_next = 0, .flags = 0x00, .atom = 64 }, /* constructor */
     },
 };
 ROM_SHAPE_CHECK(js_rom_sh_93, 4);
 
 static const ROM_SHAPE_T(4, 3) js_rom_sh_94 = {
-    .hash = { [ROM_HPAD(4) - 1 - 2] = 2, [ROM_HPAD(4) - 1 - 3] = 3, },
+    .hash = { [ROM_HPAD(4) - 1 - 0] = 3, [ROM_HPAD(4) - 1 - 1] = 1, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 3, .prop_size = 3, .prop_count = 3,
             .proto = (JSObject *)&js_rom_obj[0] },
     .prop = {
         { .hash_next = 0, .flags = 0x00, .atom = 51 }, /* length */
         { .hash_next = 0, .flags = 0x00, .atom = 58 }, /* name */
-        { .hash_next = 1, .flags = 0x00, .atom = 63 }, /* prototype */
+        { .hash_next = 2, .flags = 0x00, .atom = 63 }, /* prototype */
     },
 };
 ROM_SHAPE_CHECK(js_rom_sh_94, 4);
 
 static const ROM_SHAPE_T(64, 30) js_rom_sh_95 = {
-    .hash = { [ROM_HPAD(64) - 1 - 0] = 15, [ROM_HPAD(64) - 1 - 1] = 20, [ROM_HPAD(64) - 1 - 2] = 10, [ROM_HPAD(64) - 1 - 3] = 18, [ROM_HPAD(64) - 1 - 4] = 29, [ROM_HPAD(64) - 1 - 5] = 16, [ROM_HPAD(64) - 1 - 15] = 19, [ROM_HPAD(64) - 1 - 17] = 24, [ROM_HPAD(64) - 1 - 18] = 13, [ROM_HPAD(64) - 1 - 19] = 14, [ROM_HPAD(64) - 1 - 20] = 11, [ROM_HPAD(64) - 1 - 21] = 12, [ROM_HPAD(64) - 1 - 25] = 27, [ROM_HPAD(64) - 1 - 27] = 23, [ROM_HPAD(64) - 1 - 30] = 17, [ROM_HPAD(64) - 1 - 31] = 28, [ROM_HPAD(64) - 1 - 32] = 22, [ROM_HPAD(64) - 1 - 34] = 26, [ROM_HPAD(64) - 1 - 36] = 21, [ROM_HPAD(64) - 1 - 37] = 9, [ROM_HPAD(64) - 1 - 46] = 4, [ROM_HPAD(64) - 1 - 52] = 2, [ROM_HPAD(64) - 1 - 54] = 25, [ROM_HPAD(64) - 1 - 58] = 30, [ROM_HPAD(64) - 1 - 59] = 7, [ROM_HPAD(64) - 1 - 62] = 8, [ROM_HPAD(64) - 1 - 63] = 6, },
+    .hash = { [ROM_HPAD(64) - 1 - 0] = 22, [ROM_HPAD(64) - 1 - 1] = 8, [ROM_HPAD(64) - 1 - 2] = 14, [ROM_HPAD(64) - 1 - 6] = 23, [ROM_HPAD(64) - 1 - 9] = 1, [ROM_HPAD(64) - 1 - 10] = 20, [ROM_HPAD(64) - 1 - 15] = 17, [ROM_HPAD(64) - 1 - 17] = 24, [ROM_HPAD(64) - 1 - 19] = 29, [ROM_HPAD(64) - 1 - 21] = 27, [ROM_HPAD(64) - 1 - 25] = 6, [ROM_HPAD(64) - 1 - 27] = 11, [ROM_HPAD(64) - 1 - 28] = 5, [ROM_HPAD(64) - 1 - 31] = 30, [ROM_HPAD(64) - 1 - 32] = 19, [ROM_HPAD(64) - 1 - 34] = 21, [ROM_HPAD(64) - 1 - 35] = 10, [ROM_HPAD(64) - 1 - 39] = 28, [ROM_HPAD(64) - 1 - 42] = 13, [ROM_HPAD(64) - 1 - 44] = 16, [ROM_HPAD(64) - 1 - 49] = 26, [ROM_HPAD(64) - 1 - 50] = 15, [ROM_HPAD(64) - 1 - 51] = 12, [ROM_HPAD(64) - 1 - 55] = 7, [ROM_HPAD(64) - 1 - 58] = 9, [ROM_HPAD(64) - 1 - 59] = 18, [ROM_HPAD(64) - 1 - 61] = 25, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 63, .prop_size = 30, .prop_count = 30,
             .proto = (JSObject *)&js_rom_obj[132] },
@@ -2306,6 +2306,44 @@ static const ROM_SHAPE_T(64, 30) js_rom_sh_95 = {
         { .hash_next = 0, .flags = 0x00, .atom = 238 }, /* Symbol.toStringTag */
         { .hash_next = 0, .flags = 0x00, .atom = 64 }, /* constructor */
         { .hash_next = 0, .flags = 0x04, .atom = 255 }, /* INDEX_SIZE_ERR */
+        { .hash_next = 2, .flags = 0x04, .atom = 251 }, /* DOMSTRING_SIZE_ERR */
+        { .hash_next = 0, .flags = 0x04, .atom = 254 }, /* HIERARCHY_REQUEST_ERR */
+        { .hash_next = 4, .flags = 0x04, .atom = 293 }, /* WRONG_DOCUMENT_ERR */
+        { .hash_next = 0, .flags = 0x04, .atom = 258 }, /* INVALID_CHARACTER_ERR */
+        { .hash_next = 0, .flags = 0x04, .atom = 276 }, /* NO_DATA_ALLOWED_ERR */
+        { .hash_next = 0, .flags = 0x04, .atom = 277 }, /* NO_MODIFICATION_ALLOWED_ERR */
+        { .hash_next = 0, .flags = 0x04, .atom = 274 }, /* NOT_FOUND_ERR */
+        { .hash_next = 0, .flags = 0x04, .atom = 275 }, /* NOT_SUPPORTED_ERR */
+        { .hash_next = 0, .flags = 0x04, .atom = 256 }, /* INUSE_ATTRIBUTE_ERR */
+        { .hash_next = 0, .flags = 0x04, .atom = 261 }, /* INVALID_STATE_ERR */
+        { .hash_next = 0, .flags = 0x04, .atom = 286 }, /* SYNTAX_ERR */
+        { .hash_next = 0, .flags = 0x04, .atom = 259 }, /* INVALID_MODIFICATION_ERR */
+        { .hash_next = 0, .flags = 0x04, .atom = 271 }, /* NAMESPACE_ERR */
+        { .hash_next = 0, .flags = 0x04, .atom = 257 }, /* INVALID_ACCESS_ERR */
+        { .hash_next = 3, .flags = 0x04, .atom = 292 }, /* VALIDATION_ERR */
+        { .hash_next = 0, .flags = 0x04, .atom = 288 }, /* TYPE_MISMATCH_ERR */
+        { .hash_next = 0, .flags = 0x04, .atom = 283 }, /* SECURITY_ERR */
+        { .hash_next = 0, .flags = 0x04, .atom = 273 }, /* NETWORK_ERR */
+        { .hash_next = 0, .flags = 0x04, .atom = 246 }, /* ABORT_ERR */
+        { .hash_next = 0, .flags = 0x04, .atom = 290 }, /* URL_MISMATCH_ERR */
+        { .hash_next = 0, .flags = 0x04, .atom = 281 }, /* QUOTA_EXCEEDED_ERR */
+        { .hash_next = 0, .flags = 0x04, .atom = 287 }, /* TIMEOUT_ERR */
+        { .hash_next = 0, .flags = 0x04, .atom = 260 }, /* INVALID_NODE_TYPE_ERR */
+        { .hash_next = 0, .flags = 0x04, .atom = 250 }, /* DATA_CLONE_ERR */
+    },
+};
+ROM_SHAPE_CHECK(js_rom_sh_95, 64);
+
+static const ROM_SHAPE_T(32, 28) js_rom_sh_96 = {
+    .hash = { [ROM_HPAD(32) - 1 - 0] = 20, [ROM_HPAD(32) - 1 - 1] = 12, [ROM_HPAD(32) - 1 - 2] = 3, [ROM_HPAD(32) - 1 - 3] = 21, [ROM_HPAD(32) - 1 - 4] = 2, [ROM_HPAD(32) - 1 - 5] = 18, [ROM_HPAD(32) - 1 - 7] = 15, [ROM_HPAD(32) - 1 - 8] = 22, [ROM_HPAD(32) - 1 - 9] = 27, [ROM_HPAD(32) - 1 - 10] = 25, [ROM_HPAD(32) - 1 - 12] = 4, [ROM_HPAD(32) - 1 - 13] = 9, [ROM_HPAD(32) - 1 - 15] = 28, [ROM_HPAD(32) - 1 - 16] = 17, [ROM_HPAD(32) - 1 - 17] = 19, [ROM_HPAD(32) - 1 - 19] = 26, [ROM_HPAD(32) - 1 - 21] = 11, [ROM_HPAD(32) - 1 - 22] = 14, [ROM_HPAD(32) - 1 - 24] = 24, [ROM_HPAD(32) - 1 - 25] = 13, [ROM_HPAD(32) - 1 - 27] = 5, [ROM_HPAD(32) - 1 - 29] = 16, [ROM_HPAD(32) - 1 - 30] = 23, },
+    .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
+            .prop_hash_mask = 31, .prop_size = 28, .prop_count = 28,
+            .proto = (JSObject *)&js_rom_obj[0] },
+    .prop = {
+        { .hash_next = 0, .flags = 0x00, .atom = 51 }, /* length */
+        { .hash_next = 0, .flags = 0x00, .atom = 58 }, /* name */
+        { .hash_next = 0, .flags = 0x00, .atom = 63 }, /* prototype */
+        { .hash_next = 0, .flags = 0x04, .atom = 255 }, /* INDEX_SIZE_ERR */
         { .hash_next = 0, .flags = 0x04, .atom = 251 }, /* DOMSTRING_SIZE_ERR */
         { .hash_next = 0, .flags = 0x04, .atom = 254 }, /* HIERARCHY_REQUEST_ERR */
         { .hash_next = 0, .flags = 0x04, .atom = 293 }, /* WRONG_DOCUMENT_ERR */
@@ -2314,15 +2352,15 @@ static const ROM_SHAPE_T(64, 30) js_rom_sh_95 = {
         { .hash_next = 0, .flags = 0x04, .atom = 277 }, /* NO_MODIFICATION_ALLOWED_ERR */
         { .hash_next = 0, .flags = 0x04, .atom = 274 }, /* NOT_FOUND_ERR */
         { .hash_next = 0, .flags = 0x04, .atom = 275 }, /* NOT_SUPPORTED_ERR */
-        { .hash_next = 5, .flags = 0x04, .atom = 256 }, /* INUSE_ATTRIBUTE_ERR */
+        { .hash_next = 10, .flags = 0x04, .atom = 256 }, /* INUSE_ATTRIBUTE_ERR */
         { .hash_next = 0, .flags = 0x04, .atom = 261 }, /* INVALID_STATE_ERR */
         { .hash_next = 0, .flags = 0x04, .atom = 286 }, /* SYNTAX_ERR */
-        { .hash_next = 0, .flags = 0x04, .atom = 259 }, /* INVALID_MODIFICATION_ERR */
+        { .hash_next = 7, .flags = 0x04, .atom = 259 }, /* INVALID_MODIFICATION_ERR */
         { .hash_next = 0, .flags = 0x04, .atom = 271 }, /* NAMESPACE_ERR */
         { .hash_next = 0, .flags = 0x04, .atom = 257 }, /* INVALID_ACCESS_ERR */
-        { .hash_next = 0, .flags = 0x04, .atom = 292 }, /* VALIDATION_ERR */
-        { .hash_next = 0, .flags = 0x04, .atom = 288 }, /* TYPE_MISMATCH_ERR */
-        { .hash_next = 3, .flags = 0x04, .atom = 283 }, /* SECURITY_ERR */
+        { .hash_next = 8, .flags = 0x04, .atom = 292 }, /* VALIDATION_ERR */
+        { .hash_next = 6, .flags = 0x04, .atom = 288 }, /* TYPE_MISMATCH_ERR */
+        { .hash_next = 0, .flags = 0x04, .atom = 283 }, /* SECURITY_ERR */
         { .hash_next = 0, .flags = 0x04, .atom = 273 }, /* NETWORK_ERR */
         { .hash_next = 0, .flags = 0x04, .atom = 246 }, /* ABORT_ERR */
         { .hash_next = 0, .flags = 0x04, .atom = 290 }, /* URL_MISMATCH_ERR */
@@ -2332,48 +2370,10 @@ static const ROM_SHAPE_T(64, 30) js_rom_sh_95 = {
         { .hash_next = 1, .flags = 0x04, .atom = 250 }, /* DATA_CLONE_ERR */
     },
 };
-ROM_SHAPE_CHECK(js_rom_sh_95, 64);
-
-static const ROM_SHAPE_T(32, 28) js_rom_sh_96 = {
-    .hash = { [ROM_HPAD(32) - 1 - 0] = 20, [ROM_HPAD(32) - 1 - 1] = 18, [ROM_HPAD(32) - 1 - 2] = 24, [ROM_HPAD(32) - 1 - 3] = 16, [ROM_HPAD(32) - 1 - 4] = 27, [ROM_HPAD(32) - 1 - 5] = 14, [ROM_HPAD(32) - 1 - 15] = 17, [ROM_HPAD(32) - 1 - 17] = 22, [ROM_HPAD(32) - 1 - 18] = 11, [ROM_HPAD(32) - 1 - 19] = 12, [ROM_HPAD(32) - 1 - 20] = 9, [ROM_HPAD(32) - 1 - 21] = 10, [ROM_HPAD(32) - 1 - 22] = 23, [ROM_HPAD(32) - 1 - 25] = 25, [ROM_HPAD(32) - 1 - 26] = 28, [ROM_HPAD(32) - 1 - 27] = 21, [ROM_HPAD(32) - 1 - 30] = 15, [ROM_HPAD(32) - 1 - 31] = 26, },
-    .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
-            .prop_hash_mask = 31, .prop_size = 28, .prop_count = 28,
-            .proto = (JSObject *)&js_rom_obj[0] },
-    .prop = {
-        { .hash_next = 0, .flags = 0x00, .atom = 51 }, /* length */
-        { .hash_next = 0, .flags = 0x00, .atom = 58 }, /* name */
-        { .hash_next = 0, .flags = 0x00, .atom = 63 }, /* prototype */
-        { .hash_next = 3, .flags = 0x04, .atom = 255 }, /* INDEX_SIZE_ERR */
-        { .hash_next = 0, .flags = 0x04, .atom = 251 }, /* DOMSTRING_SIZE_ERR */
-        { .hash_next = 0, .flags = 0x04, .atom = 254 }, /* HIERARCHY_REQUEST_ERR */
-        { .hash_next = 0, .flags = 0x04, .atom = 293 }, /* WRONG_DOCUMENT_ERR */
-        { .hash_next = 0, .flags = 0x04, .atom = 258 }, /* INVALID_CHARACTER_ERR */
-        { .hash_next = 0, .flags = 0x04, .atom = 276 }, /* NO_DATA_ALLOWED_ERR */
-        { .hash_next = 0, .flags = 0x04, .atom = 277 }, /* NO_MODIFICATION_ALLOWED_ERR */
-        { .hash_next = 0, .flags = 0x04, .atom = 274 }, /* NOT_FOUND_ERR */
-        { .hash_next = 1, .flags = 0x04, .atom = 275 }, /* NOT_SUPPORTED_ERR */
-        { .hash_next = 0, .flags = 0x04, .atom = 256 }, /* INUSE_ATTRIBUTE_ERR */
-        { .hash_next = 7, .flags = 0x04, .atom = 261 }, /* INVALID_STATE_ERR */
-        { .hash_next = 6, .flags = 0x04, .atom = 286 }, /* SYNTAX_ERR */
-        { .hash_next = 0, .flags = 0x04, .atom = 259 }, /* INVALID_MODIFICATION_ERR */
-        { .hash_next = 0, .flags = 0x04, .atom = 271 }, /* NAMESPACE_ERR */
-        { .hash_next = 0, .flags = 0x04, .atom = 257 }, /* INVALID_ACCESS_ERR */
-        { .hash_next = 0, .flags = 0x04, .atom = 292 }, /* VALIDATION_ERR */
-        { .hash_next = 13, .flags = 0x04, .atom = 288 }, /* TYPE_MISMATCH_ERR */
-        { .hash_next = 5, .flags = 0x04, .atom = 283 }, /* SECURITY_ERR */
-        { .hash_next = 0, .flags = 0x04, .atom = 273 }, /* NETWORK_ERR */
-        { .hash_next = 0, .flags = 0x04, .atom = 246 }, /* ABORT_ERR */
-        { .hash_next = 8, .flags = 0x04, .atom = 290 }, /* URL_MISMATCH_ERR */
-        { .hash_next = 0, .flags = 0x04, .atom = 281 }, /* QUOTA_EXCEEDED_ERR */
-        { .hash_next = 4, .flags = 0x04, .atom = 287 }, /* TIMEOUT_ERR */
-        { .hash_next = 19, .flags = 0x04, .atom = 260 }, /* INVALID_NODE_TYPE_ERR */
-        { .hash_next = 2, .flags = 0x04, .atom = 250 }, /* DATA_CLONE_ERR */
-    },
-};
 ROM_SHAPE_CHECK(js_rom_sh_96, 32);
 
 static const ROM_SHAPE_T(16, 8) js_rom_sh_97 = {
-    .hash = { [ROM_HPAD(16) - 1 - 0] = 7, [ROM_HPAD(16) - 1 - 1] = 1, [ROM_HPAD(16) - 1 - 2] = 6, [ROM_HPAD(16) - 1 - 5] = 3, [ROM_HPAD(16) - 1 - 9] = 2, [ROM_HPAD(16) - 1 - 10] = 4, [ROM_HPAD(16) - 1 - 11] = 5, [ROM_HPAD(16) - 1 - 14] = 8, },
+    .hash = { [ROM_HPAD(16) - 1 - 1] = 7, [ROM_HPAD(16) - 1 - 3] = 5, [ROM_HPAD(16) - 1 - 12] = 6, [ROM_HPAD(16) - 1 - 13] = 4, [ROM_HPAD(16) - 1 - 14] = 8, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 15, .prop_size = 8, .prop_count = 8,
             .proto = (JSObject *)&js_rom_obj[1] },
@@ -2381,17 +2381,17 @@ static const ROM_SHAPE_T(16, 8) js_rom_sh_97 = {
         { .hash_next = 0, .flags = 0x00, .atom = 497 }, /* isNative */
         { .hash_next = 0, .flags = 0x00, .atom = 489 }, /* isConstructor */
         { .hash_next = 0, .flags = 0x00, .atom = 437 }, /* getFileName */
-        { .hash_next = 0, .flags = 0x00, .atom = 442 }, /* getFunction */
+        { .hash_next = 1, .flags = 0x00, .atom = 442 }, /* getFunction */
         { .hash_next = 0, .flags = 0x00, .atom = 443 }, /* getFunctionName */
-        { .hash_next = 0, .flags = 0x00, .atom = 434 }, /* getColumnNumber */
+        { .hash_next = 2, .flags = 0x00, .atom = 434 }, /* getColumnNumber */
         { .hash_next = 0, .flags = 0x00, .atom = 448 }, /* getLineNumber */
-        { .hash_next = 0, .flags = 0x00, .atom = 238 }, /* Symbol.toStringTag */
+        { .hash_next = 3, .flags = 0x00, .atom = 238 }, /* Symbol.toStringTag */
     },
 };
 ROM_SHAPE_CHECK(js_rom_sh_97, 16);
 
 static const ROM_SHAPE_T(64, 46) js_rom_sh_98 = {
-    .hash = { [ROM_HPAD(64) - 1 - 0] = 9, [ROM_HPAD(64) - 1 - 1] = 24, [ROM_HPAD(64) - 1 - 2] = 14, [ROM_HPAD(64) - 1 - 3] = 29, [ROM_HPAD(64) - 1 - 4] = 27, [ROM_HPAD(64) - 1 - 5] = 28, [ROM_HPAD(64) - 1 - 6] = 10, [ROM_HPAD(64) - 1 - 7] = 40, [ROM_HPAD(64) - 1 - 8] = 41, [ROM_HPAD(64) - 1 - 9] = 43, [ROM_HPAD(64) - 1 - 10] = 42, [ROM_HPAD(64) - 1 - 12] = 18, [ROM_HPAD(64) - 1 - 13] = 34, [ROM_HPAD(64) - 1 - 16] = 19, [ROM_HPAD(64) - 1 - 17] = 16, [ROM_HPAD(64) - 1 - 18] = 21, [ROM_HPAD(64) - 1 - 20] = 30, [ROM_HPAD(64) - 1 - 21] = 5, [ROM_HPAD(64) - 1 - 23] = 44, [ROM_HPAD(64) - 1 - 25] = 15, [ROM_HPAD(64) - 1 - 26] = 36, [ROM_HPAD(64) - 1 - 28] = 45, [ROM_HPAD(64) - 1 - 29] = 46, [ROM_HPAD(64) - 1 - 31] = 32, [ROM_HPAD(64) - 1 - 34] = 35, [ROM_HPAD(64) - 1 - 35] = 20, [ROM_HPAD(64) - 1 - 37] = 37, [ROM_HPAD(64) - 1 - 41] = 17, [ROM_HPAD(64) - 1 - 42] = 22, [ROM_HPAD(64) - 1 - 46] = 38, [ROM_HPAD(64) - 1 - 53] = 3, [ROM_HPAD(64) - 1 - 54] = 13, [ROM_HPAD(64) - 1 - 55] = 26, [ROM_HPAD(64) - 1 - 56] = 33, [ROM_HPAD(64) - 1 - 60] = 39, },
+    .hash = { [ROM_HPAD(64) - 1 - 0] = 2, [ROM_HPAD(64) - 1 - 1] = 3, [ROM_HPAD(64) - 1 - 2] = 18, [ROM_HPAD(64) - 1 - 3] = 22, [ROM_HPAD(64) - 1 - 6] = 35, [ROM_HPAD(64) - 1 - 7] = 19, [ROM_HPAD(64) - 1 - 9] = 37, [ROM_HPAD(64) - 1 - 10] = 36, [ROM_HPAD(64) - 1 - 13] = 12, [ROM_HPAD(64) - 1 - 14] = 43, [ROM_HPAD(64) - 1 - 15] = 26, [ROM_HPAD(64) - 1 - 16] = 39, [ROM_HPAD(64) - 1 - 18] = 25, [ROM_HPAD(64) - 1 - 21] = 14, [ROM_HPAD(64) - 1 - 24] = 1, [ROM_HPAD(64) - 1 - 26] = 32, [ROM_HPAD(64) - 1 - 29] = 40, [ROM_HPAD(64) - 1 - 30] = 45, [ROM_HPAD(64) - 1 - 32] = 16, [ROM_HPAD(64) - 1 - 33] = 10, [ROM_HPAD(64) - 1 - 36] = 44, [ROM_HPAD(64) - 1 - 38] = 42, [ROM_HPAD(64) - 1 - 39] = 33, [ROM_HPAD(64) - 1 - 40] = 34, [ROM_HPAD(64) - 1 - 43] = 17, [ROM_HPAD(64) - 1 - 45] = 29, [ROM_HPAD(64) - 1 - 50] = 23, [ROM_HPAD(64) - 1 - 52] = 4, [ROM_HPAD(64) - 1 - 53] = 41, [ROM_HPAD(64) - 1 - 54] = 13, [ROM_HPAD(64) - 1 - 55] = 46, [ROM_HPAD(64) - 1 - 56] = 21, [ROM_HPAD(64) - 1 - 57] = 11, [ROM_HPAD(64) - 1 - 58] = 38, [ROM_HPAD(64) - 1 - 60] = 7, [ROM_HPAD(64) - 1 - 61] = 31, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 63, .prop_size = 46, .prop_count = 46,
             .proto = (JSObject *)&js_rom_obj[1] },
@@ -2408,46 +2408,46 @@ static const ROM_SHAPE_T(64, 46) js_rom_sh_98 = {
         { .hash_next = 0, .flags = 0x00, .atom = 326 }, /* atan */
         { .hash_next = 0, .flags = 0x00, .atom = 327 }, /* atan2 */
         { .hash_next = 0, .flags = 0x00, .atom = 354 }, /* cos */
-        { .hash_next = 8, .flags = 0x00, .atom = 374 }, /* exp */
+        { .hash_next = 0, .flags = 0x00, .atom = 374 }, /* exp */
         { .hash_next = 0, .flags = 0x00, .atom = 514 }, /* log */
         { .hash_next = 0, .flags = 0x00, .atom = 537 }, /* pow */
         { .hash_next = 0, .flags = 0x00, .atom = 593 }, /* sin */
         { .hash_next = 0, .flags = 0x00, .atom = 617 }, /* tan */
         { .hash_next = 0, .flags = 0x00, .atom = 652 }, /* trunc */
-        { .hash_next = 0, .flags = 0x00, .atom = 592 }, /* sign */
-        { .hash_next = 0, .flags = 0x00, .atom = 355 }, /* cosh */
+        { .hash_next = 15, .flags = 0x00, .atom = 592 }, /* sign */
+        { .hash_next = 6, .flags = 0x00, .atom = 355 }, /* cosh */
         { .hash_next = 0, .flags = 0x00, .atom = 594 }, /* sinh */
-        { .hash_next = 6, .flags = 0x00, .atom = 618 }, /* tanh */
+        { .hash_next = 0, .flags = 0x00, .atom = 618 }, /* tanh */
         { .hash_next = 0, .flags = 0x00, .atom = 311 }, /* acosh */
         { .hash_next = 0, .flags = 0x00, .atom = 321 }, /* asinh */
         { .hash_next = 0, .flags = 0x00, .atom = 328 }, /* atanh */
-        { .hash_next = 23, .flags = 0x00, .atom = 375 }, /* expm1 */
+        { .hash_next = 0, .flags = 0x00, .atom = 375 }, /* expm1 */
         { .hash_next = 0, .flags = 0x00, .atom = 516 }, /* log1p */
         { .hash_next = 0, .flags = 0x00, .atom = 517 }, /* log2 */
-        { .hash_next = 4, .flags = 0x00, .atom = 515 }, /* log10 */
+        { .hash_next = 0, .flags = 0x00, .atom = 515 }, /* log10 */
         { .hash_next = 0, .flags = 0x00, .atom = 340 }, /* cbrt */
         { .hash_next = 0, .flags = 0x00, .atom = 479 }, /* hypot */
-        { .hash_next = 31, .flags = 0x00, .atom = 543 }, /* random */
-        { .hash_next = 0, .flags = 0x00, .atom = 376 }, /* f16round */
+        { .hash_next = 8, .flags = 0x00, .atom = 543 }, /* random */
+        { .hash_next = 24, .flags = 0x00, .atom = 376 }, /* f16round */
         { .hash_next = 0, .flags = 0x00, .atom = 397 }, /* fround */
-        { .hash_next = 12, .flags = 0x00, .atom = 482 }, /* imul */
-        { .hash_next = 7, .flags = 0x00, .atom = 346 }, /* clz32 */
+        { .hash_next = 27, .flags = 0x00, .atom = 482 }, /* imul */
+        { .hash_next = 0, .flags = 0x00, .atom = 346 }, /* clz32 */
         { .hash_next = 0, .flags = 0x00, .atom = 613 }, /* sumPrecise */
         { .hash_next = 0, .flags = 0x00, .atom = 238 }, /* Symbol.toStringTag */
-        { .hash_next = 0, .flags = 0x00, .atom = 252 }, /* E */
-        { .hash_next = 11, .flags = 0x00, .atom = 263 }, /* LN10 */
-        { .hash_next = 25, .flags = 0x00, .atom = 264 }, /* LN2 */
-        { .hash_next = 1, .flags = 0x00, .atom = 266 }, /* LOG2E */
-        { .hash_next = 2, .flags = 0x00, .atom = 265 }, /* LOG10E */
+        { .hash_next = 5, .flags = 0x00, .atom = 252 }, /* E */
+        { .hash_next = 0, .flags = 0x00, .atom = 263 }, /* LN10 */
+        { .hash_next = 0, .flags = 0x00, .atom = 264 }, /* LN2 */
+        { .hash_next = 20, .flags = 0x00, .atom = 266 }, /* LOG2E */
+        { .hash_next = 9, .flags = 0x00, .atom = 265 }, /* LOG10E */
         { .hash_next = 0, .flags = 0x00, .atom = 279 }, /* PI */
-        { .hash_next = 0, .flags = 0x00, .atom = 284 }, /* SQRT1_2 */
-        { .hash_next = 0, .flags = 0x00, .atom = 285 }, /* SQRT2 */
+        { .hash_next = 28, .flags = 0x00, .atom = 284 }, /* SQRT1_2 */
+        { .hash_next = 30, .flags = 0x00, .atom = 285 }, /* SQRT2 */
     },
 };
 ROM_SHAPE_CHECK(js_rom_sh_98, 64);
 
 static const ROM_SHAPE_T(32, 14) js_rom_sh_99 = {
-    .hash = { [ROM_HPAD(32) - 1 - 2] = 1, [ROM_HPAD(32) - 1 - 5] = 5, [ROM_HPAD(32) - 1 - 6] = 12, [ROM_HPAD(32) - 1 - 7] = 13, [ROM_HPAD(32) - 1 - 8] = 9, [ROM_HPAD(32) - 1 - 9] = 11, [ROM_HPAD(32) - 1 - 10] = 8, [ROM_HPAD(32) - 1 - 11] = 4, [ROM_HPAD(32) - 1 - 12] = 3, [ROM_HPAD(32) - 1 - 13] = 6, [ROM_HPAD(32) - 1 - 14] = 14, },
+    .hash = { [ROM_HPAD(32) - 1 - 0] = 10, [ROM_HPAD(32) - 1 - 3] = 11, [ROM_HPAD(32) - 1 - 8] = 3, [ROM_HPAD(32) - 1 - 10] = 13, [ROM_HPAD(32) - 1 - 11] = 5, [ROM_HPAD(32) - 1 - 13] = 1, [ROM_HPAD(32) - 1 - 15] = 8, [ROM_HPAD(32) - 1 - 18] = 2, [ROM_HPAD(32) - 1 - 20] = 6, [ROM_HPAD(32) - 1 - 23] = 12, [ROM_HPAD(32) - 1 - 27] = 4, [ROM_HPAD(32) - 1 - 29] = 14, [ROM_HPAD(32) - 1 - 30] = 7, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 31, .prop_size = 14, .prop_count = 14,
             .proto = (JSObject *)&js_rom_obj[1] },
@@ -2456,50 +2456,50 @@ static const ROM_SHAPE_T(32, 14) js_rom_sh_99 = {
         { .hash_next = 0, .flags = 0x00, .atom = 101 }, /* construct */
         { .hash_next = 0, .flags = 0x00, .atom = 108 }, /* defineProperty */
         { .hash_next = 0, .flags = 0x00, .atom = 107 }, /* deleteProperty */
-        { .hash_next = 2, .flags = 0x00, .atom = 69 }, /* get */
+        { .hash_next = 0, .flags = 0x00, .atom = 69 }, /* get */
         { .hash_next = 0, .flags = 0x00, .atom = 109 }, /* getOwnPropertyDescriptor */
         { .hash_next = 0, .flags = 0x00, .atom = 102 }, /* getPrototypeOf */
         { .hash_next = 0, .flags = 0x00, .atom = 106 }, /* has */
         { .hash_next = 0, .flags = 0x00, .atom = 104 }, /* isExtensible */
         { .hash_next = 0, .flags = 0x00, .atom = 110 }, /* ownKeys */
         { .hash_next = 0, .flags = 0x00, .atom = 105 }, /* preventExtensions */
-        { .hash_next = 7, .flags = 0x00, .atom = 70 }, /* set */
+        { .hash_next = 9, .flags = 0x00, .atom = 70 }, /* set */
         { .hash_next = 0, .flags = 0x00, .atom = 103 }, /* setPrototypeOf */
-        { .hash_next = 10, .flags = 0x00, .atom = 238 }, /* Symbol.toStringTag */
+        { .hash_next = 0, .flags = 0x00, .atom = 238 }, /* Symbol.toStringTag */
     },
 };
 ROM_SHAPE_CHECK(js_rom_sh_99, 32);
 
 static const ROM_SHAPE_T(8, 5) js_rom_sh_100 = {
-    .hash = { [ROM_HPAD(8) - 1 - 0] = 4, [ROM_HPAD(8) - 1 - 3] = 2, [ROM_HPAD(8) - 1 - 6] = 5, },
+    .hash = { [ROM_HPAD(8) - 1 - 1] = 4, [ROM_HPAD(8) - 1 - 4] = 1, [ROM_HPAD(8) - 1 - 6] = 3, [ROM_HPAD(8) - 1 - 7] = 5, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 7, .prop_size = 5, .prop_count = 5,
             .proto = (JSObject *)&js_rom_obj[1] },
     .prop = {
         { .hash_next = 0, .flags = 0x00, .atom = 499 }, /* isRawJSON */
-        { .hash_next = 1, .flags = 0x00, .atom = 531 }, /* parse */
-        { .hash_next = 0, .flags = 0x00, .atom = 120 }, /* rawJSON */
-        { .hash_next = 3, .flags = 0x00, .atom = 608 }, /* stringify */
+        { .hash_next = 0, .flags = 0x00, .atom = 531 }, /* parse */
+        { .hash_next = 2, .flags = 0x00, .atom = 120 }, /* rawJSON */
+        { .hash_next = 0, .flags = 0x00, .atom = 608 }, /* stringify */
         { .hash_next = 0, .flags = 0x00, .atom = 238 }, /* Symbol.toStringTag */
     },
 };
 ROM_SHAPE_CHECK(js_rom_sh_100, 8);
 
 static const ROM_SHAPE_T(4, 3) js_rom_sh_101 = {
-    .hash = { [ROM_HPAD(4) - 1 - 1] = 3, [ROM_HPAD(4) - 1 - 2] = 2, [ROM_HPAD(4) - 1 - 3] = 1, },
+    .hash = { [ROM_HPAD(4) - 1 - 0] = 3, [ROM_HPAD(4) - 1 - 1] = 1, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 3, .prop_size = 3, .prop_count = 3,
             .proto = (JSObject *)&js_rom_obj[0] },
     .prop = {
         { .hash_next = 0, .flags = 0x00, .atom = 51 }, /* length */
         { .hash_next = 0, .flags = 0x00, .atom = 58 }, /* name */
-        { .hash_next = 0, .flags = 0x00, .atom = 553 }, /* revocable */
+        { .hash_next = 2, .flags = 0x00, .atom = 553 }, /* revocable */
     },
 };
 ROM_SHAPE_CHECK(js_rom_sh_101, 4);
 
 static const ROM_SHAPE_T(32, 14) js_rom_sh_102 = {
-    .hash = { [ROM_HPAD(32) - 1 - 0] = 8, [ROM_HPAD(32) - 1 - 1] = 4, [ROM_HPAD(32) - 1 - 14] = 14, [ROM_HPAD(32) - 1 - 15] = 10, [ROM_HPAD(32) - 1 - 16] = 3, [ROM_HPAD(32) - 1 - 19] = 12, [ROM_HPAD(32) - 1 - 21] = 6, [ROM_HPAD(32) - 1 - 22] = 11, [ROM_HPAD(32) - 1 - 28] = 2, [ROM_HPAD(32) - 1 - 30] = 9, },
+    .hash = { [ROM_HPAD(32) - 1 - 2] = 10, [ROM_HPAD(32) - 1 - 12] = 1, [ROM_HPAD(32) - 1 - 15] = 9, [ROM_HPAD(32) - 1 - 18] = 8, [ROM_HPAD(32) - 1 - 19] = 4, [ROM_HPAD(32) - 1 - 21] = 3, [ROM_HPAD(32) - 1 - 22] = 12, [ROM_HPAD(32) - 1 - 27] = 5, [ROM_HPAD(32) - 1 - 29] = 14, [ROM_HPAD(32) - 1 - 31] = 11, },
     .sh = { .header = { .ref_count = JS_IMMORTAL_REF_COUNT, .gc_obj_type = JS_GC_OBJ_TYPE_SHAPE },
             .prop_hash_mask = 31, .prop_size = 14, .prop_count = 14,
             .proto = (JSObject *)&js_rom_obj[1] },
@@ -2510,12 +2510,12 @@ static const ROM_SHAPE_T(32, 14) js_rom_sh_102 = {
         { .hash_next = 0, .flags = 0x00, .atom = 609 }, /* sub */
         { .hash_next = 0, .flags = 0x00, .atom = 662 }, /* xor */
         { .hash_next = 0, .flags = 0x00, .atom = 373 }, /* exchange */
-        { .hash_next = 0, .flags = 0x00, .atom = 350 }, /* compareExchange */
+        { .hash_next = 2, .flags = 0x00, .atom = 350 }, /* compareExchange */
         { .hash_next = 0, .flags = 0x00, .atom = 512 }, /* load */
-        { .hash_next = 7, .flags = 0x00, .atom = 606 }, /* store */
-        { .hash_next = 1, .flags = 0x00, .atom = 495 }, /* isLockFree */
-        { .hash_next = 5, .flags = 0x00, .atom = 534 }, /* pause */
-        { .hash_next = 0, .flags = 0x00, .atom = 659 }, /* wait */
+        { .hash_next = 6, .flags = 0x00, .atom = 606 }, /* store */
+        { .hash_next = 0, .flags = 0x00, .atom = 495 }, /* isLockFree */
+        { .hash_next = 0, .flags = 0x00, .atom = 534 }, /* pause */
+        { .hash_next = 7, .flags = 0x00, .atom = 659 }, /* wait */
         { .hash_next = 0, .flags = 0x00, .atom = 526 }, /* notify */
         { .hash_next = 13, .flags = 0x00, .atom = 238 }, /* Symbol.toStringTag */
     },
