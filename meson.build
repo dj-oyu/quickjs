@@ -143,6 +143,8 @@ qjs_srcs = files(
   'libregexp.c',
   'libunicode.c',
   'quickjs.c',
+  # PocketJS: the VM's second file (yield and stack segments).
+  'quickjs-vm.c',
 )
 qjs_hdrs = files(
   'quickjs.h',
