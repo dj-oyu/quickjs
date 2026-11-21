@@ -44,6 +44,9 @@ xoption(QJS_ENABLE_GC_STRESS "Force a full GC before every allocation (GC stress
 
 # Used to properly define JS_LIBC_EXTERN.
 add_compile_definitions(QUICKJS_NG_BUILD)
+# Upstream quickjs-ng's behaviour where PocketJS departs from it on purpose
+# (quickjs.c, JS_UPSTREAM_COMPAT). PocketJS builds quickjs.c without this file.
+add_compile_definitions(JS_UPSTREAM_COMPAT)
 
 # MINGW doesn't exist in older cmake versions, newer versions don't know
 # about CMAKE_COMPILER_IS_MINGW, and there is no unique CMAKE_C_COMPILER_ID

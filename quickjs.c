@@ -290,8 +290,15 @@ typedef enum JSErrorEnum {
    non-debug build, and a non-debug build keeps no line tables: the parser
    emits no OP_source_loc and builds no pc2line, so a runtime error names
    the first line of each function. CONFIG_POCKET_VM_STRIP_DEBUG asks for
-   the same in a build that keeps its assertions. */
-#if defined(NDEBUG) || defined(CONFIG_POCKET_VM_STRIP_DEBUG)
+   the same in a build that keeps its assertions.
+
+   JS_UPSTREAM_COMPAT: upstream quickjs-ng's behaviour where PocketJS
+   departs from it on purpose -- line tables in every build, NDEBUG or not,
+   and every function keeps its source text for Function.prototype.toString.
+   The fork's own build files (CMakeLists.txt, meson.build) define it, so
+   qjs, run-test262 and upstream's tests see upstream's engine; PocketJS
+   compiles quickjs.c itself and does not. */
+#if (defined(NDEBUG) && !defined(JS_UPSTREAM_COMPAT)) || defined(CONFIG_POCKET_VM_STRIP_DEBUG)
 #define JS_NO_LINE_TABLES 1
 #endif
 
@@ -29373,7 +29380,9 @@ static __exception int js_parse_class(JSParseState *s, bool is_class_expr,
     int class_name_var_idx, prop_type, ctor_cpool_offset;
     int class_flags = 0, i, define_class_offset;
     bool is_static, is_private, is_strict_mode;
+#ifdef JS_UPSTREAM_COMPAT
     const uint8_t *class_start_ptr = s->token.ptr;
+#endif
     const uint8_t *start_ptr;
     ClassFieldsDef class_fields[2];
 
@@ -29814,10 +29823,17 @@ private_field_already_defined:
 
     /* store the class source code in the constructor. */
     js_free(ctx, ctor_fd->source);
+#ifdef JS_UPSTREAM_COMPAT
+    ctor_fd->source_len = s->buf_ptr - class_start_ptr;
+    ctor_fd->source = js_strndup(ctx, (const char *)class_start_ptr, ctor_fd->source_len);
+    if (!ctor_fd->source)
+        goto fail;
+#else
     /* See js_function_toString: no copy is kept, so the class's constructor
        prints the name-only fallback instead of the class body. */
     ctor_fd->source = NULL;
     ctor_fd->source_len = 0;
+#endif
 
     /* consume the '}' */
     if (next_token(s)) {
@@ -42079,7 +42095,7 @@ static JSValue js_create_function(JSContext *ctx, JSFunctionDef *fd)
     struct list_head *el, *el1;
     int stack_size, scope, idx;
     int function_size, byte_code_offset, cpool_offset;
-    int closure_var_offset, vardefs_offset;
+    int closure_var_offset;
 
     /* recompute scope linkage */
     for (scope = 0; scope < fd->scope_count; scope++) {
@@ -42193,7 +42209,6 @@ static JSValue js_create_function(JSContext *ctx, JSFunctionDef *fd)
     function_size = sizeof(*b);
     cpool_offset = (function_size + 7) & ~7;
     function_size = cpool_offset + fd->cpool_count * sizeof(*fd->cpool);
-    vardefs_offset = function_size;
     /* compact: harden ran, so no eval can ever need the names and scopes */
     const bool compact = ctx->harden;
     if (compact) {
@@ -43022,6 +43037,12 @@ static __exception int js_parse_function_decl2(JSParseState *s,
             /* save the function source code */
             /* the end of the function source code is after the last
                 token of the function source stored into s->last_ptr */
+#ifdef JS_UPSTREAM_COMPAT
+            fd->source_len = s->last_ptr - ptr;
+            fd->source = js_strndup(ctx, (const char *)ptr, fd->source_len);
+            if (!fd->source)
+                goto fail;
+#endif
 
             goto done;
         }
@@ -43060,6 +43081,12 @@ static __exception int js_parse_function_decl2(JSParseState *s,
         }
 
         /* save the function source code */
+#ifdef JS_UPSTREAM_COMPAT
+        fd->source_len = s->buf_ptr - ptr;
+        fd->source = js_strndup(ctx, (const char *)ptr, fd->source_len);
+        if (!fd->source)
+            goto fail;
+#endif
 
         if (next_token(s)) {
             /* consume the '}' */
@@ -49081,9 +49108,9 @@ static JSValue js_function_toString(JSContext *ctx, JSValueConst this_val,
     }
 
     p = JS_VALUE_GET_OBJ(this_val);
-    /* Pocket VM (no Kconfig switch; the name CONFIG_POCKET_VM_STRIP_FN_SOURCE
-       used here before never existed, docs/vm/strip-debug.md):
-       the parser keeps no copy of any function's source text, so b->source
+    /* Pocket VM (unless JS_UPSTREAM_COMPAT; the name
+       CONFIG_POCKET_VM_STRIP_FN_SOURCE used here before never existed,
+       docs/vm/strip-debug.md): the parser keeps no copy of any function's source text, so b->source
        is NULL for every function compiled from JS and control falls through
        to upstream's own no-source path below -- the one it already takes
        for bytecode read without source (JS_ReadObject) and for C functions.

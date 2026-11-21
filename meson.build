@@ -17,6 +17,9 @@ host_system = host_machine.system()
 cc = meson.get_compiler('c')
 
 add_project_arguments('-DQUICKJS_NG_BUILD', language: 'c')
+# Upstream quickjs-ng's behaviour where PocketJS departs from it on purpose
+# (quickjs.c, JS_UPSTREAM_COMPAT). PocketJS builds quickjs.c without this file.
+add_project_arguments('-DJS_UPSTREAM_COMPAT', language: 'c')
 
 qjs_gcc_warning_args = [
   '-Wno-unsafe-buffer-usage',
