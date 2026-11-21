@@ -75014,7 +75014,7 @@ static int js_rom_context_init(JSContext *ctx)
         js_new_shape_with(ctx, &ctx->regexp_result_shape, ctx->class_proto[JS_CLASS_ARRAY],
                           countof(regexp_result_props), regexp_result_props))
         return -1;
-    js_random_init(ctx);
+    /* random_state and hash_seed: seeded by JS_NewContextRaw since v0.18 */
 #ifndef QJS_DISABLE_PARSER
     ctx->eval_internal = __JS_EvalInternal;
 #endif
