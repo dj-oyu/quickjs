@@ -77,7 +77,11 @@
 // upstream file -- see its own header comment.
 #include "quickjs-vmstack.h"
 #include <stdatomic.h>
+/* tcc's <stdatomic.h> has no ATOMIC_*_LOCK_FREE, and MSVC does not report
+   char as always lock-free; the requirement is the target's. */
+#if defined(ATOMIC_CHAR_LOCK_FREE) && !defined(_MSC_VER)
 _Static_assert(ATOMIC_CHAR_LOCK_FREE == 2, "yield requests must not take a lock");
+#endif
 // File-scope on purpose, not a JSRuntime member: the runtime is allocated
 // from the guest heap, and one more pointer in it moved the outcome of the
 // creeping-OOM corpus case (gc_threshold_device.js -- measured: the original
@@ -596,10 +600,22 @@ enum {
     JS_CORO_ASYNC_GENERATOR, /* frame is JSAsyncGeneratorData.func_state.frame */
 };
 
-#if UINTPTR_MAX == UINT32_MAX
-_Static_assert(sizeof(JSStackFrame) == 48,
-               "coro_kind must sit in JSStackFrame's padding on the target");
+/* PocketJS: the layout the size asserts in this file describe -- the
+   target's (Xtensa: 4-byte pointers, 8-byte NaN-boxed JSValue, int64 aligned
+   to 8, GCC's bit-field rules), which the pocket host build with -m32
+   -malign-double reproduces. Other 32-bit ABIs lay these structs out
+   differently (i386 aligns int64 to 4 in a struct, Windows uses MS
+   bit-fields) and are not the memory budget. */
+typedef struct { char c; int64_t v; } js_layout_probe;
+#if UINTPTR_MAX == UINT32_MAX && defined(JS_NAN_BOXING) && JS_NAN_BOXING && \
+    (defined(__GNUC__) || defined(__clang__)) && !defined(_WIN32)
+#define JS_TARGET_LAYOUT (offsetof(js_layout_probe, v) == 8)
+#else
+#define JS_TARGET_LAYOUT 0
 #endif
+
+_Static_assert(!JS_TARGET_LAYOUT || sizeof(JSStackFrame) == 48,
+               "coro_kind must sit in JSStackFrame's padding on the target");
 
 typedef enum {
     JS_GC_OBJ_TYPE_JS_OBJECT,
@@ -1243,10 +1259,8 @@ typedef struct JSAsyncFunctionData {
 // (8-byte pointers, 16-byte JSValue) the field does not fit the padding and
 // the struct is 184, up from 176 -- measured, not asserted: the host is not
 // the memory budget.
-#if UINTPTR_MAX == UINT32_MAX
-_Static_assert(sizeof(JSAsyncFunctionData) == 104,
+_Static_assert(!JS_TARGET_LAYOUT || sizeof(JSAsyncFunctionData) == 104,
                "flat_caller_sp must sit in JSAsyncFunctionData's padding on the target");
-#endif
 
 typedef struct JSReqModuleEntry {
     JSAtom module_name;
@@ -24721,13 +24735,11 @@ typedef struct JSGeneratorData {
     JSAsyncFunctionState func_state;
 } JSGeneratorData;
 
-#if UINTPTR_MAX == UINT32_MAX
 /* 7955cfd49e backport: coro_kind went into JSStackFrame's padding so that
  * this stays 104 on the target with or without FLATCALLS (the FLATCALLS-only
  * assert next to the struct covers one configuration). */
-_Static_assert(sizeof(JSAsyncFunctionData) == 104,
+_Static_assert(!JS_TARGET_LAYOUT || sizeof(JSAsyncFunctionData) == 104,
                "coro_kind must not grow JSAsyncFunctionData on the target");
-#endif
 
 static void free_generator_stack_rt(JSRuntime *rt, JSGeneratorData *s)
 {

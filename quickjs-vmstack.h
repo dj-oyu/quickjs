@@ -409,7 +409,10 @@ static inline size_t js_vm_seg_want_for_size(const JSVMStack *st, uint32_t n, si
 // js_malloc_rt returns, because js_malloc_rt can refuse on the memory limit
 // without calling the allocator at all: a bare "next one is a segment" flag
 // would then be left set and label whatever unrelated allocation came next.
-#if !defined(ESP_PLATFORM)
+//
+// ELF hosts only: a weak reference left undefined needs the ELF linker
+// (Mach-O refuses it, MSVC has no weak attribute), and vmrun runs on Linux.
+#if !defined(ESP_PLATFORM) && defined(__ELF__)
 extern void vmtest_seg_alloc_hint(size_t size) __attribute__((weak));
 #endif
 
@@ -418,12 +421,12 @@ extern void vmtest_seg_alloc_hint(size_t size) __attribute__((weak));
 // JS_VM_SEG_MAX and for the memory-limit fallback sized to a frame alone.
 static inline JSVMSeg *js_vm_seg_new(JSRuntime *rt, JSVMStack *st, size_t payload, int standard)
 {
-#if !defined(ESP_PLATFORM)
+#if !defined(ESP_PLATFORM) && defined(__ELF__)
     if (vmtest_seg_alloc_hint)
         vmtest_seg_alloc_hint(sizeof(JSVMSeg) + (JS_VM_SEG_ALIGN - 1) + payload);
 #endif
     JSVMSeg *s = js_malloc_rt(rt, sizeof(JSVMSeg) + (JS_VM_SEG_ALIGN - 1) + payload);
-#if !defined(ESP_PLATFORM)
+#if !defined(ESP_PLATFORM) && defined(__ELF__)
     if (vmtest_seg_alloc_hint)
         vmtest_seg_alloc_hint(0);
 #endif
