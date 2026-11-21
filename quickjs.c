@@ -6664,14 +6664,14 @@ static int init_shape_hash(JSRuntime *rt)
 
 static uintptr_t hash_atom(JSAtom atom, uintptr_t mask)
 {
-    /* PocketJS: the 32-bit form on every host. Upstream hashes with the
-       width of uintptr_t, which puts an atom in a different bucket on a
-       64-bit host than on a 32-bit target -- and the ROM intrinsics'
-       shape hash tables are generated on the host and read on the target
-       (tools/vmtest/floor/gen_rom_intrinsics.c). An atom is 32 bits and a
-       shape's hash size is at most 2^31, so nothing is lost. */
-    int shift = 1 + clz32((uint32_t)mask + 1);
-    return hash32(atom) >> shift;
+    /* PocketJS: v0.14's bucket, one AND. Upstream (cad311e) multiplies
+       and shifts here, against power-of-two collisions of integer keys;
+       a shape's keys are atoms, dense small indices, which an AND already
+       spreads. Measured in r5sim (QEMU icount, non-debug firmware): the
+       multiply cost 0.6% of DERBY's turn and 0.8% of HUD's. Being the
+       same on every host, it also keeps the ROM shape tables generated
+       on a 64-bit host valid on the 32-bit target. */
+    return atom & mask;
 }
 
 static uint32_t shape_hash(uint32_t h, uint32_t val)
