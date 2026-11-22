@@ -23842,10 +23842,29 @@ cmp_fuse_done:
                 } else {
                     pc += 2;
                 }
-            } else {
-                sp[-2] = js_bool(i);
-                sp--;
+                BREAK;
             }
+            if (*pc == OP_dup && (uint32_t)(pc[1] - OP_if_false8) <= 1) {
+                if ((i != 0) ^ (pc[1] == OP_if_false8)) {
+                    int8_t diff = (int8_t)pc[2];
+                    sp[-2] = js_bool(i);
+                    sp--;
+                    pc += diff + 2;
+                    if (unlikely(diff < 0)) {
+                        JS_VM_POLL_SAFEPOINT();
+                    }
+                } else if (pc[3] == OP_drop) {
+                    sp -= 2;
+                    pc += 4;
+                } else {
+                    sp[-2] = js_bool(i);
+                    sp--;
+                    pc += 3;
+                }
+                BREAK;
+            }
+            sp[-2] = js_bool(i);
+            sp--;
             BREAK;
 
             CASE(OP_in):
