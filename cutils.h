@@ -81,6 +81,7 @@ extern "C" {
 #  define likely(x)       (x)
 #  define unlikely(x)     (x)
 #  define no_inline __declspec(noinline)
+#  define qjs_cold
 #  define __maybe_unused
 #  define __attribute__(x)
 #  define __attribute(x)
@@ -88,6 +89,11 @@ extern "C" {
 #  define likely(x)       __builtin_expect(!!(x), 1)
 #  define unlikely(x)     __builtin_expect(!!(x), 0)
 #  define no_inline __attribute__((noinline))
+#  if !defined(__TINYC__)
+#    define qjs_cold __attribute__((cold))
+#  else
+#    define qjs_cold
+#  endif
 #  define __maybe_unused __attribute__((unused))
 #endif
 
