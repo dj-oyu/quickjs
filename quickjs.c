@@ -20719,6 +20719,9 @@ static JSValue js_math_imul(JSContext *ctx, JSValueConst this_val,
 // still poll) and the opprof native-call hook (patched in by
 // tools/vmtest/opprof/patch_quickjs.py at this function too).
 // Returns false, with *pret untouched, for everything else.
+static JSValue js_string_charCodeAt(JSContext *ctx, JSValueConst this_val,
+                                    int argc, JSValueConst *argv);
+
 static no_inline bool js_call_math_fast(JSContext *ctx, JSValueConst func_obj,
                                         int argc, JSValueConst *argv,
                                         JSValue *pret)
@@ -22371,6 +22374,21 @@ has_call_argc:
                 if (js_vm_flat_callable(rt, call_argv[-1])) {
                     goto flat_call;
                 }
+                if (call_argc == 1 &&
+                    JS_VALUE_GET_TAG(call_argv[-2]) == JS_TAG_STRING &&
+                    JS_VALUE_GET_TAG(call_argv[0]) == JS_TAG_INT &&
+                    JS_VALUE_GET_TAG(call_argv[-1]) == JS_TAG_OBJECT) {
+                    JSObject *fp = JS_VALUE_GET_OBJ(call_argv[-1]);
+                    if (fp->class_id == JS_CLASS_C_FUNCTION &&
+                        fp->u.cfunc.cproto == JS_CFUNC_generic &&
+                        fp->u.cfunc.c_function.generic == js_string_charCodeAt &&
+                        !fp->u.cfunc.join) {
+                        JSString *str = JS_VALUE_GET_STRING(call_argv[-2]);
+                        uint32_t idx = JS_VALUE_GET_INT(call_argv[0]);
+                        ret_val = (idx < str->len) ? js_int32(string_get(str, idx)) : JS_NAN;
+                        goto call_method_done;
+                    }
+                }
                 if (!js_call_math_fast(ctx, call_argv[-1], call_argc, vc(call_argv),
                                        &ret_val))
                     ret_val = JS_CallInternal(ctx, call_argv[-1], call_argv[-2],
@@ -22379,6 +22397,7 @@ has_call_argc:
                 if (unlikely(JS_IsException(ret_val))) {
                     goto exception;
                 }
+call_method_done:
                 if (opcode == OP_tail_call_method) {
                     goto done;
                 }
@@ -23196,6 +23215,22 @@ put_field_slow_path:
                         sp--;
                         BREAK;
                     }
+                    if (idx < (uint32_t)p->u.array.count) {
+                        if (p->class_id == JS_CLASS_INT32_ARRAY) {
+                            val = js_int32(p->u.array.u.int32_ptr[idx]);
+                            JS_FreeValue(ctx, sp[-2]);
+                            sp[-2] = val;
+                            sp--;
+                            BREAK;
+                        }
+                        if (p->class_id == JS_CLASS_UINT8_ARRAY) {
+                            val = js_int32(p->u.array.u.uint8_ptr[idx]);
+                            JS_FreeValue(ctx, sp[-2]);
+                            sp[-2] = val;
+                            sp--;
+                            BREAK;
+                        }
+                    }
                 }
                 sf->cur_pc = pc;
                 val = JS_GetPropertyValue(ctx, sp[-2], sp[-1]);
@@ -23248,6 +23283,21 @@ put_field_slow_path:
                             JS_FreeValue(ctx, sp[-3]);
                             sp -= 3;
                             BREAK;
+                        }
+                        if (JS_VALUE_GET_TAG(val) == JS_TAG_INT &&
+                            idx < (uint32_t)p->u.array.count) {
+                            if (p->class_id == JS_CLASS_INT32_ARRAY) {
+                                p->u.array.u.int32_ptr[idx] = JS_VALUE_GET_INT(val);
+                                JS_FreeValue(ctx, sp[-3]);
+                                sp -= 3;
+                                BREAK;
+                            }
+                            if (p->class_id == JS_CLASS_UINT8_ARRAY) {
+                                p->u.array.u.uint8_ptr[idx] = (uint8_t)JS_VALUE_GET_INT(val);
+                                JS_FreeValue(ctx, sp[-3]);
+                                sp -= 3;
+                                BREAK;
+                            }
                         }
                         if (likely(p->class_id == JS_CLASS_ARRAY &&
                                    idx == (uint32_t)p->u.array.count &&
