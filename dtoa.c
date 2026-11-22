@@ -35,6 +35,15 @@
 #include "cutils.h"
 #include "dtoa.h"
 
+/* 128-bit Schubfach dtoa / Eisel-Lemire atod need only 64x64->128 multiplies,
+ * so they also run on 32-bit targets (ESP32-S3: three 32x32->64 products per
+ * half). JS_NO_SCHUBFACH_DTOA falls back to the multi-precision code;
+ * JS_DTOA_NO_INT128 forces the portable multiply (host tests of the 32-bit path). */
+#ifndef JS_NO_SCHUBFACH_DTOA
+#define USE_SCHUBFACH_DTOA10
+#include "dtoa_schubfach_table.h"
+#endif
+
 /*
    TODO:
    - simplify subnormal handling
@@ -1133,6 +1142,165 @@ static void dtoa_free(void *ptr)
 }
 #endif
 
+#ifdef USE_SCHUBFACH_DTOA10
+/* *phi:*plo = a * b. Without __int128 this is four 32x32->64 products. */
+static inline void umul64x64(uint64_t a, uint64_t b, uint64_t *phi, uint64_t *plo)
+{
+#if defined(__SIZEOF_INT128__) && !defined(JS_DTOA_NO_INT128)
+    unsigned __int128 p = (unsigned __int128)a * b;
+    *phi = (uint64_t)(p >> 64);
+    *plo = (uint64_t)p;
+#else
+    uint32_t a0 = (uint32_t)a, a1 = (uint32_t)(a >> 32);
+    uint32_t b0 = (uint32_t)b, b1 = (uint32_t)(b >> 32);
+    uint64_t p00 = (uint64_t)a0 * b0, p01 = (uint64_t)a0 * b1;
+    uint64_t p10 = (uint64_t)a1 * b0, p11 = (uint64_t)a1 * b1;
+    /* at most 3 * (2^32 - 1): cannot overflow */
+    uint64_t mid = (p00 >> 32) + (uint32_t)p01 + (uint32_t)p10;
+    *plo = (mid << 32) | (uint32_t)p00;
+    *phi = p11 + (p01 >> 32) + (p10 >> 32) + (mid >> 32);
+#endif
+}
+
+/* x / 10 for any uint64_t without a 64-bit division (32-bit targets have none:
+ * a constant uint64_t divide is a libgcc call). 0xcccccccccccccccd = ceil(2^67 / 10). */
+static inline uint64_t udiv10_u64(uint64_t x)
+{
+    uint64_t hi, lo;
+    umul64x64(x, 0xcccccccccccccccdULL, &hi, &lo);
+    return hi >> 3;
+}
+
+static inline uint64_t schubfach_rop(uint64_t g1, uint64_t g0, uint64_t cp)
+{
+    uint64_t x1h, x1l, y0h, y0l, y1h, y1l;
+    umul64x64(g0, cp, &x1h, &x1l);
+    umul64x64(g1, cp, &y0h, &y0l);
+    y1l = y0l + x1h;               /* y1 = y0 + (x1 >> 64) */
+    y1h = y0h + (y1l < y0l);
+    uint64_t v_bp = (y1h << 1) | (y1l >> 63);
+    uint64_t sticky = (y1l & (((uint64_t)1 << 63) - 1)) != 0 ? 1ULL : 0ULL;
+    return v_bp | sticky;
+}
+
+static inline int schubfach_dec_digits(uint64_t v)
+{
+    static const uint64_t p10[19] = {
+        1ULL, 10ULL, 100ULL, 1000ULL, 10000ULL, 100000ULL, 1000000ULL,
+        10000000ULL, 100000000ULL, 1000000000ULL, 10000000000ULL,
+        100000000000ULL, 1000000000000ULL, 10000000000000ULL,
+        100000000000000ULL, 1000000000000000ULL, 10000000000000000ULL,
+        100000000000000000ULL, 1000000000000000000ULL };
+    /* smallest n in [1, 18] with v < 10^n (a result has at most 17 digits) */
+    int lo = 1, hi = 18;
+    while (lo < hi) {
+        int mid = (lo + hi) >> 1;
+        if (v < p10[mid])
+            hi = mid;
+        else
+            lo = mid + 1;
+    }
+    return lo;
+}
+
+/* Shortest round-trip base-10 representation of finite non-zero float64 'a'
+ * using Raffaello Giulietti's 128-bit Schubfach algorithm (pure register math).
+ * Outputs mantissa *pmant (with trailing zeros stripped), digit count *pP,
+ * and QuickJS exponent *pE such that d ~= (*pmant) * 10^(*pE - *pP).
+ */
+static void schubfach_dtoa10(uint64_t a, uint64_t *pmant, int *pE, int *pP)
+{
+    uint64_t ieee_e = (a >> 52) & 0x7ff;
+    uint64_t ieee_m = a & (((uint64_t)1 << 52) - 1);
+    uint64_t c, cb, vbl, vbr, v_b, v_bl, v_br, lower, upper, s, mant;
+    int q, k, h, P;
+    bool is_regular, even;
+    const DtoaPow10 *gp;
+
+    if (ieee_e != 0) {
+        c = ((uint64_t)1 << 52) | ieee_m;
+        q = (int)ieee_e - 1075;
+        is_regular = (ieee_m != 0) || (ieee_e == 1);
+    } else {
+        c = ieee_m;
+        q = -1074;
+        is_regular = true;
+    }
+
+    even = ((c & 1) == 0);
+    cb = c << 2;
+    vbl = cb - (is_regular ? 2 : 1);
+    vbr = cb + 2;
+
+    if (is_regular) {
+        k = (q * 1262611) >> 22;
+    } else {
+        k = (q * 1262611 - 524031) >> 22;
+    }
+    h = q + (((-k) * 1741647) >> 19) + 1;
+
+    gp = &dtoa_pow10_table[-k - DTOA_POW10_E_MIN];
+    {
+        /* g = ((hi:lo) >> 1) + 1 */
+        uint64_t g1 = gp->hi >> 1;
+        uint64_t g0 = (gp->lo >> 1) | (gp->hi << 63);
+        g0 += 1;
+        g1 += (g0 == 0);
+        v_b = schubfach_rop(g1, g0, cb << h);
+        v_bl = schubfach_rop(g1, g0, vbl << h);
+        v_br = schubfach_rop(g1, g0, vbr << h);
+    }
+
+    lower = v_bl + (even ? 0 : 1);
+    upper = v_br - (even ? 0 : 1);
+
+    s = v_b >> 2;
+    if (s >= 10) {
+        uint64_t sp = udiv10_u64(s);
+        bool up_in = (40 * sp >= lower);
+        bool wp_in = (40 * sp + 40 <= upper);
+        if (up_in != wp_in) {
+            mant = up_in ? sp : (sp + 1);
+            k += 1;
+            goto strip_zeros;
+        }
+    }
+
+    {
+        uint64_t u = s;
+        uint64_t w = s + 1;
+        bool u_in = (4 * u >= lower);
+        bool w_in = (4 * w <= upper);
+        if (u_in != w_in) {
+            mant = u_in ? u : w;
+        } else {
+            uint64_t rem = v_b & 3;
+            if (rem < 2) {
+                mant = u;
+            } else if (rem > 2) {
+                mant = w;
+            } else {
+                mant = ((u & 1) == 0) ? u : w;
+            }
+        }
+    }
+
+strip_zeros:
+    while (mant >= 10) {
+        uint64_t q10 = udiv10_u64(mant);
+        if (q10 * 10 != mant) {
+            break;
+        }
+        mant = q10;
+        k++;
+    }
+    P = schubfach_dec_digits(mant);
+    *pmant = mant;
+    *pP = P;
+    *pE = k + P;
+}
+#endif
+
 /* return the length */
 int js_dtoa(char *buf, double d, int radix, int n_digits, int flags,
             JSDTOATempMem *tmp_mem)
@@ -1207,6 +1375,18 @@ int js_dtoa(char *buf, double d, int radix, int n_digits, int flags,
         /* 'm' is never zero */
         q += u64toa_radix(q, m, radix);
         goto done;
+    }
+#endif
+
+#ifdef USE_SCHUBFACH_DTOA10
+    if (fmt == JS_DTOA_FORMAT_FREE && radix == 10) {
+        uint64_t mant_found;
+        schubfach_dtoa10(a, &mant_found, &E, &P);
+        mpb_set_u64(tmp1, mant_found);
+#ifdef JS_DTOA_DUMP_STATS
+        out_len_count[P - 1]++;
+#endif
+        goto output;
     }
 #endif
 
@@ -1390,6 +1570,81 @@ static void mpb_mul1_base(mpb_t *r, limb_t radix_base, limb_t a)
         mpb_renorm(r);
     }
 }
+
+#ifdef USE_SCHUBFACH_DTOA10
+static const double exact_pow10_table[23] = {
+    1e0,  1e1,  1e2,  1e3,  1e4,  1e5,  1e6,  1e7,
+    1e8,  1e9,  1e10, 1e11, 1e12, 1e13, 1e14, 1e15,
+    1e16, 1e17, 1e18, 1e19, 1e20, 1e21, 1e22
+};
+
+/* Clinger FPU fast path + 128-bit Eisel-Lemire decimal-to-float64 conversion.
+ * Converts non-zero w * 10^q (1 <= w < 10^19) to exact IEEE-754 float64 bits *pa.
+ * Returns true on exact result, false on rare ambiguous halfway ties or subnormal/overflow
+ * (caller falls back to exact multiprecision mul_pow_round_to_d).
+ */
+static bool eisel_lemire_atod10(uint64_t w, int q, uint64_t *pa)
+{
+    int lz, s, upper_bit, shift, biased_e;
+    uint64_t w_norm, upper, lower, m54, rem, m53;
+    const DtoaPow10 *fp;
+    uint64_t p1h, p1l, p0h, p0l;
+
+    /* Clinger (1990) exact IEEE-754 FPU fast path */
+    if (w <= (((uint64_t)1 << 53) - 1) && q >= -22 && q <= 22) {
+        double d = (double)w;
+        if (q > 0) {
+            d *= exact_pow10_table[q];
+        } else if (q < 0) {
+            d /= exact_pow10_table[-q];
+        }
+        *pa = float64_as_uint64(d);
+        return true;
+    }
+
+    if (q < DTOA_POW10_E_MIN || q > 308) {
+        return false;
+    }
+
+    lz = clz64(w);
+    w_norm = w << lz;
+    s = (q * 1741647) >> 19;
+    fp = &dtoa_pow10_table[q - DTOA_POW10_E_MIN];
+
+    umul64x64(w_norm, fp->hi, &p1h, &p1l);
+    umul64x64(w_norm, fp->lo, &p0h, &p0l);
+    lower = p1l + p0h;              /* prod = p1 + (p0 >> 64) */
+    upper = p1h + (lower < p1l);
+    if (unlikely(lower >= 0xfffffffffffffffeULL)) {
+        return false;
+    }
+
+    upper_bit = (int)(upper >> 63);
+    shift = upper_bit + 9;
+    m54 = upper >> shift;
+    rem = upper & (((uint64_t)1 << shift) - 1);
+
+    if ((m54 & 1) == 0) {
+        m53 = m54 >> 1;
+    } else if (rem != 0 || lower != 0) {
+        m53 = (m54 >> 1) + 1;
+    } else {
+        return false;
+    }
+
+    biased_e = s - lz + upper_bit + 1086;
+    if (unlikely(m53 >= ((uint64_t)1 << 53))) {
+        m53 >>= 1;
+        biased_e += 1;
+    }
+    if (biased_e <= 0 || biased_e >= 2047) {
+        return false;
+    }
+
+    *pa = ((uint64_t)biased_e << 52) | (m53 & (((uint64_t)1 << 52) - 1));
+    return true;
+}
+#endif
 
 /* XXX: add fast path for small integers */
 double js_atod(const char *str, const char **pnext, int radix, int flags,
@@ -1650,6 +1905,13 @@ no_prefix: ;
             } else if (expn1 <= min_exponent[radix - 2]) {
                 goto underflow;
             }
+#ifdef USE_SCHUBFACH_DTOA10
+            if (radix == 10 && digit_count <= 19) {
+                if (eisel_lemire_atod10(mpb_get_u64(tmp0), expn, &a)) {
+                    goto done;
+                }
+            }
+#endif
             m = mul_pow_round_to_d(&e, tmp0, radix1, radix_shift, expn, JS_RNDN);
         }
         if (m == 0) {
