@@ -624,6 +624,7 @@ typedef enum {
     JS_GC_OBJ_TYPE_VAR_REF,
     JS_GC_OBJ_TYPE_ASYNC_FUNCTION,
     JS_GC_OBJ_TYPE_JS_CONTEXT,
+    JS_GC_OBJ_TYPE_LAZY_SLICE_BUF,
 } JSGCObjectTypeEnum;
 
 /* header for GC objects. GC objects are C data structures with a
@@ -1919,6 +1920,7 @@ static int _JS_AddIntrinsicCallSite(JSContext *ctx);
 
 static void JS_SetOpaqueInternal(JSValueConst obj, void *opaque);
 
+static const JSClassExoticMethods js_array_exotic_methods;
 static const JSClassExoticMethods js_arguments_exotic_methods;
 static const JSClassExoticMethods js_string_exotic_methods;
 static const JSClassExoticMethods js_proxy_exotic_methods;
@@ -2717,6 +2719,7 @@ JSRuntime *JS_NewRuntime2(const JSMallocFunctions *mf, void *opaque)
                          countof(js_std_class_def)) < 0) {
         goto fail;
     }
+    rt->class_array[JS_CLASS_ARRAY].exotic = &js_array_exotic_methods;
     rt->class_array[JS_CLASS_ARGUMENTS].exotic = &js_arguments_exotic_methods;
     rt->class_array[JS_CLASS_MAPPED_ARGUMENTS].exotic = &js_arguments_exotic_methods;
     rt->class_array[JS_CLASS_STRING].exotic = &js_string_exotic_methods;
@@ -8532,11 +8535,308 @@ static void free_var_ref(JSRuntime *rt, JSVarRef *var_ref)
     }
 }
 
+enum {
+    JS_LAZY_ARRAY_SPLIT = 0,
+    JS_LAZY_ARRAY_SLICE = 1,
+    JS_LAZY_ARRAY_KEYS = 2,
+};
+
+typedef struct JSLazySplitBuf {
+    uint32_t ref_count;
+    uint32_t count;    /* number of tokens; starts[] has count + 1 entries */
+    uint32_t starts[]; /* token i is [starts[i], starts[i + 1] - sep_len) */
+} JSLazySplitBuf;
+
+typedef struct JSLazyKeysBuf {
+    uint32_t ref_count;
+    uint32_t count;
+    JSAtom atoms[];
+} JSLazyKeysBuf;
+
+typedef struct JSLazySliceBuf {
+    JSGCObjectHeader header; /* ref_count managed by QuickJS GC */
+    uint32_t capacity;
+    uint32_t count;
+    JSValue *values;
+} JSLazySliceBuf;
+
+typedef struct JSLazyArrayData {
+    uint8_t kind;
+    uint32_t len;
+    uint32_t offset;
+    union {
+        struct {
+            JSString *str;
+            uint32_t sep_len;
+            JSLazySplitBuf *buf;
+        } split;
+        struct {
+            JSLazySliceBuf *buf;
+        } slice;
+        struct {
+            JSLazyKeysBuf *buf;
+        } keys;
+    } u;
+} JSLazyArrayData;
+
+static inline bool js_is_lazy_array(const JSObject *p)
+{
+    return p->class_id == JS_CLASS_ARRAY && !p->fast_array && p->u.array.u.ptr != NULL;
+}
+
+static void js_lazy_array_free(JSRuntime *rt, JSLazyArrayData *lazy)
+{
+    if (lazy->kind == JS_LAZY_ARRAY_SPLIT) {
+        JS_FreeValueRT(rt, JS_MKPTR(JS_TAG_STRING, lazy->u.split.str));
+        if (--lazy->u.split.buf->ref_count == 0) {
+            js_free_rt(rt, lazy->u.split.buf);
+        }
+    } else if (lazy->kind == JS_LAZY_ARRAY_SLICE) {
+        JSLazySliceBuf *buf = lazy->u.slice.buf;
+        if (--buf->header.ref_count <= 0) {
+            uint32_t i;
+            remove_gc_object(&buf->header);
+            for (i = 0; i < buf->count; i++) {
+                JS_FreeValueRT(rt, buf->values[i]);
+            }
+            js_free_rt(rt, buf->values);
+            js_free_rt(rt, buf);
+        }
+    } else if (lazy->kind == JS_LAZY_ARRAY_KEYS) {
+        JSLazyKeysBuf *kbuf = lazy->u.keys.buf;
+        if (--kbuf->ref_count == 0) {
+            uint32_t i;
+            for (i = 0; i < kbuf->count; i++) {
+                JS_FreeAtomRT(rt, kbuf->atoms[i]);
+            }
+            js_free_rt(rt, kbuf);
+        }
+    }
+    js_free_rt(rt, lazy);
+}
+
+static void js_lazy_array_mark(JSRuntime *rt, JSLazyArrayData *lazy,
+                               JS_MarkFunc *mark_func)
+{
+    if (lazy->kind == JS_LAZY_ARRAY_SLICE) {
+        mark_func(rt, &lazy->u.slice.buf->header);
+    }
+}
+
+static no_inline bool js_lazy_array_get_elem(JSContext *ctx, JSObject *p,
+                                             uint32_t idx, JSValue *pval)
+{
+    JSLazyArrayData *lazy = (JSLazyArrayData *)p->u.array.u.ptr;
+    if (unlikely(idx >= lazy->len)) {
+        return false;
+    }
+    if (lazy->kind == JS_LAZY_ARRAY_SPLIT) {
+        uint32_t k = lazy->offset + idx;
+        uint32_t start = lazy->u.split.buf->starts[k];
+        uint32_t end = lazy->u.split.buf->starts[k + 1] - lazy->u.split.sep_len;
+        *pval = js_sub_string(ctx, lazy->u.split.str, start, end);
+        return true;
+    } else if (lazy->kind == JS_LAZY_ARRAY_SLICE) {
+        JSLazySliceBuf *buf = lazy->u.slice.buf;
+        *pval = js_dup(buf->values[lazy->offset + idx]);
+        return true;
+    } else {
+        JSLazyKeysBuf *kbuf = lazy->u.keys.buf;
+        *pval = JS_AtomToValue(ctx, kbuf->atoms[lazy->offset + idx]);
+        return true;
+    }
+}
+
+static int js_lazy_array_materialize(JSContext *ctx, JSObject *p)
+{
+    JSLazyArrayData *lazy = (JSLazyArrayData *)p->u.array.u.ptr;
+    uint32_t len = lazy->len;
+    uint32_t i;
+    JSValue *values = NULL;
+    uint32_t cap = len;
+
+    if (lazy->kind == JS_LAZY_ARRAY_SLICE) {
+        JSLazySliceBuf *buf = lazy->u.slice.buf;
+        if (buf->header.ref_count == 1 && lazy->offset == 0 && len == buf->count) {
+            /* Reclaim owned buffer directly in O(1) without copying */
+            values = buf->values;
+            cap = buf->capacity;
+            buf->values = NULL;
+            buf->count = 0;
+            remove_gc_object(&buf->header);
+            js_free(ctx, buf);
+            js_free(ctx, lazy);
+            p->u.array.u.values = values;
+            p->u.array.count = len;
+            p->u.array.u1.size = cap;
+            p->fast_array = 1;
+            return 0;
+        }
+        if (len > 0) {
+            values = js_malloc(ctx, sizeof(JSValue) * len);
+            if (!values) {
+                return -1;
+            }
+            for (i = 0; i < len; i++) {
+                values[i] = js_dup(buf->values[lazy->offset + i]);
+            }
+        }
+        js_lazy_array_free(ctx->rt, lazy);
+    } else if (lazy->kind == JS_LAZY_ARRAY_KEYS) {
+        if (len > 0) {
+            JSAtom *atoms = lazy->u.keys.buf->atoms + lazy->offset;
+            values = js_malloc(ctx, sizeof(JSValue) * len);
+            if (!values) {
+                return -1;
+            }
+            for (i = 0; i < len; i++) {
+                JSValue s = JS_AtomToValue(ctx, atoms[i]);
+                if (unlikely(JS_IsException(s))) {
+                    uint32_t j;
+                    for (j = 0; j < i; j++) {
+                        JS_FreeValue(ctx, values[j]);
+                    }
+                    js_free(ctx, values);
+                    return -1;
+                }
+                values[i] = s;
+            }
+        }
+        js_lazy_array_free(ctx->rt, lazy);
+    } else {
+        if (len > 0) {
+            uint32_t *starts = lazy->u.split.buf->starts + lazy->offset;
+            uint32_t sep_len = lazy->u.split.sep_len;
+            JSString *str = lazy->u.split.str;
+            values = js_malloc(ctx, sizeof(JSValue) * len);
+            if (!values) {
+                return -1;
+            }
+            for (i = 0; i < len; i++) {
+                JSValue s = js_sub_string(ctx, str, starts[i], starts[i + 1] - sep_len);
+                if (unlikely(JS_IsException(s))) {
+                    uint32_t j;
+                    for (j = 0; j < i; j++) {
+                        JS_FreeValue(ctx, values[j]);
+                    }
+                    js_free(ctx, values);
+                    return -1;
+                }
+                values[i] = s;
+            }
+        }
+        js_lazy_array_free(ctx->rt, lazy);
+    }
+
+    p->u.array.u.values = values;
+    p->u.array.count = len;
+    p->u.array.u1.size = cap;
+    p->fast_array = 1;
+    return 0;
+}
+
+static int js_array_exotic_get_own_property(JSContext *ctx,
+                                            JSPropertyDescriptor *desc,
+                                            JSValueConst obj, JSAtom prop)
+{
+    JSObject *p = JS_VALUE_GET_OBJ(obj);
+    if (js_is_lazy_array(p) && __JS_AtomIsTaggedInt(prop)) {
+        JSLazyArrayData *lazy = (JSLazyArrayData *)p->u.array.u.ptr;
+        uint32_t idx = __JS_AtomToUInt32(prop);
+        if (idx < lazy->len) {
+            if (desc) {
+                JSValue val;
+                if (!js_lazy_array_get_elem(ctx, p, idx, &val) || JS_IsException(val)) {
+                    return -1;
+                }
+                desc->flags = JS_PROP_C_W_E;
+                desc->value = val;
+                desc->getter = JS_UNDEFINED;
+                desc->setter = JS_UNDEFINED;
+            }
+            return true;
+        }
+    }
+    return false;
+}
+
+static int js_array_exotic_get_own_property_names(JSContext *ctx,
+                                                  JSPropertyEnum **ptab,
+                                                  uint32_t *plen,
+                                                  JSValueConst obj)
+{
+    JSObject *p = JS_VALUE_GET_OBJ(obj);
+    if (!js_is_lazy_array(p)) {
+        *ptab = NULL;
+        *plen = 0;
+        return 0;
+    }
+    {
+        JSLazyArrayData *lazy = (JSLazyArrayData *)p->u.array.u.ptr;
+        uint32_t i, len = lazy->len;
+        JSPropertyEnum *tab;
+        if (len == 0) {
+            *ptab = NULL;
+            *plen = 0;
+            return 0;
+        }
+        tab = js_malloc(ctx, sizeof(JSPropertyEnum) * len);
+        if (!tab) {
+            return -1;
+        }
+        for (i = 0; i < len; i++) {
+            tab[i].is_enumerable = true;
+            tab[i].atom = __JS_AtomFromUInt32(i);
+        }
+        *ptab = tab;
+        *plen = len;
+        return 0;
+    }
+}
+
+static int js_array_exotic_delete_property(JSContext *ctx, JSValueConst obj, JSAtom prop)
+{
+    JSObject *p = JS_VALUE_GET_OBJ(obj);
+    if (!js_is_lazy_array(p)) {
+        return true;
+    }
+    if (js_lazy_array_materialize(ctx, p) < 0) {
+        return -1;
+    }
+    return JS_DeleteProperty(ctx, obj, prop, 0);
+}
+
+static int js_array_exotic_define_own_property(JSContext *ctx, JSValueConst obj,
+                                               JSAtom prop, JSValueConst val,
+                                               JSValueConst getter, JSValueConst setter,
+                                               int flags)
+{
+    JSObject *p = JS_VALUE_GET_OBJ(obj);
+    if (js_is_lazy_array(p)) {
+        if (js_lazy_array_materialize(ctx, p) < 0) {
+            return -1;
+        }
+        return JS_DefineProperty(ctx, obj, prop, val, getter, setter, flags);
+    }
+    return JS_DefineProperty(ctx, obj, prop, val, getter, setter, flags | JS_PROP_NO_EXOTIC);
+}
+
+static const JSClassExoticMethods js_array_exotic_methods = {
+    .get_own_property = js_array_exotic_get_own_property,
+    .get_own_property_names = js_array_exotic_get_own_property_names,
+    .delete_property = js_array_exotic_delete_property,
+    .define_own_property = js_array_exotic_define_own_property,
+};
+
 static void js_array_finalizer(JSRuntime *rt, JSValueConst val)
 {
     JSObject *p = JS_VALUE_GET_OBJ(val);
     uint32_t i;
 
+    if (unlikely(js_is_lazy_array(p))) {
+        js_lazy_array_free(rt, (JSLazyArrayData *)p->u.array.u.ptr);
+        return;
+    }
     for (i = 0; i < p->u.array.count; i++) {
         JS_FreeValueRT(rt, p->u.array.u.values[i]);
     }
@@ -8549,6 +8849,10 @@ static void js_array_mark(JSRuntime *rt, JSValueConst val,
     JSObject *p = JS_VALUE_GET_OBJ(val);
     uint32_t i;
 
+    if (unlikely(js_is_lazy_array(p))) {
+        js_lazy_array_mark(rt, (JSLazyArrayData *)p->u.array.u.ptr, mark_func);
+        return;
+    }
     for (i = 0; i < p->u.array.count; i++) {
         JS_MarkValue(rt, p->u.array.u.values[i], mark_func);
     }
@@ -8969,6 +9273,14 @@ static void mark_children(JSRuntime *rt, JSGCObjectHeader *gp,
         }
         if (b->realm) {
             mark_func(rt, &b->realm->header);
+        }
+    }
+    break;
+    case JS_GC_OBJ_TYPE_LAZY_SLICE_BUF: {
+        JSLazySliceBuf *buf = (JSLazySliceBuf *)gp;
+        uint32_t i;
+        for (i = 0; i < buf->count; i++) {
+            JS_MarkValue(rt, buf->values[i], mark_func);
         }
     }
     break;
@@ -11843,6 +12155,14 @@ static bool js_get_fast_array_element(JSContext *ctx, JSObject *p,
 {
     switch (p->class_id) {
     case JS_CLASS_ARRAY:
+        if (unlikely(idx >= p->u.array.count)) {
+            if (unlikely(!p->fast_array && p->u.array.u.ptr != NULL)) {
+                return js_lazy_array_get_elem(ctx, p, idx, pval);
+            }
+            return false;
+        }
+        *pval = js_dup(p->u.array.u.values[idx]);
+        return true;
     case JS_CLASS_ARGUMENTS:
         if (unlikely(idx >= p->u.array.count)) {
             return false;
@@ -11994,6 +12314,9 @@ static int JS_TryGetPropertyInt64(JSContext *ctx, JSValueConst obj, int64_t idx,
         /* fast path for array and typed array access */
         JSObject *p = JS_VALUE_GET_OBJ(obj);
         if (js_get_fast_array_element(ctx, p, idx, pval)) {
+            if (unlikely(JS_IsException(*pval))) {
+                return -1;
+            }
             return true;
         }
     }
@@ -12310,6 +12633,12 @@ static int set_array_length(JSContext *ctx, JSObject *p, JSValue val,
     /* JS_ToArrayLengthFree() must be done before the read-only test */
     if (unlikely(!(p->shape->prop[0].flags & JS_PROP_WRITABLE))) {
         return JS_ThrowTypeErrorReadOnly(ctx, flags, JS_ATOM_length);
+    }
+
+    if (unlikely(js_is_lazy_array(p))) {
+        if (js_lazy_array_materialize(ctx, p) < 0) {
+            return -1;
+        }
     }
 
     if (likely(p->fast_array)) {
@@ -13061,6 +13390,15 @@ static int JS_CreateProperty(JSContext *ctx, JSObject *p,
         if (p->class_id == JS_CLASS_ARRAY) {
             uint32_t idx, len;
 
+            if (unlikely(!p->fast_array && p->u.array.u.ptr != NULL)) {
+                if (JS_AtomIsArrayIndex(ctx, &idx, prop)) {
+                    if (js_lazy_array_materialize(ctx, p) < 0) {
+                        return -1;
+                    }
+                    return JS_DefineProperty(ctx, JS_MKPTR(JS_TAG_OBJECT, p),
+                                             prop, val, getter, setter, flags);
+                }
+            }
             if (p->fast_array) {
                 if (__JS_AtomIsTaggedInt(prop)) {
                     idx = __JS_AtomToUInt32(prop);
@@ -47969,6 +48307,72 @@ static JSValue JS_GetOwnPropertyNames2(JSContext *ctx, JSValueConst obj1,
         return JS_EXCEPTION;
     }
     p = JS_VALUE_GET_OBJ(obj);
+    if (!p->is_exotic && kind == JS_ITERATOR_KIND_KEY &&
+            flags == (JS_GPN_ENUM_ONLY | JS_GPN_STRING_MASK)
+#ifdef POCKET_VM_LAZY_BUILTINS
+            && !js_obj_lazy(p)
+#endif
+    ) {
+        JSShape *sh = p->shape;
+        uint32_t prop_count = sh->prop_count;
+        if (prop_count >= 4) {
+            uint32_t cnt = 0, dummy;
+            bool ok = true;
+            for (i = 0; i < prop_count; i++) {
+                JSShapeProperty *pr = &sh->prop[i];
+                JSAtom atom = pr->atom;
+                if (atom == JS_ATOM_NULL || !(pr->flags & JS_PROP_ENUMERABLE)) {
+                    continue;
+                }
+                if (JS_AtomGetKind(ctx, atom) != JS_ATOM_KIND_STRING) {
+                    continue;
+                }
+                if (__JS_AtomIsTaggedInt(atom) || JS_AtomIsArrayIndex(ctx, &dummy, atom)) {
+                    ok = false;
+                    break;
+                }
+                cnt++;
+            }
+            if (ok && cnt >= 4) {
+                JSLazyKeysBuf *kbuf = js_malloc(ctx, sizeof(JSLazyKeysBuf) + cnt * sizeof(JSAtom));
+                JSLazyArrayData *lazy = js_malloc(ctx, sizeof(JSLazyArrayData));
+                r = JS_NewArray(ctx);
+                if (!kbuf || !lazy || JS_IsException(r)) {
+                    js_free(ctx, kbuf);
+                    js_free(ctx, lazy);
+                    JS_FreeValue(ctx, r);
+                    JS_FreeValue(ctx, obj);
+                    return JS_EXCEPTION;
+                }
+                kbuf->ref_count = 1;
+                kbuf->count = cnt;
+                j = 0;
+                for (i = 0; i < prop_count; i++) {
+                    JSShapeProperty *pr = &sh->prop[i];
+                    JSAtom atom = pr->atom;
+                    if (atom == JS_ATOM_NULL || !(pr->flags & JS_PROP_ENUMERABLE) ||
+                            JS_AtomGetKind(ctx, atom) != JS_ATOM_KIND_STRING) {
+                        continue;
+                    }
+                    kbuf->atoms[j++] = JS_DupAtom(ctx, atom);
+                }
+                lazy->kind = JS_LAZY_ARRAY_KEYS;
+                lazy->len = cnt;
+                lazy->offset = 0;
+                lazy->u.keys.buf = kbuf;
+                {
+                    JSObject *rp = JS_VALUE_GET_OBJ(r);
+                    rp->fast_array = 0;
+                    rp->u.array.count = 0;
+                    rp->u.array.u1.size = 0;
+                    rp->u.array.u.ptr = lazy;
+                    rp->prop[0].u.value = js_uint32(cnt);
+                }
+                JS_FreeValue(ctx, obj);
+                return r;
+            }
+        }
+    }
     if (JS_GetOwnPropertyNamesInternal(ctx, &atoms, &len, p, flags & ~JS_GPN_ENUM_ONLY)) {
         goto exception;
     }
@@ -51505,6 +51909,88 @@ static JSValue js_array_slice(JSContext *ctx, JSValueConst this_val,
     k = start;
     final = start + count;
     n = 0;
+    if (!splice && count > 0 &&
+            JS_VALUE_GET_TAG(obj) == JS_TAG_OBJECT &&
+            JS_VALUE_GET_TAG(arr) == JS_TAG_OBJECT) {
+        JSObject *obj_p = JS_VALUE_GET_OBJ(obj);
+        JSObject *arr_p = JS_VALUE_GET_OBJ(arr);
+        if (arr_p->class_id == JS_CLASS_ARRAY && arr_p->fast_array &&
+                arr_p->u.array.count == 0 && arr_p->u.array.u.values == NULL) {
+            if (js_is_lazy_array(obj_p)) {
+                JSLazyArrayData *src = (JSLazyArrayData *)obj_p->u.array.u.ptr;
+                if ((uint64_t)final <= (uint64_t)src->len) {
+                    JSLazyArrayData *dst = js_malloc(ctx, sizeof(JSLazyArrayData));
+                    if (!dst) {
+                        goto exception;
+                    }
+                    dst->kind = src->kind;
+                    dst->len = (uint32_t)count;
+                    dst->offset = src->offset + (uint32_t)start;
+                    if (src->kind == JS_LAZY_ARRAY_SPLIT) {
+                        dst->u.split.str = JS_VALUE_GET_STRING(js_dup(JS_MKPTR(JS_TAG_STRING, src->u.split.str)));
+                        dst->u.split.sep_len = src->u.split.sep_len;
+                        dst->u.split.buf = src->u.split.buf;
+                        src->u.split.buf->ref_count++;
+                    } else if (src->kind == JS_LAZY_ARRAY_SLICE) {
+                        dst->u.slice.buf = src->u.slice.buf;
+                        src->u.slice.buf->header.ref_count++;
+                    } else {
+                        dst->u.keys.buf = src->u.keys.buf;
+                        src->u.keys.buf->ref_count++;
+                    }
+                    arr_p->fast_array = 0;
+                    arr_p->u.array.count = 0;
+                    arr_p->u.array.u1.size = 0;
+                    arr_p->u.array.u.ptr = dst;
+                    arr_p->prop[0].u.value = js_uint32((uint32_t)count);
+                    JS_FreeValue(ctx, obj);
+                    return arr;
+                }
+            } else if (count >= 64 && obj_p->class_id == JS_CLASS_ARRAY &&
+                       obj_p->fast_array && obj_p->extensible &&
+                       (uint64_t)obj_p->u.array.count == (uint64_t)len &&
+                       obj_p->u.array.u.values != NULL) {
+                JSLazySliceBuf *buf = js_malloc(ctx, sizeof(JSLazySliceBuf));
+                JSLazyArrayData *lp = js_malloc(ctx, sizeof(JSLazyArrayData));
+                JSLazyArrayData *lc = js_malloc(ctx, sizeof(JSLazyArrayData));
+                if (!buf || !lp || !lc) {
+                    js_free(ctx, buf);
+                    js_free(ctx, lp);
+                    js_free(ctx, lc);
+                    goto exception;
+                }
+                add_gc_object(ctx->rt, &buf->header, JS_GC_OBJ_TYPE_LAZY_SLICE_BUF);
+                buf->header.ref_count = 2;
+                buf->capacity = obj_p->u.array.u1.size;
+                buf->count = obj_p->u.array.count;
+                buf->values = obj_p->u.array.u.values;
+
+                lp->kind = JS_LAZY_ARRAY_SLICE;
+                lp->len = buf->count;
+                lp->offset = 0;
+                lp->u.slice.buf = buf;
+
+                lc->kind = JS_LAZY_ARRAY_SLICE;
+                lc->len = (uint32_t)count;
+                lc->offset = (uint32_t)start;
+                lc->u.slice.buf = buf;
+
+                obj_p->fast_array = 0;
+                obj_p->u.array.count = 0;
+                obj_p->u.array.u1.size = 0;
+                obj_p->u.array.u.ptr = lp;
+
+                arr_p->fast_array = 0;
+                arr_p->u.array.count = 0;
+                arr_p->u.array.u1.size = 0;
+                arr_p->u.array.u.ptr = lc;
+                arr_p->prop[0].u.value = js_uint32((uint32_t)count);
+
+                JS_FreeValue(ctx, obj);
+                return arr;
+            }
+        }
+    }
     /* The fast array test on arr ensures that
        JS_CreateDataPropertyUint32() won't modify obj in case arr is
        an exotic object */
@@ -55864,6 +56350,88 @@ static JSValue js_string_split(JSContext *ctx, JSValueConst this_val,
             goto add_tail;
         }
         goto done;
+    }
+    if (r >= 1 && s >= 64 && lim > 1) {
+        uint32_t cap = 64, cnt = 0;
+        JSLazySplitBuf *sbuf = js_malloc(ctx, sizeof(JSLazySplitBuf) + (cap + 1) * sizeof(uint32_t));
+        if (!sbuf) {
+            goto exception;
+        }
+        for (q = p; q <= s - r; q = p = e + r) {
+            e = string_indexof(sp, rp, q);
+            if (e < 0) {
+                break;
+            }
+            if (unlikely(cnt + 1 >= cap)) {
+                uint32_t new_cap = cap * 2;
+                JSLazySplitBuf *nb = js_realloc(ctx, sbuf,
+                                                sizeof(JSLazySplitBuf) + (new_cap + 1) * sizeof(uint32_t));
+                if (!nb) {
+                    js_free(ctx, sbuf);
+                    goto exception;
+                }
+                sbuf = nb;
+                cap = new_cap;
+            }
+            sbuf->starts[cnt++] = (uint32_t)p;
+            if (cnt == lim) {
+                sbuf->starts[cnt] = (uint32_t)(e + r);
+                goto lazy_split_done;
+            }
+        }
+        if (unlikely(cnt + 1 >= cap)) {
+            JSLazySplitBuf *nb = js_realloc(ctx, sbuf,
+                                            sizeof(JSLazySplitBuf) + (cnt + 2) * sizeof(uint32_t));
+            if (!nb) {
+                js_free(ctx, sbuf);
+                goto exception;
+            }
+            sbuf = nb;
+        }
+        sbuf->starts[cnt++] = (uint32_t)p;
+        sbuf->starts[cnt] = (uint32_t)(s + r);
+lazy_split_done:
+        if (cnt >= 4) {
+            JSLazyArrayData *lazy = js_malloc(ctx, sizeof(JSLazyArrayData));
+            if (!lazy) {
+                js_free(ctx, sbuf);
+                goto exception;
+            }
+            sbuf->ref_count = 1;
+            sbuf->count = cnt;
+            lazy->kind = JS_LAZY_ARRAY_SPLIT;
+            lazy->len = cnt;
+            lazy->offset = 0;
+            lazy->u.split.str = JS_VALUE_GET_STRING(js_dup(S));
+            lazy->u.split.sep_len = (uint32_t)r;
+            lazy->u.split.buf = sbuf;
+            {
+                JSObject *ap = JS_VALUE_GET_OBJ(A);
+                ap->fast_array = 0;
+                ap->u.array.count = 0;
+                ap->u.array.u1.size = 0;
+                ap->u.array.u.ptr = lazy;
+                ap->prop[0].u.value = js_uint32(cnt);
+            }
+            goto done;
+        }
+        /* Fewer than 4 tokens: build standard fast_array directly */
+        {
+            uint32_t i;
+            for (i = 0; i < cnt; i++) {
+                T = js_sub_string(ctx, sp, sbuf->starts[i], sbuf->starts[i + 1] - (uint32_t)r);
+                if (JS_IsException(T)) {
+                    js_free(ctx, sbuf);
+                    goto exception;
+                }
+                if (JS_CreateDataPropertyUint32(ctx, A, lengthA++, T, 0) < 0) {
+                    js_free(ctx, sbuf);
+                    goto exception;
+                }
+            }
+            js_free(ctx, sbuf);
+            goto done;
+        }
     }
     q = p;
     for (q = p; (q += !r) <= s - r - !r; q = p = e + r) {
