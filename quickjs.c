@@ -23285,19 +23285,18 @@ put_field_slow_path:
                             BREAK;
                         }
                         if (JS_VALUE_GET_TAG(val) == JS_TAG_INT &&
-                            idx < (uint32_t)p->u.array.count) {
+                            idx < (uint32_t)p->u.array.count &&
+                            (p->class_id == JS_CLASS_INT32_ARRAY ||
+                             p->class_id == JS_CLASS_UINT8_ARRAY) &&
+                            likely(!typed_array_is_immutable(p))) {
                             if (p->class_id == JS_CLASS_INT32_ARRAY) {
                                 p->u.array.u.int32_ptr[idx] = JS_VALUE_GET_INT(val);
-                                JS_FreeValue(ctx, sp[-3]);
-                                sp -= 3;
-                                BREAK;
-                            }
-                            if (p->class_id == JS_CLASS_UINT8_ARRAY) {
+                            } else {
                                 p->u.array.u.uint8_ptr[idx] = (uint8_t)JS_VALUE_GET_INT(val);
-                                JS_FreeValue(ctx, sp[-3]);
-                                sp -= 3;
-                                BREAK;
                             }
+                            JS_FreeValue(ctx, sp[-3]);
+                            sp -= 3;
+                            BREAK;
                         }
                         if (likely(p->class_id == JS_CLASS_ARRAY &&
                                    idx == (uint32_t)p->u.array.count &&
