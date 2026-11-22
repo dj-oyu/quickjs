@@ -20893,11 +20893,11 @@ static bool needs_backtrace(JSValue exc)
 }
 
 /* argv[] is modified if (flags & JS_CALL_FLAG_COPY_ARGV) = 0. */
-static no_inline qjs_cold int js_call_cold_op(JSContext *ctx, JSStackFrame *sf, JSFunctionBytecode *b, int opcode)
+static no_inline qjs_cold int js_call_cold_op(JSContext *ctx, JSStackFrame *sf, JSFunctionBytecode *b, int opcode, uint8_t **ppc, JSValue **psp)
 {
     JSRuntime *rt = ctx->rt;
-    uint8_t *pc = sf->cur_pc;
-    JSValue *sp = sf->cur_sp;
+    uint8_t *pc = *ppc;
+    JSValue *sp = *psp;
     JSValue *var_buf = sf->var_buf;
     JSValue *arg_buf = sf->arg_buf;
     JSValue func_obj = sf->cur_func;
@@ -21596,12 +21596,12 @@ static no_inline qjs_cold int js_call_cold_op(JSContext *ctx, JSStackFrame *sf, 
     default:
         abort();
     }
-    sf->cur_pc = pc;
-    sf->cur_sp = sp;
+    *ppc = pc;
+    *psp = sp;
     return 0;
 exception:
-    sf->cur_pc = pc;
-    sf->cur_sp = sp;
+    *ppc = pc;
+    *psp = sp;
     return -1;
 }
 
@@ -24223,12 +24223,13 @@ free_and_set_false:
             CASE(OP_delete):
             CASE(OP_delete_var):
             {
+                uint8_t *cold_pc = pc;
+                JSValue *cold_sp = sp;
                 int cold_ret;
                 sf->cur_pc = pc;
-                sf->cur_sp = sp;
-                cold_ret = js_call_cold_op(ctx, sf, b, opcode);
-                pc = sf->cur_pc;
-                sp = sf->cur_sp;
+                cold_ret = js_call_cold_op(ctx, sf, b, opcode, &cold_pc, &cold_sp);
+                pc = cold_pc;
+                sp = cold_sp;
                 if (unlikely(cold_ret < 0))
                     goto exception;
             }
