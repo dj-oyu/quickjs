@@ -23215,21 +23215,16 @@ put_field_slow_path:
                         sp--;
                         BREAK;
                     }
-                    if (idx < (uint32_t)p->u.array.count) {
-                        if (p->class_id == JS_CLASS_INT32_ARRAY) {
-                            val = js_int32(p->u.array.u.int32_ptr[idx]);
-                            JS_FreeValue(ctx, sp[-2]);
-                            sp[-2] = val;
-                            sp--;
-                            BREAK;
-                        }
-                        if (p->class_id == JS_CLASS_UINT8_ARRAY) {
-                            val = js_int32(p->u.array.u.uint8_ptr[idx]);
-                            JS_FreeValue(ctx, sp[-2]);
-                            sp[-2] = val;
-                            sp--;
-                            BREAK;
-                        }
+                    if ((p->class_id == JS_CLASS_INT32_ARRAY ||
+                         p->class_id == JS_CLASS_UINT8_ARRAY) &&
+                        idx < (uint32_t)p->u.array.count) {
+                        val = (p->class_id == JS_CLASS_INT32_ARRAY)
+                            ? js_int32(p->u.array.u.int32_ptr[idx])
+                            : js_int32(p->u.array.u.uint8_ptr[idx]);
+                        JS_FreeValue(ctx, sp[-2]);
+                        sp[-2] = val;
+                        sp--;
+                        BREAK;
                     }
                 }
                 sf->cur_pc = pc;
@@ -23284,10 +23279,10 @@ put_field_slow_path:
                             sp -= 3;
                             BREAK;
                         }
-                        if (JS_VALUE_GET_TAG(val) == JS_TAG_INT &&
-                            idx < (uint32_t)p->u.array.count &&
-                            (p->class_id == JS_CLASS_INT32_ARRAY ||
+                        if ((p->class_id == JS_CLASS_INT32_ARRAY ||
                              p->class_id == JS_CLASS_UINT8_ARRAY) &&
+                            JS_VALUE_GET_TAG(val) == JS_TAG_INT &&
+                            idx < (uint32_t)p->u.array.count &&
                             likely(!typed_array_is_immutable(p))) {
                             if (p->class_id == JS_CLASS_INT32_ARRAY) {
                                 p->u.array.u.int32_ptr[idx] = JS_VALUE_GET_INT(val);
