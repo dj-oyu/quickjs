@@ -40,6 +40,9 @@
 #include <string.h>
 #include <inttypes.h>
 #include <math.h>
+#if defined(__aarch64__) && defined(__ARM_NEON)
+#include <arm_neon.h>
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -1199,9 +1202,26 @@ static inline int utf8_scan(const char *buf, size_t buf_len, size_t *plen)
     kind = UTF8_PLAIN_ASCII;
     cbits = 0;
     len = buf_len;
-    // TODO: handle more than 1 byte at a time
-    for (i = 0; i < buf_len; i++) {
-        cbits |= buf[i];
+    i = 0;
+#if defined(__aarch64__) && defined(__ARM_NEON)
+    if (buf_len >= 16) {
+        const uint8_t *bp = (const uint8_t *)buf;
+        uint8x16_t acc0 = vdupq_n_u8(0);
+        uint8x16_t acc1 = vdupq_n_u8(0);
+        while (i + 32 <= buf_len) {
+            acc0 = vorrq_u8(acc0, vld1q_u8(bp + i));
+            acc1 = vorrq_u8(acc1, vld1q_u8(bp + i + 16));
+            i += 32;
+        }
+        if (i + 16 <= buf_len) {
+            acc0 = vorrq_u8(acc0, vld1q_u8(bp + i));
+            i += 16;
+        }
+        cbits = vmaxvq_u8(vorrq_u8(acc0, acc1));
+    }
+#endif
+    for (; i < buf_len; i++) {
+        cbits |= (uint8_t)buf[i];
     }
     if (cbits >= 0x80) {
         p = (const uint8_t *)buf;
@@ -1225,6 +1245,23 @@ static inline int utf8_scan(const char *buf, size_t buf_len, size_t *plen)
                     }
                 }
             }
+#if defined(__aarch64__) && defined(__ARM_NEON)
+            else {
+                if (p + 16 <= p_end && (p[7] | p[15]) < 0x80) {
+                    while (p + 16 <= p_end) {
+                        uint8x16_t v = vld1q_u8(p);
+                        if (vmaxvq_u8(v) >= 0x80)
+                            break;
+                        p += 16;
+                        len += 16;
+                    }
+                }
+                while (p < p_end && *p < 0x80) {
+                    p++;
+                    len++;
+                }
+            }
+#endif
         }
     }
     *plen = len;
@@ -1250,9 +1287,29 @@ static inline size_t utf8_decode_buf8(uint8_t *dest, size_t dest_len, const char
         uint32_t c = *p++;
         if (c >= 0xC0) {
             c = (c << 6) + *p++ - ((0xC0 << 6) + 0x80);
-        }
-        if (i < dest_len) {
-            dest[i] = c;
+            if (i < dest_len) {
+                dest[i] = c;
+            }
+        } else {
+            if (i < dest_len) {
+                dest[i] = c;
+            }
+#if defined(__aarch64__) && defined(__ARM_NEON)
+            while (p + 16 <= p_end && i + 17 <= dest_len) {
+                uint8x16_t v = vld1q_u8(p);
+                if (vmaxvq_u8(v) >= 0x80)
+                    break;
+                vst1q_u8(dest + i + 1, v);
+                p += 16;
+                i += 16;
+            }
+            while (p < p_end && *p < 0x80) {
+                i++;
+                if (i < dest_len)
+                    dest[i] = *p;
+                p++;
+            }
+#endif
         }
     }
     if (i < dest_len) {
@@ -1290,9 +1347,32 @@ static inline size_t utf8_decode_buf16(uint16_t *dest, size_t dest_len, const ch
                 i++;
                 c = get_lo_surrogate(c);
             }
-        }
-        if (i < dest_len) {
-            dest[i] = c;
+            if (i < dest_len) {
+                dest[i] = c;
+            }
+        } else {
+            if (i < dest_len) {
+                dest[i] = c;
+            }
+#if defined(__aarch64__) && defined(__ARM_NEON)
+            if (p + 16 <= p_end && i + 17 <= dest_len && (p[7] | p[15]) < 0x80) {
+                while (p + 16 <= p_end && i + 17 <= dest_len) {
+                    uint8x16_t v = vld1q_u8(p);
+                    if (vmaxvq_u8(v) >= 0x80)
+                        break;
+                    vst1q_u16(dest + i + 1, vmovl_u8(vget_low_u8(v)));
+                    vst1q_u16(dest + i + 9, vmovl_high_u8(v));
+                    p += 16;
+                    i += 16;
+                }
+            }
+            while (p < p_end && *p < 0x80) {
+                i++;
+                if (i < dest_len)
+                    dest[i] = *p;
+                p++;
+            }
+#endif
         }
     }
     return i;

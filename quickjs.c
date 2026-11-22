@@ -5929,7 +5929,27 @@ const char *JS_ToCStringLen2(JSContext *ctx, size_t *plen, JSValueConst val1,
            strings, which is the most common case.
          */
         count = 0;
-        for (pos = 0; pos < len; pos++) {
+        pos = 0;
+#if defined(__aarch64__) && defined(__ARM_NEON)
+        if (len >= 16) {
+            uint8x16_t acc0 = vdupq_n_u8(0);
+            uint8x16_t acc1 = vdupq_n_u8(0);
+            int p_scan = 0;
+            while (p_scan + 32 <= len) {
+                acc0 = vorrq_u8(acc0, vld1q_u8(src + p_scan));
+                acc1 = vorrq_u8(acc1, vld1q_u8(src + p_scan + 16));
+                p_scan += 32;
+            }
+            if (p_scan + 16 <= len) {
+                acc0 = vorrq_u8(acc0, vld1q_u8(src + p_scan));
+                p_scan += 16;
+            }
+            if (vmaxvq_u8(vorrq_u8(acc0, acc1)) < 0x80) {
+                pos = p_scan;
+            }
+        }
+#endif
+        for (; pos < len; pos++) {
             count += src[pos] >> 7;
         }
         if (count == 0 && str->kind == JS_STRING_KIND_NORMAL) {
@@ -5967,6 +5987,22 @@ const char *JS_ToCStringLen2(JSContext *ctx, size_t *plen, JSValueConst val1,
             c = src[pos++];
             if (c < 0x80) {
                 *q++ = c;
+#if defined(__aarch64__) && defined(__ARM_NEON)
+                if (pos + 16 <= len && (src[pos + 7] | src[pos + 15]) < 0x80) {
+                    while (pos + 16 <= len) {
+                        uint16x8_t v0 = vld1q_u16(src + pos);
+                        uint16x8_t v1 = vld1q_u16(src + pos + 8);
+                        if (vmaxvq_u16(vorrq_u16(v0, v1)) >= 0x80)
+                            break;
+                        vst1q_u8(q, vcombine_u8(vmovn_u16(v0), vmovn_u16(v1)));
+                        q += 16;
+                        pos += 16;
+                    }
+                }
+                while (pos < len && src[pos] < 0x80) {
+                    *q++ = (uint8_t)src[pos++];
+                }
+#endif
             } else {
                 if (is_hi_surrogate(c)) {
                     if (pos < len && !cesu8) {
@@ -55101,17 +55137,69 @@ static int string_cmp(JSString *p1, JSString *p2, int x1, int x2, int len)
 static int string_indexof_char(JSString *p, int c, int from)
 {
     /* assuming 0 <= from <= p->len */
-    int i, len = p->len;
+    int i = from, len = p->len;
     if (p->is_wide_char) {
-        for (i = from; i < len; i++) {
-            if (str16(p)[i] == c) {
+        const uint16_t *s = str16(p);
+#if defined(__aarch64__) && defined(__ARM_NEON)
+        if ((c & ~0xffff) == 0 && len - i >= 8) {
+            static const uint16_t lanes16[8] = {0, 1, 2, 3, 4, 5, 6, 7};
+            uint16x8_t needle = vdupq_n_u16((uint16_t)c);
+            uint16x8_t lane_v = vld1q_u16(lanes16);
+            uint16x8_t ones = vdupq_n_u16(0xFFFF);
+            while (i + 16 <= len) {
+                uint16x8_t eq0 = vceqq_u16(vld1q_u16(s + i), needle);
+                uint16x8_t eq1 = vceqq_u16(vld1q_u16(s + i + 8), needle);
+                if (vmaxvq_u16(vorrq_u16(eq0, eq1)) != 0) {
+                    if (vmaxvq_u16(eq0) != 0)
+                        return i + vminvq_u16(vbslq_u16(eq0, lane_v, ones));
+                    return i + 8 + vminvq_u16(vbslq_u16(eq1, lane_v, ones));
+                }
+                i += 16;
+            }
+            if (i + 8 <= len) {
+                uint16x8_t eq = vceqq_u16(vld1q_u16(s + i), needle);
+                if (vmaxvq_u16(eq) != 0)
+                    return i + vminvq_u16(vbslq_u16(eq, lane_v, ones));
+                i += 8;
+            }
+        }
+#endif
+        for (; i < len; i++) {
+            if (s[i] == c) {
                 return i;
             }
         }
     } else {
         if ((c & ~0xff) == 0) {
-            for (i = from; i < len; i++) {
-                if (str8(p)[i] == (uint8_t)c) {
+            const uint8_t *s = str8(p);
+#if defined(__aarch64__) && defined(__ARM_NEON)
+            if (len - i >= 16) {
+                static const uint8_t lanes8[16] = {
+                    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
+                };
+                uint8x16_t needle = vdupq_n_u8((uint8_t)c);
+                uint8x16_t lane_v = vld1q_u8(lanes8);
+                uint8x16_t ones = vdupq_n_u8(0xFF);
+                while (i + 32 <= len) {
+                    uint8x16_t eq0 = vceqq_u8(vld1q_u8(s + i), needle);
+                    uint8x16_t eq1 = vceqq_u8(vld1q_u8(s + i + 16), needle);
+                    if (vmaxvq_u8(vorrq_u8(eq0, eq1)) != 0) {
+                        if (vmaxvq_u8(eq0) != 0)
+                            return i + vminvq_u8(vbslq_u8(eq0, lane_v, ones));
+                        return i + 16 + vminvq_u8(vbslq_u8(eq1, lane_v, ones));
+                    }
+                    i += 32;
+                }
+                if (i + 16 <= len) {
+                    uint8x16_t eq = vceqq_u8(vld1q_u8(s + i), needle);
+                    if (vmaxvq_u8(eq) != 0)
+                        return i + vminvq_u8(vbslq_u8(eq, lane_v, ones));
+                    i += 16;
+                }
+            }
+#endif
+            for (; i < len; i++) {
+                if (s[i] == (uint8_t)c) {
                     return i;
                 }
             }
@@ -55288,13 +55376,17 @@ static JSValue js_string_indexOf(JSContext *ctx, JSValueConst this_val,
     }
     ret = -1;
     if (len >= v_len && inc * (stop - start) >= 0) {
-        for (i = start;; i += inc) {
-            if (!string_cmp(p, p1, i, 0, v_len)) {
-                ret = i;
-                break;
-            }
-            if (i == stop) {
-                break;
+        if (!lastIndexOf) {
+            ret = string_indexof(p, p1, start);
+        } else {
+            for (i = start;; i += inc) {
+                if (!string_cmp(p, p1, i, 0, v_len)) {
+                    ret = i;
+                    break;
+                }
+                if (i == stop) {
+                    break;
+                }
             }
         }
     }
@@ -55315,7 +55407,7 @@ static JSValue js_string_includes(JSContext *ctx, JSValueConst this_val,
                                   int argc, JSValueConst *argv, int magic)
 {
     JSValue str, v = JS_UNDEFINED;
-    int i, len, v_len, pos, start, stop, ret;
+    int len, v_len, pos, start, stop, ret;
     JSString *p;
     JSString *p1;
 
@@ -55360,14 +55452,10 @@ static JSValue js_string_includes(JSContext *ctx, JSValueConst this_val,
         start = stop = pos;
     }
     if (start >= 0 && start <= stop) {
-        for (i = start;; i++) {
-            if (!string_cmp(p, p1, i, 0, v_len)) {
-                ret = 1;
-                break;
-            }
-            if (i == stop) {
-                break;
-            }
+        if (magic == 0) {
+            ret = (string_indexof(p, p1, start) >= 0);
+        } else {
+            ret = !string_cmp(p, p1, start, 0, v_len);
         }
     }
 done:
@@ -56233,6 +56321,68 @@ static JSValue js_string_toLowerCase(JSContext *ctx, JSValueConst this_val,
     if (p->len == 0) {
         return val;
     }
+#if defined(__aarch64__) && defined(__ARM_NEON)
+    /* Single-pass branchless ARMv8.0 NEON ASCII fast path for 8-bit strings.
+       Falls back cleanly to full Unicode lre_case_conv if any byte >= 0x80
+       (preserving Latin-1 expansions like U+00DF 'ß' -> "SS"). */
+    if (!p->is_wide_char) {
+        int len = p->len;
+        const uint8_t *src = str8(p);
+        JSString *out_str = js_alloc_string(ctx, len, 0);
+        if (unlikely(!out_str)) {
+            JS_FreeValue(ctx, val);
+            return JS_EXCEPTION;
+        }
+        uint8_t *dst = str8(out_str);
+        uint8x16_t hi_acc0 = vdupq_n_u8(0);
+        uint8x16_t hi_acc1 = vdupq_n_u8(0);
+        uint8x16_t c_lo = vdupq_n_u8(to_lower ? 'A' : 'a');
+        uint8x16_t c_hi = vdupq_n_u8(to_lower ? 'Z' : 'z');
+        uint8x16_t bit5 = vdupq_n_u8(0x20);
+        int k = 0;
+        while (k + 32 <= len) {
+            uint8x16_t v0 = vld1q_u8(src + k);
+            uint8x16_t v1 = vld1q_u8(src + k + 16);
+            hi_acc0 = vorrq_u8(hi_acc0, v0);
+            hi_acc1 = vorrq_u8(hi_acc1, v1);
+            uint8x16_t m0 = vandq_u8(vcgeq_u8(v0, c_lo), vcleq_u8(v0, c_hi));
+            uint8x16_t m1 = vandq_u8(vcgeq_u8(v1, c_lo), vcleq_u8(v1, c_hi));
+            uint8x16_t r0 = to_lower ? vorrq_u8(v0, vandq_u8(m0, bit5))
+                                     : vbicq_u8(v0, vandq_u8(m0, bit5));
+            uint8x16_t r1 = to_lower ? vorrq_u8(v1, vandq_u8(m1, bit5))
+                                     : vbicq_u8(v1, vandq_u8(m1, bit5));
+            vst1q_u8(dst + k, r0);
+            vst1q_u8(dst + k + 16, r1);
+            k += 32;
+        }
+        if (k + 16 <= len) {
+            uint8x16_t v = vld1q_u8(src + k);
+            hi_acc0 = vorrq_u8(hi_acc0, v);
+            uint8x16_t m = vandq_u8(vcgeq_u8(v, c_lo), vcleq_u8(v, c_hi));
+            uint8x16_t r = to_lower ? vorrq_u8(v, vandq_u8(m, bit5))
+                                    : vbicq_u8(v, vandq_u8(m, bit5));
+            vst1q_u8(dst + k, r);
+            k += 16;
+        }
+        uint8_t hi_or = vmaxvq_u8(vorrq_u8(hi_acc0, hi_acc1));
+        for (; k < len; k++) {
+            uint8_t ch = src[k];
+            hi_or |= ch;
+            if (to_lower) {
+                if (ch >= 'A' && ch <= 'Z') ch |= 0x20;
+            } else {
+                if (ch >= 'a' && ch <= 'z') ch &= ~0x20;
+            }
+            dst[k] = ch;
+        }
+        if (likely(hi_or < 0x80)) {
+            dst[len] = '\0';
+            JS_FreeValue(ctx, val);
+            return JS_MKPTR(JS_TAG_STRING, out_str);
+        }
+        JS_FreeValue(ctx, JS_MKPTR(JS_TAG_STRING, out_str));
+    }
+#endif
     if (string_buffer_init(ctx, b, p->len)) {
         goto fail;
     }
