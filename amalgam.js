@@ -21,7 +21,8 @@ const quickjs_opcode_h = loadFile("quickjs-opcode.h")
 const quickjs_vm_c = loadFile("quickjs-vm.c")
 const pocket_once_h = ["pocket_trig.h", "quickjs-vmprobe.h", "quickjs-vm.h", "quickjs-vmstack.h"]
 const pocket_data_h = ["quickjs-rom-atoms-defs.h", "quickjs-rom-atoms.h",
-                       "quickjs-rom-intrinsics-defs.h", "quickjs-rom-intrinsics.h"]
+                       "quickjs-rom-intrinsics-defs.h", "quickjs-rom-intrinsics.h",
+                       "dtoa_schubfach_table.h"]
 
 let source = "#if defined(QJS_BUILD_LIBC) && defined(__linux__) && !defined(_GNU_SOURCE)\n"
            + "#define _GNU_SOURCE\n"
