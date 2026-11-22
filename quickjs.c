@@ -23786,8 +23786,8 @@ dec_loc_slow:
                 op1 = sp[-2];                             \
                 op2 = sp[-1];                                   \
                 if (likely(JS_VALUE_IS_BOTH_INT(op1, op2))) {           \
-                    sp[-2] = js_bool(JS_VALUE_GET_INT(op1) binary_op JS_VALUE_GET_INT(op2)); \
-                    sp--;                                               \
+                    i = (JS_VALUE_GET_INT(op1) binary_op JS_VALUE_GET_INT(op2)); \
+                    goto cmp_fuse_done;                                 \
                 } else {                                                \
                     sf->cur_pc = pc;                                    \
                     if (slow_call)                                      \
@@ -23808,11 +23808,11 @@ dec_loc_slow:
                 op1 = sp[-2];                                           \
                 op2 = sp[-1];                                           \
                 if (likely(JS_VALUE_IS_BOTH_INT(op1, op2))) {           \
-                    sp[-2] = js_bool(JS_VALUE_GET_INT(op1) binary_op JS_VALUE_GET_INT(op2)); \
-                    sp--;                                               \
+                    i = (JS_VALUE_GET_INT(op1) binary_op JS_VALUE_GET_INT(op2)); \
+                    goto cmp_fuse_done;                                 \
                 } else if (js_both_number(op1, op2, &d1, &d2)) {        \
-                    sp[-2] = js_bool(d1 binary_op d2);                  \
-                    sp--;                                               \
+                    i = (d1 binary_op d2);                              \
+                    goto cmp_fuse_done;                                 \
                 } else {                                                \
                     sf->cur_pc = pc;                                    \
                     if (js_relational_slow(ctx, sp, opcode))            \
@@ -23830,6 +23830,23 @@ dec_loc_slow:
             OP_CMP(OP_neq, !=, js_eq_slow(ctx, sp, 1));
             OP_CMP(OP_strict_eq, ==, js_strict_eq_slow(ctx, sp, 0));
             OP_CMP(OP_strict_neq, !=, js_strict_eq_slow(ctx, sp, 1));
+cmp_fuse_done:
+            if (likely(*pc == OP_if_false8)) {
+                int8_t diff = (int8_t)pc[1];
+                sp -= 2;
+                if (!i) {
+                    pc += diff + 1;
+                    if (unlikely(diff < 0)) {
+                        JS_VM_POLL_SAFEPOINT();
+                    }
+                } else {
+                    pc += 2;
+                }
+            } else {
+                sp[-2] = js_bool(i);
+                sp--;
+            }
+            BREAK;
 
             CASE(OP_in):
                 sf->cur_pc = pc;
