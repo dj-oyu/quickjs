@@ -51341,6 +51341,62 @@ static JSValue js_array_every(JSContext *ctx, JSValueConst this_val,
     }
     n = 0;
 
+    if (special == special_map && len > 0 && len <= (int64_t)INT32_MAX) {
+        JSValue *src_arr, *dst_arr;
+        uint32_t src_cnt, dst_cnt;
+        if (js_get_fast_array(ctx, obj, &src_arr, &src_cnt) &&
+            (int64_t)src_cnt == len &&
+            js_get_fast_array(ctx, ret, &dst_arr, &dst_cnt) &&
+            dst_cnt == 0) {
+            JSObject *src_obj = JS_VALUE_GET_OBJ(obj);
+            JSObject *ret_obj = JS_VALUE_GET_OBJ(ret);
+            if (ret_obj->extensible) {
+                if (expand_fast_array(ctx, ret_obj, (uint32_t)len) < 0) {
+                    goto exception;
+                }
+                for (k = 0; k < len; k++) {
+                    if (js_poll_interrupts(ctx)) {
+                        goto exception;
+                    }
+                    if (likely(src_obj->fast_array &&
+                               (uint32_t)k < src_obj->u.array.count)) {
+                        val = js_dup(src_obj->u.array.u.values[k]);
+                        present = true;
+                    } else {
+                        present = JS_TryGetPropertyInt64(ctx, obj, k, &val);
+                        if (present < 0) {
+                            goto exception;
+                        }
+                    }
+                    if (present) {
+                        args[0] = val;
+                        args[1] = js_int32((int32_t)k);
+                        args[2] = obj;
+                        res = JS_Call(ctx, func, this_arg, 3, args);
+                        if (JS_IsException(res)) {
+                            goto exception;
+                        }
+                        if (likely(ret_obj->fast_array &&
+                                   ret_obj->extensible &&
+                                   ret_obj->u.array.count == (uint32_t)k &&
+                                   ret_obj->u.array.u1.size > (uint32_t)k)) {
+                            ret_obj->u.array.u.values[k] = res;
+                            ret_obj->u.array.count = (uint32_t)k + 1;
+                        } else {
+                            if (JS_DefinePropertyValueInt64(ctx, ret, k, res,
+                                                            JS_PROP_C_W_E | JS_PROP_THROW) < 0) {
+                                goto exception;
+                            }
+                        }
+                        JS_FreeValue(ctx, val);
+                        val = JS_UNDEFINED;
+                    }
+                }
+                goto done;
+            }
+        }
+    }
+
     for (k = 0; k < len; k++) {
         if (js_poll_interrupts(ctx)) {
             goto exception;
@@ -51860,6 +51916,64 @@ static JSValue js_array_toString(JSContext *ctx, JSValueConst this_val,
     return ret;
 }
 
+static inline uint32_t js_i32_dec_len(int32_t v)
+{
+    uint32_t u = (v < 0) ? (0u - (uint32_t)v) : (uint32_t)v;
+    uint32_t len = (v < 0) ? 1u : 0u;
+    if (u < 10) return len + 1;
+    if (u < 100) return len + 2;
+    if (u < 1000) return len + 3;
+    if (u < 10000) return len + 4;
+    if (u < 100000) return len + 5;
+    if (u < 1000000) return len + 6;
+    if (u < 10000000) return len + 7;
+    if (u < 100000000) return len + 8;
+    if (u < 1000000000) return len + 9;
+    return len + 10;
+}
+
+static inline uint8_t *js_put_i32_8(uint8_t *dst, int32_t v)
+{
+    char tmp[12];
+    int n = 0;
+    uint32_t u;
+    if (v < 0) {
+        *dst++ = '-';
+        u = 0u - (uint32_t)v;
+    } else {
+        u = (uint32_t)v;
+    }
+    do {
+        tmp[n++] = (char)('0' + (u % 10u));
+        u /= 10u;
+    } while (u);
+    while (n > 0) {
+        *dst++ = (uint8_t)tmp[--n];
+    }
+    return dst;
+}
+
+static inline uint16_t *js_put_i32_16(uint16_t *dst, int32_t v)
+{
+    char tmp[12];
+    int n = 0;
+    uint32_t u;
+    if (v < 0) {
+        *dst++ = '-';
+        u = 0u - (uint32_t)v;
+    } else {
+        u = (uint32_t)v;
+    }
+    do {
+        tmp[n++] = (char)('0' + (u % 10u));
+        u /= 10u;
+    } while (u);
+    while (n > 0) {
+        *dst++ = (uint16_t)(uint8_t)tmp[--n];
+    }
+    return dst;
+}
+
 static JSValue js_array_join(JSContext *ctx, JSValueConst this_val,
                              int argc, JSValueConst *argv, int toLocaleString)
 {
@@ -51887,6 +52001,144 @@ static JSValue js_array_join(JSContext *ctx, JSValueConst this_val,
             c = -1;
         }
     }
+
+    if (!toLocaleString) {
+        JSValue *arrp;
+        uint32_t count32;
+        if (n == 0) {
+            JS_FreeValue(ctx, sep);
+            JS_FreeValue(ctx, obj);
+            return JS_AtomToString(ctx, JS_ATOM_empty_string);
+        }
+        if (js_get_fast_array(ctx, obj, &arrp, &count32) &&
+            (int64_t)count32 == n) {
+            if (n == 1) {
+                int tag0 = JS_VALUE_GET_TAG(arrp[0]);
+                if (tag0 == JS_TAG_STRING) {
+                    JSValue r = js_dup(arrp[0]);
+                    JS_FreeValue(ctx, sep);
+                    JS_FreeValue(ctx, obj);
+                    return r;
+                }
+                if (tag0 == JS_TAG_NULL || tag0 == JS_TAG_UNDEFINED) {
+                    JS_FreeValue(ctx, sep);
+                    JS_FreeValue(ctx, obj);
+                    return JS_AtomToString(ctx, JS_ATOM_empty_string);
+                }
+            }
+            uint32_t sep_len = (c >= 0) ? 1u : p->len;
+            uint64_t total_len = (uint64_t)sep_len * (uint64_t)(n - 1);
+            int is_wide = (c < 0 && p->is_wide_char) ? 1 : 0;
+            bool can_fast = true;
+            for (i = 0; i < n; i++) {
+                int tag = JS_VALUE_GET_TAG(arrp[i]);
+                if (tag == JS_TAG_STRING) {
+                    JSString *es = JS_VALUE_GET_STRING(arrp[i]);
+                    total_len += es->len;
+                    is_wide |= es->is_wide_char;
+                } else if (tag == JS_TAG_INT) {
+                    total_len += js_i32_dec_len(JS_VALUE_GET_INT(arrp[i]));
+                } else if (tag == JS_TAG_NULL || tag == JS_TAG_UNDEFINED) {
+                    /* empty */
+                } else if (tag == JS_TAG_BOOL) {
+                    total_len += JS_VALUE_GET_BOOL(arrp[i]) ? 4u : 5u;
+                } else {
+                    can_fast = false;
+                    break;
+                }
+            }
+            if (can_fast && total_len <= JS_STRING_LEN_MAX) {
+                if (total_len == 0) {
+                    JS_FreeValue(ctx, sep);
+                    JS_FreeValue(ctx, obj);
+                    return JS_AtomToString(ctx, JS_ATOM_empty_string);
+                }
+                JSString *out = js_alloc_string(ctx, (int)total_len, is_wide);
+                if (!out) {
+                    JS_FreeValue(ctx, sep);
+                    goto exception;
+                }
+                if (!is_wide) {
+                    uint8_t *dst = str8(out);
+                    for (i = 0; i < n; i++) {
+                        if (i > 0) {
+                            if (c >= 0) {
+                                *dst++ = (uint8_t)c;
+                            } else if (sep_len > 0) {
+                                memcpy(dst, str8(p), sep_len);
+                                dst += sep_len;
+                            }
+                        }
+                        int tag = JS_VALUE_GET_TAG(arrp[i]);
+                        if (tag == JS_TAG_STRING) {
+                            JSString *es = JS_VALUE_GET_STRING(arrp[i]);
+                            if (es->len > 0) {
+                                memcpy(dst, str8(es), es->len);
+                                dst += es->len;
+                            }
+                        } else if (tag == JS_TAG_INT) {
+                            dst = js_put_i32_8(dst, JS_VALUE_GET_INT(arrp[i]));
+                        } else if (tag == JS_TAG_BOOL) {
+                            if (JS_VALUE_GET_BOOL(arrp[i])) {
+                                memcpy(dst, "true", 4);
+                                dst += 4;
+                            } else {
+                                memcpy(dst, "false", 5);
+                                dst += 5;
+                            }
+                        }
+                    }
+                    *dst = '\0';
+                } else {
+                    uint16_t *dst = str16(out);
+                    for (i = 0; i < n; i++) {
+                        if (i > 0) {
+                            if (c >= 0) {
+                                *dst++ = (uint16_t)c;
+                            } else if (sep_len > 0) {
+                                if (p->is_wide_char) {
+                                    memcpy(dst, str16(p), sep_len * sizeof(uint16_t));
+                                    dst += sep_len;
+                                } else {
+                                    const uint8_t *s8 = str8(p);
+                                    for (uint32_t j = 0; j < sep_len; j++) {
+                                        *dst++ = s8[j];
+                                    }
+                                }
+                            }
+                        }
+                        int tag = JS_VALUE_GET_TAG(arrp[i]);
+                        if (tag == JS_TAG_STRING) {
+                            JSString *es = JS_VALUE_GET_STRING(arrp[i]);
+                            if (es->len > 0) {
+                                if (es->is_wide_char) {
+                                    memcpy(dst, str16(es), es->len * sizeof(uint16_t));
+                                    dst += es->len;
+                                } else {
+                                    const uint8_t *s8 = str8(es);
+                                    for (uint32_t j = 0; j < es->len; j++) {
+                                        *dst++ = s8[j];
+                                    }
+                                }
+                            }
+                        } else if (tag == JS_TAG_INT) {
+                            dst = js_put_i32_16(dst, JS_VALUE_GET_INT(arrp[i]));
+                        } else if (tag == JS_TAG_BOOL) {
+                            const char *bs = JS_VALUE_GET_BOOL(arrp[i]) ? "true" : "false";
+                            uint32_t blen = JS_VALUE_GET_BOOL(arrp[i]) ? 4u : 5u;
+                            for (uint32_t j = 0; j < blen; j++) {
+                                *dst++ = (uint16_t)(uint8_t)bs[j];
+                            }
+                        }
+                    }
+                }
+                JS_FreeValue(ctx, sep);
+                JS_FreeValue(ctx, obj);
+                return JS_MKPTR(JS_TAG_STRING, out);
+            }
+        }
+    }
+
     string_buffer_init(ctx, b, 0);
 
     for (i = 0; i < n; i++) {
@@ -59273,25 +59525,62 @@ static JSValue js_regexp_exec(JSContext *ctx, JSValueConst this_val,
     return js_regexp_exec_internal(ctx, this_val, argv[0], false);
 }
 
-/* delete portions of a string that match a given regex */
-static JSValue JS_RegExpDelete(JSContext *ctx, JSValueConst this_val, JSValue arg)
+/* Check that rx is a plain RegExp instance whose `exec` resolves directly to
+   built-in js_regexp_exec with no own property or getter side effects. */
+static JSRegExp *js_get_fast_regexp(JSContext *ctx, JSValueConst rx)
+{
+    JSObject *p, *proto;
+    JSShapeProperty *pr;
+    JSProperty *prop;
+
+    if (JS_VALUE_GET_TAG(rx) != JS_TAG_OBJECT) {
+        return NULL;
+    }
+    p = JS_VALUE_GET_OBJ(rx);
+    if (p->class_id != JS_CLASS_REGEXP || !p->u.regexp.bytecode) {
+        return NULL;
+    }
+    if (find_own_property(&prop, p, JS_ATOM_exec) != NULL) {
+        return NULL;
+    }
+    if (JS_VALUE_GET_TAG(ctx->class_proto[JS_CLASS_REGEXP]) != JS_TAG_OBJECT) {
+        return NULL;
+    }
+    proto = JS_VALUE_GET_OBJ(ctx->class_proto[JS_CLASS_REGEXP]);
+    if (p->shape->proto != proto) {
+        return NULL;
+    }
+    pr = find_own_property(&prop, proto, JS_ATOM_exec);
+    if (!pr || (pr->flags & JS_PROP_TMASK) != JS_PROP_NORMAL) {
+        return NULL;
+    }
+    if (!JS_IsCFunction(ctx, prop->u.value, js_regexp_exec, 0)) {
+        return NULL;
+    }
+    return &p->u.regexp;
+}
+
+/* Replace portions of a string matching a global standard regex with a plain
+   (no-'$') replacement string without allocating per-match result arrays. */
+static JSValue JS_RegExpReplacePlain(JSContext *ctx, JSValueConst this_val,
+                                     JSValue arg, JSString *rep)
 {
     JSRegExp *re = js_get_regexp(ctx, this_val, true);
     JSString *str;
     JSValue str_val, val;
     uint8_t *re_bytecode;
     int ret;
+    uint8_t *capture_stack[32];
     uint8_t **capture, *str_buf;
     int alloc_count, shift, re_flags;
     int next_src_pos, start, end;
     int64_t last_index;
     StringBuffer b_s, *b = &b_s;
+    bool buf_inited = false;
 
     if (!re) {
         return JS_EXCEPTION;
     }
-
-    string_buffer_init(ctx, b, 0);
 
     capture = NULL;
     str_val = JS_ToString(ctx, arg);
@@ -59313,9 +59602,13 @@ static JSValue JS_RegExpDelete(JSContext *ctx, JSValueConst this_val, JSValue ar
        the capture positions for its registers (see js_regexp_exec). */
     alloc_count = lre_get_alloc_count(re_bytecode);
     if (alloc_count > 0) {
-        capture = js_malloc(ctx, sizeof(capture[0]) * alloc_count);
-        if (!capture) {
-            goto fail;
+        if ((unsigned)alloc_count <= countof(capture_stack)) {
+            capture = capture_stack;
+        } else {
+            capture = js_malloc(ctx, sizeof(capture[0]) * alloc_count);
+            if (!capture) {
+                goto fail;
+            }
         }
     }
     shift = str->is_wide_char;
@@ -59323,6 +59616,12 @@ static JSValue JS_RegExpDelete(JSContext *ctx, JSValueConst this_val, JSValue ar
     next_src_pos = 0;
     for (;;) {
         if (last_index > str->len) {
+            if (re_flags & (LRE_FLAG_GLOBAL | LRE_FLAG_STICKY)) {
+                if (JS_SetProperty(ctx, this_val, JS_ATOM_lastIndex,
+                                   js_int32(0)) < 0) {
+                    goto fail;
+                }
+            }
             break;
         }
 
@@ -59354,6 +59653,10 @@ static JSValue JS_RegExpDelete(JSContext *ctx, JSValueConst this_val, JSValue ar
             }
             break;
         }
+        if (!buf_inited) {
+            string_buffer_init2(ctx, b, str->len, str->is_wide_char | (rep ? rep->is_wide_char : 0));
+            buf_inited = true;
+        }
         start = (capture[0] - str_buf) >> shift;
         end = (capture[1] - str_buf) >> shift;
         last_index = end;
@@ -59362,11 +59665,18 @@ static JSValue JS_RegExpDelete(JSContext *ctx, JSValueConst this_val, JSValue ar
                 goto fail;
             }
         }
+        if (rep && rep->len > 0) {
+            if (string_buffer_concat(b, rep, 0, rep->len)) {
+                goto fail;
+            }
+        }
         next_src_pos = end;
         if (!(re_flags & LRE_FLAG_GLOBAL)) {
-            if (JS_SetProperty(ctx, this_val, JS_ATOM_lastIndex,
-                               js_int32(end)) < 0) {
-                goto fail;
+            if (re_flags & LRE_FLAG_STICKY) {
+                if (JS_SetProperty(ctx, this_val, JS_ATOM_lastIndex,
+                                   js_int32(end)) < 0) {
+                    goto fail;
+                }
             }
             break;
         }
@@ -59379,16 +59689,27 @@ static JSValue JS_RegExpDelete(JSContext *ctx, JSValueConst this_val, JSValue ar
         }
         last_index = end;
     }
+    if (capture != capture_stack) {
+        js_free(ctx, capture);
+    }
+    if (!buf_inited) {
+        return str_val;
+    }
     if (string_buffer_concat(b, str, next_src_pos, str->len)) {
-        goto fail;
+        JS_FreeValue(ctx, str_val);
+        string_buffer_free(b);
+        return JS_EXCEPTION;
     }
     JS_FreeValue(ctx, str_val);
-    js_free(ctx, capture);
     return string_buffer_end(b);
 fail:
     JS_FreeValue(ctx, str_val);
-    js_free(ctx, capture);
-    string_buffer_free(b);
+    if (capture != capture_stack) {
+        js_free(ctx, capture);
+    }
+    if (buf_inited) {
+        string_buffer_free(b);
+    }
     return JS_EXCEPTION;
 }
 
@@ -59492,6 +59813,110 @@ static JSValue js_regexp_Symbol_match(JSContext *ctx, JSValueConst this_val,
 
         if (JS_SetProperty(ctx, rx, JS_ATOM_lastIndex, js_int32(0)) < 0) {
             goto exception;
+        }
+        {
+            JSRegExp *re = js_get_fast_regexp(ctx, rx);
+            if (re) {
+                uint8_t *re_bytecode = str8(re->bytecode);
+                int re_flags = lre_get_flags(re_bytecode);
+                bool re_unicode = (re_flags & (LRE_FLAG_UNICODE | LRE_FLAG_UNICODE_SETS)) != 0;
+                if ((re_flags & LRE_FLAG_GLOBAL) && re_unicode == (fullUnicode != 0)) {
+                    JSString *sp = JS_VALUE_GET_STRING(S);
+                    uint8_t *str_buf = str8(sp);
+                    int shift = sp->is_wide_char;
+                    int alloc_count = lre_get_alloc_count(re_bytecode);
+                    uint8_t *capture_stack[32];
+                    uint8_t **capture = NULL;
+                    int64_t last_index = 0;
+                    int lre_ret;
+
+                    if (alloc_count > 0) {
+                        if ((unsigned)alloc_count <= countof(capture_stack)) {
+                            capture = capture_stack;
+                        } else {
+                            capture = js_malloc(ctx, sizeof(capture[0]) * alloc_count);
+                            if (!capture) {
+                                goto exception;
+                            }
+                        }
+                    }
+                    n = 0;
+                    for (;;) {
+                        if (last_index > sp->len) {
+                            break;
+                        }
+                        lre_ret = lre_exec(capture, re_bytecode,
+                                           str_buf, last_index, sp->len, shift, ctx);
+                        if (lre_ret != 1) {
+                            if (lre_ret < 0) {
+                                switch (lre_ret) {
+                                case LRE_RET_TIMEOUT:
+                                    JS_ThrowInterrupted(ctx);
+                                    break;
+                                case LRE_RET_MEMORY_ERROR:
+                                    JS_ThrowInternalError(ctx, "out of memory in regexp execution");
+                                    break;
+                                case LRE_RET_BYTECODE_ERROR:
+                                    JS_ThrowInternalError(ctx, "corrupted bytecode in regexp execution");
+                                    break;
+                                default:
+                                    abort();
+                                }
+                                if (capture != capture_stack) {
+                                    js_free(ctx, capture);
+                                }
+                                goto exception;
+                            }
+                            break;
+                        }
+                        int start = (capture[0] - str_buf) >> shift;
+                        int end = (capture[1] - str_buf) >> shift;
+                        if (n == 0) {
+                            A = JS_NewArray(ctx);
+                            if (JS_IsException(A)) {
+                                if (capture != capture_stack) {
+                                    js_free(ctx, capture);
+                                }
+                                goto exception;
+                            }
+                        }
+                        if (start == end) {
+                            matchStr = JS_AtomToString(ctx, JS_ATOM_empty_string);
+                        } else {
+                            matchStr = js_sub_string(ctx, sp, start, end);
+                        }
+                        if (JS_IsException(matchStr)) {
+                            if (capture != capture_stack) {
+                                js_free(ctx, capture);
+                            }
+                            goto exception;
+                        }
+                        if (add_fast_array_element(ctx, JS_VALUE_GET_OBJ(A), matchStr, JS_PROP_THROW) < 0) {
+                            if (capture != capture_stack) {
+                                js_free(ctx, capture);
+                            }
+                            goto exception;
+                        }
+                        n++;
+                        if (end == start) {
+                            end = string_advance_index(sp, end, fullUnicode);
+                        }
+                        last_index = end;
+                    }
+                    if (capture != capture_stack) {
+                        js_free(ctx, capture);
+                    }
+                    if (JS_SetProperty(ctx, rx, JS_ATOM_lastIndex, js_int32(0)) < 0) {
+                        goto exception;
+                    }
+                    if (n == 0) {
+                        A = JS_NULL;
+                    }
+                    JS_FreeValue(ctx, flags);
+                    JS_FreeValue(ctx, S);
+                    return A;
+                }
+            }
         }
         A = JS_NewArray(ctx);
         if (JS_IsException(A)) {
@@ -59772,30 +60197,6 @@ static int value_buffer_append(ValueBuffer *b, JSValue val)
     return 0;
 }
 
-static int js_is_standard_regexp(JSContext *ctx, JSValueConst rx)
-{
-    JSValue val;
-    int res;
-
-    val = JS_GetProperty(ctx, rx, JS_ATOM_constructor);
-    if (JS_IsException(val)) {
-        return -1;
-    }
-    // rx.constructor === RegExp
-    res = js_same_value(ctx, val, ctx->regexp_ctor);
-    JS_FreeValue(ctx, val);
-    if (res) {
-        val = JS_GetProperty(ctx, rx, JS_ATOM_exec);
-        if (JS_IsException(val)) {
-            return -1;
-        }
-        // rx.exec === RE_exec
-        res = JS_IsCFunction(ctx, val, js_regexp_exec, 0);
-        JS_FreeValue(ctx, val);
-    }
-    return res;
-}
-
 static JSValue js_regexp_Symbol_replace(JSContext *ctx, JSValueConst this_val,
                                         int argc, JSValueConst *argv)
 {
@@ -59861,10 +60262,18 @@ static JSValue js_regexp_Symbol_replace(JSContext *ctx, JSValueConst this_val,
         }
     }
 
-    if (rp && rp->len == 0 && is_global && js_is_standard_regexp(ctx, rx)) {
-        /* use faster version for simple cases */
-        res = JS_RegExpDelete(ctx, rx, str);
-        goto done;
+    if (rp && string_indexof_char(rp, '$', 0) < 0) {
+        JSRegExp *re = js_get_fast_regexp(ctx, rx);
+        if (re) {
+            int re_flags = lre_get_flags(str8(re->bytecode));
+            bool re_global = (re_flags & LRE_FLAG_GLOBAL) != 0;
+            bool re_unicode = (re_flags & (LRE_FLAG_UNICODE | LRE_FLAG_UNICODE_SETS)) != 0;
+            if (re_global == (is_global != 0) && (!is_global || re_unicode == (fullUnicode != 0))) {
+                /* use faster version for simple cases */
+                res = JS_RegExpReplacePlain(ctx, rx, str, rp);
+                goto done;
+            }
+        }
     }
     for (;;) {
         JSValue result;
