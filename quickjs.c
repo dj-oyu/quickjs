@@ -55,7 +55,9 @@
 // Defined ahead of quickjs-vmprobe.h, whose F3 hooks test the third.
 #ifndef POCKET_VM_GEN_ROM_ATOMS
 #define POCKET_VM_ROM_ATOMS 1
-#define POCKET_VM_LAZY_BUILTINS 1
+#ifndef POCKET_VM_LAZY_BUILTINS
+#define POCKET_VM_LAZY_BUILTINS 0
+#endif
 #define POCKET_VM_LAZY_INTRINSICS 1
 #endif
 // VM_PROBE (docs/vm/quickjs-freertos-vm-spec.md sec.5): declares the handful of
@@ -389,7 +391,7 @@ struct JSRuntime {
     JSString *rom_cache[32];
     uint16_t rom_cache_atom[32];
 #endif
-#ifdef POCKET_VM_LAZY_BUILTINS
+#if POCKET_VM_LAZY_BUILTINS
     /* F2 (docs/vm/builtin-floor-plan.md sec.5.2): function lists whose
        entries are not in their object's shape yet, sorted by object. */
     struct JSLazyList *lazy;
@@ -1504,7 +1506,7 @@ struct JSObject {
     /* byte sizes: 40/48/72 */
 };
 
-#ifdef POCKET_VM_LAZY_BUILTINS
+#if POCKET_VM_LAZY_BUILTINS
 /* F2 (docs/vm/builtin-floor-plan.md sec.5.2): an object whose function
    lists are not (all) in its shape yet. The entries stay in the flash lists
    and a lookup that misses the shape searches them (js_lazy_touch), so the
@@ -2650,7 +2652,7 @@ JSRuntime *JS_NewRuntime2(const JSMallocFunctions *mf, void *opaque)
     if (!rt) {
         return NULL;
     }
-#ifdef POCKET_VM_LAZY_BUILTINS
+#if POCKET_VM_LAZY_BUILTINS
     {
         /* The lazy flag borrows a header bit that no field names in the
            JSObject view. Bitfield layout is the compiler's choice, so prove
@@ -3229,7 +3231,7 @@ void JS_FreeRuntime(JSRuntime *rt)
     }
 #endif
 
-#ifdef POCKET_VM_LAZY_BUILTINS
+#if POCKET_VM_LAZY_BUILTINS
     /* Every object is gone by now, and free_object took its lists along. */
     assert(rt->lazy_count == 0);
     js_free_rt(rt, rt->lazy);
@@ -5493,12 +5495,10 @@ static no_inline int string_buffer_putc16_slow(StringBuffer *s, uint32_t c)
 }
 
 /* 0 <= c <= 0xff */
-static int string_buffer_putc8(StringBuffer *s, uint32_t c)
+static no_inline int string_buffer_putc8_slow(StringBuffer *s, uint32_t c)
 {
-    if (unlikely(s->len >= s->size)) {
-        if (string_buffer_realloc(s, s->len + 1, c)) {
-            return -1;
-        }
+    if (string_buffer_realloc(s, s->len + 1, c)) {
+        return -1;
     }
     if (s->is_wide_char) {
         str16(s->str)[s->len++] = c;
@@ -5506,6 +5506,19 @@ static int string_buffer_putc8(StringBuffer *s, uint32_t c)
         str8(s->str)[s->len++] = c;
     }
     return 0;
+}
+
+static inline int string_buffer_putc8(StringBuffer *s, uint32_t c)
+{
+    if (likely(s->len < s->size)) {
+        if (likely(!s->is_wide_char)) {
+            str8(s->str)[s->len++] = c;
+        } else {
+            str16(s->str)[s->len++] = c;
+        }
+        return 0;
+    }
+    return string_buffer_putc8_slow(s, c);
 }
 
 /* 0 <= c <= 0xffff */
@@ -7283,15 +7296,15 @@ static JSValue JS_NewObjectFromShape(JSContext *ctx, JSShape *sh, JSClassID clas
     p->tmp_mark = 0;
     p->is_HTMLDDA = 0;
     p->is_prototype = 0;
-#ifdef POCKET_VM_LAZY_BUILTINS
+#if POCKET_VM_LAZY_BUILTINS
     /* Upstream never initializes the spare header bits (nothing read
        them); the lazy flag is one, and a recycled block would otherwise
        hand a new object a dead one's flag -- seen under ASan, whose fresh
        memory is not zero, as %ThrowTypeError% being "fully materialized"
        at startup (2026-09-25). */
     js_obj_set_lazy(p, false);
-    js_obj_set_locked(p, false);   /* the same reason, for the lock bit */
 #endif
+    js_obj_set_locked(p, false);   /* initialize spare lock bit unconditionally */
     p->first_weak_ref = NULL;
     p->u.opaque = NULL;
     p->shape = sh;
@@ -8472,7 +8485,7 @@ static inline JSShapeProperty *find_own_property1(JSObject *p, JSAtom atom)
     return NULL;
 }
 
-#ifdef POCKET_VM_LAZY_BUILTINS
+#if POCKET_VM_LAZY_BUILTINS
 static int js_lazy_touch(JSContext *ctx, JSObject *p, JSAtom atom);
 static int js_lazy_all(JSContext *ctx, JSObject *p, bool enum_only);
 static int js_lazy_delete(JSContext *ctx, JSObject *p, JSAtom atom);
@@ -8998,7 +9011,7 @@ static void free_object(JSRuntime *rt, JSObject *p)
 
     p->free_mark = 1; /* used to tell the object is invalid when
                          freeing cycles */
-#ifdef POCKET_VM_LAZY_BUILTINS
+#if POCKET_VM_LAZY_BUILTINS
     /* Its lists go with it: rt->lazy is keyed by the object's address,
        which the allocator will hand out again. */
     if (unlikely(js_obj_lazy(p)))
@@ -11321,7 +11334,7 @@ static JSValue JS_GetPropertyInternal(JSContext *ctx, JSValueConst obj,
                 return js_dup(pr->u.value);
             }
         }
-#ifdef POCKET_VM_LAZY_BUILTINS
+#if POCKET_VM_LAZY_BUILTINS
         if (unlikely(js_obj_lazy(p))) {
             int r = js_lazy_touch(ctx, p, prop);
             if (r < 0)
@@ -11680,7 +11693,7 @@ static int __exception JS_GetOwnPropertyNamesInternal(JSContext *ctx,
     *ptab = NULL;
     *plen = 0;
 
-#ifdef POCKET_VM_LAZY_BUILTINS
+#if POCKET_VM_LAZY_BUILTINS
     /* Listing the keys observes the whole set and its order: pending
        entries go into the shape, in definition order, first -- unless only
        enumerable keys are wanted and no pending entry is enumerable, the
@@ -11935,7 +11948,7 @@ retry:
         }
         return true;
     }
-#ifdef POCKET_VM_LAZY_BUILTINS
+#if POCKET_VM_LAZY_BUILTINS
     if (unlikely(js_obj_lazy(p))) {
         int r = js_lazy_touch(ctx, p, prop);
         if (r < 0)
@@ -12488,7 +12501,7 @@ static int delete_property0(JSContext *ctx, JSObject *p, JSAtom atom);
 
 static int delete_property(JSContext *ctx, JSObject *p, JSAtom atom)
 {
-#ifdef POCKET_VM_LAZY_BUILTINS
+#if POCKET_VM_LAZY_BUILTINS
     if (unlikely(js_obj_lazy(p))) {
         /* A pending entry is deleted by never materializing it. A plain
            property ahead of a list moves the list's slot back by one when
@@ -12896,7 +12909,7 @@ retry:
             goto read_only_prop;
         }
     }
-#ifdef POCKET_VM_LAZY_BUILTINS
+#if POCKET_VM_LAZY_BUILTINS
     if (unlikely(js_obj_lazy(p1))) {
         int r = js_lazy_touch(ctx, p1, prop);
         if (r < 0)
@@ -13017,7 +13030,7 @@ prototype_lookup:
 
 retry2:
         prs = find_own_property(&pr, p1, prop);
-#ifdef POCKET_VM_LAZY_BUILTINS
+#if POCKET_VM_LAZY_BUILTINS
         /* A setter or a read-only property up the chain may still be in a
            list; it decides this assignment exactly as if it were here. */
         if (!prs && unlikely(js_obj_lazy(p1))) {
@@ -13611,7 +13624,7 @@ int JS_DefineProperty(JSContext *ctx, JSValueConst this_obj,
 
 redo_prop_update:
     prs = find_own_property(&pr, p, prop);
-#ifdef POCKET_VM_LAZY_BUILTINS
+#if POCKET_VM_LAZY_BUILTINS
     /* Redefining a pending entry redefines what it would have been, so it
        is put in the shape first; a new name falls through to be added. */
     if (!prs && unlikely(js_obj_lazy(p))) {
@@ -44923,7 +44936,7 @@ static int JS_WriteObjectTag(BCWriterState *s, JSValueConst obj)
 
     bc_put_u8(s, BC_TAG_OBJECT);
     prop_count = 0;
-#ifdef POCKET_VM_LAZY_BUILTINS
+#if POCKET_VM_LAZY_BUILTINS
     /* Only enumerable properties are written, like a for-in. */
     if (unlikely(js_obj_lazy(p)) && js_lazy_all(s->ctx, p, true)) {
         goto fail;
@@ -46890,7 +46903,7 @@ static int JS_InstantiateFunctionListItem(JSContext *ctx, JSValueConst obj,
     return 0;
 }
 
-#ifdef POCKET_VM_LAZY_BUILTINS
+#if POCKET_VM_LAZY_BUILTINS
 static inline bool lazy_done(const JSLazyList *l, int k)
 {
     return (l->done[k >> 5] >> (k & 31)) & 1;
@@ -47558,7 +47571,7 @@ int JS_PocketHarden(JSContext *ctx)
 
     if (ctx->harden)
         return 0;
-#ifdef POCKET_VM_LAZY_BUILTINS
+#if POCKET_VM_LAZY_BUILTINS
     if (!ctx->rt->lock_ok)
 #endif
     {
@@ -47635,7 +47648,7 @@ int JS_SetPropertyFunctionList(JSContext *ctx, JSValueConst obj,
 {
     int i, ret;
 
-#ifdef POCKET_VM_LAZY_BUILTINS
+#if POCKET_VM_LAZY_BUILTINS
     if (lazy_eligible(ctx, obj, len))
         return lazy_register(ctx, obj, tab, len);
 #endif
@@ -48494,7 +48507,7 @@ static JSValue JS_GetOwnPropertyNames2(JSContext *ctx, JSValueConst obj1,
     p = JS_VALUE_GET_OBJ(obj);
     if (!p->is_exotic && kind == JS_ITERATOR_KIND_KEY &&
             flags == (JS_GPN_ENUM_ONLY | JS_GPN_STRING_MASK)
-#ifdef POCKET_VM_LAZY_BUILTINS
+#if POCKET_VM_LAZY_BUILTINS
             && !js_obj_lazy(p)
 #endif
     ) {
@@ -48560,7 +48573,7 @@ static JSValue JS_GetOwnPropertyNames2(JSContext *ctx, JSValueConst obj1,
     } else if (!p->is_exotic &&
                (kind == JS_ITERATOR_KIND_VALUE || kind == JS_ITERATOR_KIND_KEY_AND_VALUE) &&
                flags == (JS_GPN_ENUM_ONLY | JS_GPN_STRING_MASK)
-#ifdef POCKET_VM_LAZY_BUILTINS
+#if POCKET_VM_LAZY_BUILTINS
                && !js_obj_lazy(p)
 #endif
     ) {
@@ -61313,7 +61326,7 @@ static int js_json_to_str(JSContext *ctx, JSONStringifyContext *jsc,
             if (JS_IsUndefined(jsc->property_list) &&
                     JS_IsUndefined(jsc->replacer_func) &&
                     !p->is_exotic
-#ifdef POCKET_VM_LAZY_BUILTINS
+#if POCKET_VM_LAZY_BUILTINS
                     && !js_obj_lazy(p)
 #endif
             ) {
