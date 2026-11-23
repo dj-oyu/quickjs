@@ -27827,6 +27827,23 @@ static int json_parse_string(JSParseState *s, const uint8_t **pp)
 
         // Fast path: batch consecutive ASCII characters
         const uint8_t *p_start = p;
+#if defined(__aarch64__) && defined(__ARM_NEON)
+        {
+            const int8x16_t v_sp = vdupq_n_s8(0x20);
+            const uint8x16_t v_qt = vdupq_n_u8('"');
+            const uint8x16_t v_bs = vdupq_n_u8('\\');
+            while (p + 16 <= s->buf_end) {
+                uint8x16_t v = vld1q_u8(p);
+                /* Signed < 0x20 catches both control chars (< 0x20) and non-ASCII (>= 0x80). */
+                uint8x16_t bad = vorrq_u8(
+                    vorrq_u8(vcltq_s8(vreinterpretq_s8_u8(v), v_sp), vceqq_u8(v, v_qt)),
+                    vceqq_u8(v, v_bs));
+                if (vmaxvq_u8(bad) != 0)
+                    break;
+                p += 16;
+            }
+        }
+#endif
         while (p < s->buf_end && *p != '"' && *p != '\\' && *p >= 0x20 && *p < 0x80) {
             p++;
         }
@@ -56522,6 +56539,26 @@ static JSValue js_string_replace(JSContext *ctx, JSValueConst this_val,
     searchp = JS_VALUE_GET_STRING(search_str);
     endOfLastMatch = 0;
     is_first = true;
+    /* Fast path: when replaceValue is a literal string with no '$', skip
+       js_string___GetSubstitution (avoids allocating a JSString per match). */
+    bool plain_replace = false;
+    JSString *replp = NULL;
+    if (!functionalReplace) {
+        replp = JS_VALUE_GET_STRING(replaceValue_str);
+        if (!replp->is_wide_char) {
+            plain_replace = (memchr(str8(replp), '$', replp->len) == NULL);
+        } else {
+            const uint16_t *u16 = str16(replp);
+            int k;
+            plain_replace = true;
+            for (k = 0; k < replp->len; k++) {
+                if (u16[k] == '$') {
+                    plain_replace = false;
+                    break;
+                }
+            }
+        }
+    }
     for (;;) {
         if (unlikely(searchp->len == 0)) {
             if (is_first) {
@@ -56543,6 +56580,18 @@ static JSValue js_string_replace(JSContext *ctx, JSValueConst this_val,
             } else {
                 break;
             }
+        }
+        if (plain_replace) {
+            string_buffer_concat(b, sp, endOfLastMatch, pos);
+            if (replp->len > 0) {
+                string_buffer_concat(b, replp, 0, replp->len);
+            }
+            endOfLastMatch = pos + searchp->len;
+            is_first = false;
+            if (!is_replaceAll) {
+                break;
+            }
+            continue;
         }
         if (functionalReplace) {
             args[0] = search_str;
@@ -56658,26 +56707,93 @@ static JSValue js_string_split(JSContext *ctx, JSValueConst this_val,
         if (!sbuf) {
             goto exception;
         }
-        for (q = p; q <= s - r; q = p = e + r) {
-            e = string_indexof(sp, rp, q);
-            if (e < 0) {
-                break;
-            }
-            if (unlikely(cnt + 1 >= cap)) {
-                uint32_t new_cap = cap * 2;
-                JSLazySplitBuf *nb = js_realloc(ctx, sbuf,
-                                                sizeof(JSLazySplitBuf) + (new_cap + 1) * sizeof(uint32_t));
-                if (!nb) {
-                    js_free(ctx, sbuf);
-                    goto exception;
+        if (r == 1 && !sp->is_wide_char && !rp->is_wide_char) {
+            const uint8_t *buf = str8(sp);
+            uint8_t sep = str8(rp)[0];
+            uint32_t slen = (uint32_t)s;
+            uint32_t pos = 0;
+#if defined(__aarch64__) && defined(__ARM_NEON)
+            static const uint8_t bit_mask[16] = {
+                1, 2, 4, 8, 16, 32, 64, 128,
+                1, 2, 4, 8, 16, 32, 64, 128
+            };
+            const uint8x16_t v_sep = vdupq_n_u8(sep);
+            const uint8x16_t v_bm = vld1q_u8(bit_mask);
+            while (pos + 16 <= slen) {
+                uint8x16_t eq = vceqq_u8(vld1q_u8(buf + pos), v_sep);
+                if (vmaxvq_u8(eq) != 0) {
+                    uint8x16_t bits = vandq_u8(eq, v_bm);
+                    uint32_t m = (uint32_t)vaddv_u8(vget_low_u8(bits)) |
+                                 ((uint32_t)vaddv_u8(vget_high_u8(bits)) << 8);
+                    do {
+                        uint32_t hit = pos + (uint32_t)__builtin_ctz(m);
+                        m &= m - 1;
+                        if (unlikely(cnt + 1 >= cap)) {
+                            uint32_t new_cap = cap * 2;
+                            JSLazySplitBuf *nb = js_realloc(ctx, sbuf,
+                                                            sizeof(JSLazySplitBuf) + (new_cap + 1) * sizeof(uint32_t));
+                            if (!nb) {
+                                js_free(ctx, sbuf);
+                                goto exception;
+                            }
+                            sbuf = nb;
+                            cap = new_cap;
+                        }
+                        sbuf->starts[cnt++] = (uint32_t)p;
+                        p = (int64_t)(hit + 1);
+                        if (cnt == lim) {
+                            sbuf->starts[cnt] = (uint32_t)p;
+                            goto lazy_split_done;
+                        }
+                    } while (m);
                 }
-                sbuf = nb;
-                cap = new_cap;
+                pos += 16;
             }
-            sbuf->starts[cnt++] = (uint32_t)p;
-            if (cnt == lim) {
-                sbuf->starts[cnt] = (uint32_t)(e + r);
-                goto lazy_split_done;
+#endif
+            while (pos < slen) {
+                if (buf[pos] == sep) {
+                    if (unlikely(cnt + 1 >= cap)) {
+                        uint32_t new_cap = cap * 2;
+                        JSLazySplitBuf *nb = js_realloc(ctx, sbuf,
+                                                        sizeof(JSLazySplitBuf) + (new_cap + 1) * sizeof(uint32_t));
+                        if (!nb) {
+                            js_free(ctx, sbuf);
+                            goto exception;
+                        }
+                        sbuf = nb;
+                        cap = new_cap;
+                    }
+                    sbuf->starts[cnt++] = (uint32_t)p;
+                    p = (int64_t)(pos + 1);
+                    if (cnt == lim) {
+                        sbuf->starts[cnt] = (uint32_t)p;
+                        goto lazy_split_done;
+                    }
+                }
+                pos++;
+            }
+        } else {
+            for (q = p; q <= s - r; q = p = e + r) {
+                e = string_indexof(sp, rp, q);
+                if (e < 0) {
+                    break;
+                }
+                if (unlikely(cnt + 1 >= cap)) {
+                    uint32_t new_cap = cap * 2;
+                    JSLazySplitBuf *nb = js_realloc(ctx, sbuf,
+                                                    sizeof(JSLazySplitBuf) + (new_cap + 1) * sizeof(uint32_t));
+                    if (!nb) {
+                        js_free(ctx, sbuf);
+                        goto exception;
+                    }
+                    sbuf = nb;
+                    cap = new_cap;
+                }
+                sbuf->starts[cnt++] = (uint32_t)p;
+                if (cnt == lim) {
+                    sbuf->starts[cnt] = (uint32_t)(e + r);
+                    goto lazy_split_done;
+                }
             }
         }
         if (unlikely(cnt + 1 >= cap)) {
@@ -60873,6 +60989,22 @@ static int string_buffer_append_quoted(StringBuffer *b, JSString *p)
         i = 0;
         while (i < len) {
             int start = i;
+#if defined(__aarch64__) && defined(__ARM_NEON)
+            {
+                const uint8x16_t v_sp = vdupq_n_u8(0x20);
+                const uint8x16_t v_qt = vdupq_n_u8('"');
+                const uint8x16_t v_bs = vdupq_n_u8('\\');
+                while (i + 16 <= len) {
+                    uint8x16_t v = vld1q_u8(s + i);
+                    uint8x16_t bad = vorrq_u8(
+                        vorrq_u8(vcltq_u8(v, v_sp), vceqq_u8(v, v_qt)),
+                        vceqq_u8(v, v_bs));
+                    if (vmaxvq_u8(bad) != 0)
+                        break;
+                    i += 16;
+                }
+            }
+#endif
             while (i < len) {
                 uint8_t ch = s[i];
                 if (ch < 0x20 || ch == '\"' || ch == '\\') {
