@@ -5,7 +5,7 @@
 // includer that instantiates anything is quickjs.c (every function is `static
 // inline`, so quickjs-vm.c can include it for the struct layout alone without
 // pulling in a second copy), and no build list -- CMake, tools/vmtest/build.sh,
-// tools/build_pocket_text_test.sh -- has to learn a new object.
+// tools/build_kobako_text_test.sh -- has to learn a new object.
 //
 // What moves. Upstream JS_CallInternal keeps two things on the C stack per JS
 // call: `JSStackFrame sf_s` (a plain automatic) and one alloca() block holding
@@ -13,7 +13,7 @@
 // JSVarRef and rt->current_stack_frame point at with raw pointers, so both must
 // live somewhere that neither moves nor disappears when this C frame returns
 // early -- spec sec.7: "L2a moves the JSStackFrame itself, not only the
-// alloca block". With CONFIG_POCKET_VM_SEGFRAMES the two become ONE block here,
+// alloca block". With QJS_LEAN_SEGFRAMES the two become ONE block here,
 // [JSStackFrame][JSValue slots...][JSVarRef *...], carved from a segment.
 //
 // What does not move: the C recursion. JS_CallInternal still calls itself for
@@ -80,11 +80,12 @@
 #include <string.h>
 #include "cutils.h"
 #include "quickjs.h"
+#include "quickjs-lean-config.h"
 
 // Same reason quickjs-vmprobe.h does this: the config macro lives in
 // sdkconfig.h, which ESP-IDF puts on the include path but never force-
 // includes; host builds have none (tools/vmtest/build.sh passes the macro
-// with -D instead, tools/build_pocket_text_test.sh passes nothing and gets
+// with -D instead, tools/build_kobako_text_test.sh passes nothing and gets
 // the alloca path).
 #if defined(__has_include)
 #if __has_include("sdkconfig.h")
@@ -96,7 +97,7 @@
 extern "C" {
 #endif
 
-// L2b (CONFIG_POCKET_VM_FLATCALLS, docs/vm/vm-L2-design.md sec.9) is a
+// L2b (QJS_LEAN_FLATCALLS, docs/vm/vm-L2-design.md sec.9) is a
 // property of frames that live here: a flat callee's frame is popped by the
 // same JS_CallInternal activation that pushed it, which is only possible
 // when the frame is not on that activation's C stack. Kconfig says
@@ -156,7 +157,7 @@ _Static_assert((JS_VM_FRAME_ALIGN & (JS_VM_FRAME_ALIGN - 1)) == 0 &&
 
 // Counters cost a few adds per call; the host harness reads them, the
 // firmware only under the probe config.
-#if !defined(ESP_PLATFORM) || defined(CONFIG_POCKET_VM_PROBE)
+#if !defined(ESP_PLATFORM) || defined(QJS_LEAN_PROBE)
 #define JS_VM_STACK_STATS 1
 #endif
 
@@ -232,7 +233,7 @@ typedef struct JSVMStack {
     // the target, so a frame count would bound memory by nothing.
     size_t used;
     size_t budget;
-#ifdef CONFIG_POCKET_VM_RELOC
+#ifdef QJS_LEAN_RELOC
     // L3a (docs/vm/vm-L3-design.md D51). `generation` counts completed
     // moves; nothing in the VM reads it yet -- L3a keeps raw pointers and
     // fixes them up at move time, so there is no relative reference to
@@ -697,7 +698,7 @@ static inline void js_vm_stack_trim(JSRuntime *rt, JSVMStack *st)
 // Splitting it here is what keeps this header's promise (layout plus bump
 // allocator, no VM semantics) intact for a stage whose whole subject is VM
 // semantics.
-#ifdef CONFIG_POCKET_VM_RELOC
+#ifdef QJS_LEAN_RELOC
 
 // One moved segment. `delta` is what a pointer INTO this segment's payload
 // gains; the pair of bounds is how a pointer is recognised as belonging here
@@ -930,11 +931,11 @@ static inline void js_vm_stack_reloc_finish(JSRuntime *rt, JSVMStack *st,
     st->generation++;
 }
 
-#endif /* CONFIG_POCKET_VM_RELOC */
+#endif /* QJS_LEAN_RELOC */
 
 // ---------------------------------------------------------------- L2b
 //
-// With CONFIG_POCKET_VM_FLATCALLS a JS-to-JS call does not recurse in C:
+// With QJS_LEAN_FLATCALLS a JS-to-JS call does not recurse in C:
 // JS_CallInternal pushes the callee's block and carries on in the same
 // activation, and the callee's return pops it and resumes the caller from
 // what the frame chain holds (docs/vm/vm-L2-design.md sec.9). Everything the
@@ -993,7 +994,7 @@ _Static_assert(sizeof(JSVMLink) % JS_VM_FRAME_ALIGN == 0,
                "the link must keep the JSStackFrame behind it frame-aligned");
 
 // Defined in quickjs.c: the runtime's stack, or NULL when the build keeps
-// frames on the C stack (CONFIG_POCKET_VM_SEGFRAMES off).
+// frames on the C stack (QJS_LEAN_SEGFRAMES off).
 JSVMStack *js_vm_stack_get(JSRuntime *rt);
 
 #ifdef __cplusplus

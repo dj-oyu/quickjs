@@ -715,7 +715,7 @@ jobs:
       - uses: actions/checkout@v7
       - name: build
         run: |
-          cmake -B build -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_FLAGS="-DPOCKET_VM_LAZY_BUILTINS=1"
+          cmake -B build -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_FLAGS="-DQJS_LEAN_LAZY_BUILTINS=1"
           cmake --build build -j 4
       - name: test
         run: |

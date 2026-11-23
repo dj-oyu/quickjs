@@ -5101,7 +5101,7 @@ void js_std_init_handlers(JSRuntime *rt)
         /* PocketJS: upstream called exit(1) here, which on the device is an
          * abort and a reboot for what is only a failed app start. The
          * rejection is on the OOM canary (quickjs.h JS_TakeOOMCanary), and
-         * pocketjs_guest_create / tools/vmtest/vmrun.c check it after setup
+         * kobako_guest_create / tools/vmtest/vmrun.c check it after setup
          * and refuse the runtime, so returning with no thread state is safe
          * for them; js_std_free_handlers accepts that state. */
         return;

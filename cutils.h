@@ -320,7 +320,7 @@ static inline void put_u64(uint8_t *tab, uint64_t val)
     memcpy(tab, &val, sizeof(val));
 }
 
-/* POCKET: on a little-endian target the 16/32-bit accessors assemble bytes
+/* QJS_LEAN: on a little-endian target the 16/32-bit accessors assemble bytes
  * instead of memcpy'ing. Xtensa has no unaligned load, and -Os GCC turns a
  * 4-byte memcpy of unknown alignment into a call to ROM memcpy (~25
  * instructions behind two calls): the interpreter reads its unaligned

@@ -1,4 +1,4 @@
-/* POCKET: sin/cos/tan from Shiki's quarter-wave table instead of libm's
+/* QJS_LEAN: sin/cos/tan from Shiki's quarter-wave table instead of libm's
  * double kernels (docs/vm/qjs-observe.md sec.18). Not part of upstream
  * quickjs-ng; it lives here because every build that compiles quickjs.c (the
  * firmware, r5sim, vmtest, the host harnesses) already has this directory on
@@ -10,7 +10,7 @@
  * (__kernel_rem_pio2, __rem_pio2, __kernel_sin/cos/tan, their tables).
  * ECMAScript leaves the precision of these functions to the implementation;
  * the owner accepted a lower one. Everything in the firmware that called the
- * double functions (QuickJS, pocket_derby.c, solar_sail.c) calls these
+ * double functions (QuickJS, lean_derby.c, solar_sail.c) calls these
  * instead, so DERBY's C series and its JS oracle still agree bit for bit.
  *
  * How: the argument becomes a phase, x * 2^32 / (2 pi) modulo 2^32, taken from
@@ -25,15 +25,15 @@
  * The table and the functions are weak, so each translation unit may include
  * this header and the image keeps one copy. ksn_shiki.c makes the firmware's
  * copy the Shiki table itself (a strong alias), and
- * tools/check_pocket_trig_table.py checks that the two literals agree. */
+ * tools/check_lean_trig_table.py checks that the two literals agree. */
 #pragma once
 
 #include <stdint.h>
 #include <string.h>
 
-#define POCKET_TRIG_WEAK __attribute__((weak))
+#define QJS_LEAN_TRIG_WEAK __attribute__((weak))
 
-POCKET_TRIG_WEAK const int32_t pocket_sin_q16[257] = {
+QJS_LEAN_TRIG_WEAK const int32_t lean_sin_q16[257] = {
     0,402,804,1206,1608,2010,2412,2814,
     3216,3617,4019,4420,4821,5222,5623,6023,
     6424,6824,7224,7623,8022,8421,8820,9218,
@@ -72,7 +72,7 @@ POCKET_TRIG_WEAK const int32_t pocket_sin_q16[257] = {
 /* The phase of |x|: |x| * 2^32 / (2 pi), truncated, modulo 2^32. The product is
  * one double multiply; the reduction reads its bits, in 32-bit halves (-Os
  * GCC on Xtensa makes a variable 64-bit shift a libgcc call). */
-static inline uint32_t pocket_trig_phase(double x) {
+static inline uint32_t lean_trig_phase(double x) {
     const double q = x * 683565275.57643158978;   /* 2^32 / (2 pi) */
     uint64_t bits;
     memcpy(&bits, &q, sizeof bits);
@@ -94,17 +94,17 @@ static inline uint32_t pocket_trig_phase(double x) {
 }
 
 /* sin of a phase, in Q30 (2^30 = 1.0). */
-static inline int32_t pocket_trig_sin_q30(uint32_t p) {
+static inline int32_t lean_trig_sin_q30(uint32_t p) {
     uint32_t w = (p >> 8) & 0x3FFFFFu;        /* within the quarter, 2^22 a quarter */
     if (p & 0x40000000u) w = 0x400000u - w;   /* the falling quarters mirror */
     const uint32_t i = w >> 14, t = w & 0x3FFFu;
-    int32_t v = pocket_sin_q16[i] << 14;
-    if (i < 256) v += (pocket_sin_q16[i + 1] - pocket_sin_q16[i]) * (int32_t)t;
+    int32_t v = lean_sin_q16[i] << 14;
+    if (i < 256) v += (lean_sin_q16[i + 1] - lean_sin_q16[i]) * (int32_t)t;
     return (p & 0x80000000u) ? -v : v;
 }
 
 /* Q30 to double: exact (|v| <= 2^30), and the scaling is an exponent change. */
-static inline double pocket_trig_q30_to_double(int32_t v) {
+static inline double lean_trig_q30_to_double(int32_t v) {
     double d = (double)v;
     if (v != 0) {
         uint64_t bits;
@@ -116,49 +116,49 @@ static inline double pocket_trig_q30_to_double(int32_t v) {
 }
 
 /* exponent field 0x7FF: NaN or infinity */
-static inline int pocket_trig_not_finite(double x) {
+static inline int lean_trig_not_finite(double x) {
     uint64_t bits;
     memcpy(&bits, &x, sizeof bits);
     return ((uint32_t)(bits >> 52) & 0x7FFu) == 0x7FFu;
 }
-static inline int pocket_trig_negative(double x) {
+static inline int lean_trig_negative(double x) {
     uint64_t bits;
     memcpy(&bits, &x, sizeof bits);
     return (int)(bits >> 63);
 }
-static inline int pocket_trig_tiny(double x) {   /* |x| < 2^-10, including +-0 */
+static inline int lean_trig_tiny(double x) {   /* |x| < 2^-10, including +-0 */
     uint64_t bits;
     memcpy(&bits, &x, sizeof bits);
     return ((uint32_t)(bits >> 52) & 0x7FFu) < 1023u - 10u;
 }
 
 /* The shared bodies, out of line (weak: one copy in the image). */
-POCKET_TRIG_WEAK uint32_t pocket_trig_phase_of(double x) { return pocket_trig_phase(x); }
-POCKET_TRIG_WEAK double pocket_trig_sin_of_phase(uint32_t p) {
-    return pocket_trig_q30_to_double(pocket_trig_sin_q30(p));
+QJS_LEAN_TRIG_WEAK uint32_t lean_trig_phase_of(double x) { return lean_trig_phase(x); }
+QJS_LEAN_TRIG_WEAK double lean_trig_sin_of_phase(uint32_t p) {
+    return lean_trig_q30_to_double(lean_trig_sin_q30(p));
 }
 
-POCKET_TRIG_WEAK double pocket_sin(double x) {
-    if (pocket_trig_not_finite(x)) return x - x;   /* NaN for NaN and +-Infinity */
-    if (pocket_trig_tiny(x)) return x;
-    const double v = pocket_trig_sin_of_phase(pocket_trig_phase_of(x));
-    return pocket_trig_negative(x) ? -v : v;
+QJS_LEAN_TRIG_WEAK double lean_sin(double x) {
+    if (lean_trig_not_finite(x)) return x - x;   /* NaN for NaN and +-Infinity */
+    if (lean_trig_tiny(x)) return x;
+    const double v = lean_trig_sin_of_phase(lean_trig_phase_of(x));
+    return lean_trig_negative(x) ? -v : v;
 }
 
-POCKET_TRIG_WEAK double pocket_cos(double x) {
-    if (pocket_trig_not_finite(x)) return x - x;
-    return pocket_trig_sin_of_phase(pocket_trig_phase_of(x) + 0x40000000u);
+QJS_LEAN_TRIG_WEAK double lean_cos(double x) {
+    if (lean_trig_not_finite(x)) return x - x;
+    return lean_trig_sin_of_phase(lean_trig_phase_of(x) + 0x40000000u);
 }
 
-POCKET_TRIG_WEAK double pocket_tan(double x) {
-    if (pocket_trig_not_finite(x)) return x - x;
-    if (pocket_trig_tiny(x)) return x;
-    const uint32_t p = pocket_trig_phase_of(x);
-    const int32_t s = pocket_trig_sin_q30(p);
-    int32_t c = pocket_trig_sin_q30(p + 0x40000000u);
+QJS_LEAN_TRIG_WEAK double lean_tan(double x) {
+    if (lean_trig_not_finite(x)) return x - x;
+    if (lean_trig_tiny(x)) return x;
+    const uint32_t p = lean_trig_phase_of(x);
+    const int32_t s = lean_trig_sin_q30(p);
+    int32_t c = lean_trig_sin_q30(p + 0x40000000u);
     /* the phase can land on cos's zero, which no finite double does: answer
      * the steepest finite slope instead of an infinity */
     if (c == 0) c = (p & 0x40000000u) ? -1 : 1;
     const double v = (double)s / (double)c;
-    return pocket_trig_negative(x) ? -v : v;
+    return lean_trig_negative(x) ? -v : v;
 }

@@ -1,8 +1,8 @@
 // VM_PROBE declarations (docs/vm/quickjs-freertos-vm-spec.md sec.5, L0).
 //
 // This file is NOT part of the upstream quickjs-ng import -- it is new, added
-// alongside the vendored sources so main/pocket/vmprobe.c can reach the few
-// counters and accessors quickjs.c defines under #ifdef CONFIG_POCKET_VM_PROBE
+// alongside the vendored sources so main/lean/vmprobe.c can reach the few
+// counters and accessors quickjs.c defines under #ifdef QJS_LEAN_PROBE
 // (see the "VM_PROBE" blocks in quickjs.c). Kept separate from quickjs.h so
 // re-vendoring quickjs.h from upstream never has to route around it.
 //
@@ -12,7 +12,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
-// CONFIG_POCKET_VM_PROBE lives here. ESP-IDF puts the build's config/
+// QJS_LEAN_PROBE lives here. ESP-IDF puts the build's config/
 // directory on every component's include path but does NOT force-include
 // this header into every translation unit, so anyone gating on the config
 // macro has to pull it in explicitly -- this header does, once, so its own
@@ -20,22 +20,16 @@
 //
 // __has_include, not a bare #include: quickjs.c includes this header, and
 // host builds compile quickjs.c with no IDF config dir on the path
-// (tools/build_pocket_text_test.sh passes only -I <quickjs dir>). A bare
+// (tools/build_kobako_text_test.sh passes only -I <quickjs dir>). A bare
 // include broke that build outright. No sdkconfig.h means no
-// CONFIG_POCKET_VM_PROBE, which is the shipping default anyway.
-#if defined(__has_include)
-#if __has_include("sdkconfig.h")
-#include "sdkconfig.h"
-#endif
-#else
-#include "sdkconfig.h"
-#endif
+// QJS_LEAN_PROBE, which is the shipping default anyway.
+#include "quickjs-lean-config.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#ifdef CONFIG_POCKET_VM_PROBE
+#ifdef QJS_LEAN_PROBE
 
 // sizeof(JSStackFrame) / sizeof(JSVarRef): private structs, not otherwise
 // reachable outside quickjs.c.
@@ -51,23 +45,23 @@ size_t qjs_vmprobe_job_queue_peak_take(void);
 // a caller diffs two reads to get "jobs executed this window".
 uint64_t qjs_vmprobe_jobs_executed_get(void);
 
-#endif // CONFIG_POCKET_VM_PROBE
+#endif // QJS_LEAN_PROBE
 
-// F3b/F3c (POCKET_VM_LAZY_INTRINSICS, docs/vm/builtin-floor-plan.md
+// F3b/F3c (QJS_LEAN_LAZY_INTRINSICS, docs/vm/builtin-floor-plan.md
 // sec.17-18): typed-array, Map/Set, WeakRef and DOMException constructors
 // made on first use. The hooks are macros placed on lines of quickjs.c; off
 // (only in tools/vmtest/floor/gen_rom_atoms.sh, see quickjs.c) each expands
 // to nothing or to a constant the compiler folds. The functions they name are
 // at the end of quickjs.c.
-#ifdef POCKET_VM_LAZY_INTRINSICS
-#define JS_DEF_POCKET_LAZY_CLASS 12   /* after JS_DEF_PROP_BOOL; quickjs.c only */
+#ifdef QJS_LEAN_LAZY_INTRINSICS
+#define JS_DEF_LEAN_LAZY_CLASS 12   /* after JS_DEF_PROP_BOOL; quickjs.c only */
 #define LAZY_CLASS_DECLS \
     static JSValue js_lazy_class_ctor(JSContext *ctx, int class_id); \
     static int js_lazy_class_ensure(JSContext *ctx, int class_id); \
     static int js_lazy_ta_register(JSContext *ctx); \
     static int js_lazy_register(JSContext *ctx, int group);
 #define LAZY_CLASS_CASE \
-    case JS_DEF_POCKET_LAZY_CLASS: val = js_lazy_class_ctor(ctx, e->magic); break;
+    case JS_DEF_LEAN_LAZY_CLASS: val = js_lazy_class_ctor(ctx, e->magic); break;
 /* true = the class's prototype was pending and making it failed */
 #define LAZY_CLASS_MISSING(ctx, id) \
     (unlikely(JS_IsNull((ctx)->class_proto[id])) && js_lazy_class_ensure(ctx, id) < 0)

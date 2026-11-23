@@ -32,6 +32,7 @@
 #include <stdint.h>
 #include <string.h>
 #include <math.h>
+#include "quickjs-lean-config.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -545,11 +546,11 @@ JS_EXTERN void JS_GetMemoryCounters(JSRuntime *rt, size_t *used, size_t *limit);
  * safe at any point, including with frames live. No-op when the build keeps
  * frames on the C stack. Does not allocate. */
 JS_EXTERN void JS_VMStackTrim(JSRuntime *rt);
-/* G12 (main/pocket/oomprobe.c): the heap blocks the frame segments occupy,
+/* G12 (main/lean/oomprobe.c): the heap blocks the frame segments occupy,
  * live chain and reuse cache alike, so a heap walk can ask what moving them
  * would have joined. Writes at most `cap` block pointers, returns how many
  * there are (0 without SEGFRAMES). Read-only; call it on the thread that
- * runs the runtime. Defined only with CONFIG_POCKET_VM_OOMPROBE. */
+ * runs the runtime. Defined only with QJS_LEAN_OOMPROBE. */
 JS_EXTERN uint32_t JS_VMStackBlocks(JSRuntime *rt, const void **out, uint32_t cap);
 /* L3a (docs/vm/vm-L3-design.md sec.7): what one move did. Zeroed on failure. */
 typedef struct JSVMRelocStats {
@@ -585,7 +586,7 @@ typedef struct JSVMRelocStats {
  * the memory for the new blocks cannot be had. 0 with segments == 0 means
  * there was nothing live to move, which is success.
  *
- * Always -1 when built without CONFIG_POCKET_VM_RELOC. `out` may be NULL. */
+ * Always -1 when built without QJS_LEAN_RELOC. `out` may be NULL. */
 JS_EXTERN int JS_VMStackRelocate(JSRuntime *rt, JSVMRelocStats *out);
 /* L4a: the same move, but the whole live chain goes into ONE new block, so
  * the stack stops being scattered across the heap (JS_VMStackRelocate only
@@ -650,17 +651,17 @@ JS_EXTERN bool JS_IsLiveObject(JSRuntime *rt, JSValueConst obj);
 JS_EXTERN JSContext *JS_NewContext(JSRuntime *rt);
 /* PocketJS (docs/vm/harden.md): lock the intrinsics of a fresh context and
    switch it to the harden rules. Call before adding host globals. 0 or -1. */
-JS_EXTERN int JS_PocketHarden(JSContext *ctx);
+JS_EXTERN int JS_LeanHarden(JSContext *ctx);
 /* PocketJS (docs/vm/strip-debug.md): while on, the functions this context
    compiles keep no line table (a runtime error names each function's first
-   line); parse errors keep their position. pocket_app_load.c sets it around
+   line); parse errors keep their position. lean_app_load.c sets it around
    the compile of an app's chunks when its chunks.txt has `option
    strip-debug`. Default off. */
-JS_EXTERN void JS_PocketSetStripDebug(JSContext *ctx, int on);
-#ifdef POCKET_VM_IMMORTAL_TEST
+JS_EXTERN void JS_LeanSetStripDebug(JSContext *ctx, int on);
+#ifdef QJS_LEAN_IMMORTAL_TEST
 // Host only (docs/vm/rom-intrinsics.md R1): the intrinsics become immortal in
 // RAM, as a ROM snapshot will hold them. The runtime must not be freed after.
-JS_EXTERN int JS_PocketImmortalizeIntrinsics(JSContext *ctx, int full);
+JS_EXTERN int JS_LeanImmortalizeIntrinsics(JSContext *ctx, int full);
 #endif
 JS_EXTERN void JS_FreeContext(JSContext *s);
 JS_EXTERN JSContext *JS_DupContext(JSContext *ctx);
@@ -1321,7 +1322,7 @@ typedef int JSInterruptHandler(JSContext *ctx, void *opaque);
 JS_EXTERN void JS_SetInterruptHandler(JSRuntime *rt, JSInterruptHandler *cb, void *opaque);
 /* if can_block is true, Atomics.wait() can be used */
 JS_EXTERN void JS_SetCanBlock(JSRuntime *rt, bool can_block);
-/* Pocket (docs/perf/two-core-pipeline.md, P2a): a native function marked
+/* Lean (docs/perf/two-core-pipeline.md, P2a): a native function marked
    "join" calls the runtime's join hook before it runs. A function is marked
    when it is created while marking is on and the current stack frame is the
    one that turned it on: JS_MarkCFunctions / JS_SetCFunctionMark turn it on
