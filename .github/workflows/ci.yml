@@ -709,6 +709,19 @@ jobs:
           ./build/hello
           ./build/hello_module
 
+  lazy-builtins:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: build
+        run: |
+          cmake -B build -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_FLAGS="-DPOCKET_VM_LAZY_BUILTINS=1"
+          cmake --build build -j 4
+      - name: test
+        run: |
+          build/run-test262 -c tests.conf
+          ./build/api-test
+
 
   meson:
     runs-on: ${{ matrix.platform }}
