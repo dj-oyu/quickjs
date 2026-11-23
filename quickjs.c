@@ -45,7 +45,7 @@
 #include "cutils.h"
 #include "list.h"
 #include "quickjs.h"
-#include "pocket_trig.h"   /* POCKET: Math.sin/cos/tan (docs/vm/qjs-observe.md sec.18) */
+#include "lean_trig.h"   /* QJS_LEAN: Math.sin/cos/tan (docs/vm/qjs-observe.md sec.18) */
 #include "libregexp.h"
 #include "dtoa.h"
 // F1-F3 (docs/vm/builtin-floor-plan.md): builtin names in flash, builtin
@@ -53,23 +53,23 @@
 // tools/vmtest/floor/gen_rom_atoms.sh turns them off, because the atom table
 // it writes has to describe everything an eager JS_NewContext creates.
 // Defined ahead of quickjs-vmprobe.h, whose F3 hooks test the third.
-#ifndef POCKET_VM_GEN_ROM_ATOMS
-#define POCKET_VM_ROM_ATOMS 1
-#ifndef POCKET_VM_LAZY_BUILTINS
-#define POCKET_VM_LAZY_BUILTINS 0
+#ifndef QJS_LEAN_GEN_ROM_ATOMS
+#define QJS_LEAN_ROM_ATOMS 1
+#ifndef QJS_LEAN_LAZY_BUILTINS
+#define QJS_LEAN_LAZY_BUILTINS 0
 #endif
-#define POCKET_VM_LAZY_INTRINSICS 1
+#define QJS_LEAN_LAZY_INTRINSICS 1
 #endif
 // VM_PROBE (docs/vm/quickjs-freertos-vm-spec.md sec.5): declares the handful of
-// accessors this file defines under #ifdef CONFIG_POCKET_VM_PROBE below.
+// accessors this file defines under #ifdef QJS_LEAN_PROBE below.
 // Not an upstream file -- see its own header comment.
 #include "quickjs-vmprobe.h"
 // R2 (docs/vm/rom-intrinsics.md): the hardened intrinsics come from const
 // data (quickjs-rom-intrinsics.h) instead of being built in RAM. Never in
 // the generators, which build the graph the ordinary way to write it out.
-#if (defined(CONFIG_POCKET_VM_ROM_INTRINSICS) || defined(POCKET_VM_ROM_INTRINSICS_HOST)) && \
-    !defined(POCKET_VM_GEN_ROM_INTRINSICS) && !defined(POCKET_VM_GEN_ROM_ATOMS)
-#define POCKET_VM_ROM_INTRINSICS 1
+#if (defined(QJS_LEAN_ROM_INTRINSICS) || defined(QJS_LEAN_ROM_INTRINSICS_HOST)) && \
+    !defined(QJS_LEAN_GEN_ROM_INTRINSICS) && !defined(QJS_LEAN_GEN_ROM_ATOMS)
+#define QJS_LEAN_ROM_INTRINSICS 1
 #endif
 // L2 harness hooks (forced yield at class-A safepoints, G5 gap recorder).
 // Not an upstream file -- see its own header comment. Harness measurement
@@ -125,7 +125,7 @@ static JSVMState *js_vm_armed;
 #define __extension__
 #endif
 
-// Pocket: QJS_DISABLE_DUMPS drops the dump hooks without defining NDEBUG,
+// Lean: QJS_DISABLE_DUMPS drops the dump hooks without defining NDEBUG,
 // so assert() stays live. The firmware sets it (components/quickjs-ng/
 // CMakeLists.txt): with dumps on, every dispatch tests rt->dump_flags for
 // JS_DUMP_BYTECODE_STEP, which costs icache in JS_CallInternal
@@ -285,27 +285,27 @@ typedef enum JSErrorEnum {
 #define __exception __attribute__((warn_unused_result))
 
 /* Upstream v0.18 (90aa2c4, db0fe52) makes every InternalError -- out of
-   memory among them -- uncatchable by JS code. PocketJS keeps them
+   memory among them -- uncatchable by JS code. QJS_LEAN keeps them
    catchable: an app on a fixed 160 KiB heap is expected to catch a failed
    allocation and carry on, and the runtime is hardened for exactly that
    (docs/vm/oom-parse-safety.md; tools/vmtest/corpus/memory_device.js and the
    oom_* tests). Build with -DJS_UNCATCHABLE_INTERNAL_ERRORS=1 for upstream's
    behaviour. "interrupted" stays uncatchable either way. */
-/* PocketJS: one debug switch. A build without assertions (NDEBUG, e.g.
+/* QJS_LEAN: one debug switch. A build without assertions (NDEBUG, e.g.
    ESP-IDF's CONFIG_COMPILER_OPTIMIZATION_ASSERTIONS_DISABLE) is a
    non-debug build, and a non-debug build keeps no line tables: the parser
    emits no OP_source_loc and builds no pc2line, so a runtime error names
-   the first line of each function. CONFIG_POCKET_VM_STRIP_DEBUG asks for
+   the first line of each function. QJS_LEAN_STRIP_DEBUG asks for
    the same in a build that keeps its assertions.
 
-   JS_UPSTREAM_COMPAT: upstream quickjs-ng's behaviour where PocketJS
+   JS_UPSTREAM_COMPAT: upstream quickjs-ng's behaviour where QJS_LEAN
    departs from it on purpose -- line tables in every build, NDEBUG or not,
    every function keeps its source text for Function.prototype.toString, and
-   Math.sin/cos/tan are libm's instead of pocket_trig.h's table.
+   Math.sin/cos/tan are libm's instead of lean_trig.h's table.
    The fork's own build files (CMakeLists.txt, meson.build) define it, so
-   qjs, run-test262 and upstream's tests see upstream's engine; PocketJS
+   qjs, run-test262 and upstream's tests see upstream's engine; QJS_LEAN
    compiles quickjs.c itself and does not. */
-#if (defined(NDEBUG) && !defined(JS_UPSTREAM_COMPAT)) || defined(CONFIG_POCKET_VM_STRIP_DEBUG)
+#if (defined(NDEBUG) && !defined(JS_UPSTREAM_COMPAT)) || defined(QJS_LEAN_STRIP_DEBUG)
 #define JS_NO_LINE_TABLES 1
 #endif
 
@@ -360,7 +360,7 @@ struct JSRuntime {
     JSMallocFunctions mf;
     JSMallocState malloc_state;
     const char *rt_info;
-    /* Pocket: called before any native function marked "join" runs
+    /* Lean: called before any native function marked "join" runs
        (docs/perf/two-core-pipeline.md, P2a). The display task may still be
        reading the render state that such a function writes; the hook waits
        for it. A native function is marked when it is created while
@@ -382,7 +382,7 @@ struct JSRuntime {
     uint32_t *atom_hash;
     JSAtomStruct **atom_array;
     int atom_free_index; /* 0 = none */
-#ifdef POCKET_VM_ROM_ATOMS
+#ifdef QJS_LEAN_ROM_ATOMS
     /* F1 (docs/vm/builtin-floor-plan.md sec.5.1): a flash atom has no
        JSString to hand out, so turning one into a string value builds one.
        Names that escape often (typeof's answers, class names) would build one
@@ -391,7 +391,7 @@ struct JSRuntime {
     JSString *rom_cache[32];
     uint16_t rom_cache_atom[32];
 #endif
-#if POCKET_VM_LAZY_BUILTINS
+#if QJS_LEAN_LAZY_BUILTINS
     /* F2 (docs/vm/builtin-floor-plan.md sec.5.2): function lists whose
        entries are not in their object's shape yet, sorted by object. */
     struct JSLazyList *lazy;
@@ -437,7 +437,7 @@ struct JSRuntime {
     /* true if inside JS_FreeRuntime */
     bool in_free;
     _Atomic uint8_t vm_yield_req; /* fills the flags' alignment padding */
-    /* PocketJS: bumped by every JS_ThrowOutOfMemory. The parser snapshots it
+    /* QJS_LEAN: bumped by every JS_ThrowOutOfMemory. The parser snapshots it
        in js_parse_init so js_parse_error can tell that an allocation already
        failed during this parse (see there); wrap-around is harmless, only
        equality is tested. */
@@ -462,7 +462,7 @@ struct JSRuntime {
     uint8_t vm_entry_block; /* native completion tails cannot park */
     JSValue vm_floor_this;
     JSValue vm_floor_new_target;
-#ifdef CONFIG_POCKET_VM_RELOC
+#ifdef QJS_LEAN_RELOC
     /* L3a diagnostic (design D50 layer 3): keep the old segment blocks
        allocated and poisoned after a move instead of freeing them, so that
        tlsf cannot hand the address straight back out and overwrite the
@@ -528,13 +528,13 @@ struct JSRuntime {
     JSRuntimeFinalizerState *finalizers;
 };
 
-/* Pocket: whether a native function created now is marked "join" */
+/* Lean: whether a native function created now is marked "join" */
 static inline bool js_cfunc_marking(JSRuntime *rt)
 {
     return rt->cfunc_marking && rt->current_stack_frame == rt->cfunc_mark_sf;
 }
 
-/* Pocket: sets the mark for the current frame; returns what it replaced */
+/* Lean: sets the mark for the current frame; returns what it replaced */
 static inline JSCFunctionMark js_mark_set(JSRuntime *rt, bool on)
 {
     JSCFunctionMark old = { rt->cfunc_marking, rt->cfunc_mark_sf };
@@ -570,7 +570,7 @@ typedef struct JSStackFrame {
     uint16_t arg_count;
     bool is_strict_mode;
     uint8_t l2_flags;  /* JS_SF_* (quickjs-vmstack.h); offset 37, was padding */
-    /* PocketJS (backport of quickjs-ng 7955cfd49e): JS_CORO_* -- which kind of
+    /* QJS_LEAN (backport of quickjs-ng 7955cfd49e): JS_CORO_* -- which kind of
      * coroutine owns this frame, or JS_CORO_NONE. Upstream adds a
      * JSGCObjectHeader *cur_gc_obj here; that pointer would take this struct
      * from 48 to 52 bytes on the target (every JS frame in a segment, and
@@ -602,9 +602,9 @@ enum {
     JS_CORO_ASYNC_GENERATOR, /* frame is JSAsyncGeneratorData.func_state.frame */
 };
 
-/* PocketJS: the layout the size asserts in this file describe -- the
+/* QJS_LEAN: the layout the size asserts in this file describe -- the
    target's (Xtensa: 4-byte pointers, 8-byte NaN-boxed JSValue, int64 aligned
-   to 8, GCC's bit-field rules), which the pocket host build with -m32
+   to 8, GCC's bit-field rules), which the lean host build with -m32
    -malign-double reproduces. Other 32-bit ABIs lay these structs out
    differently (i386 aligns int64 to 4 in a struct, Windows uses MS
    bit-fields) and are not the memory budget. */
@@ -659,7 +659,7 @@ typedef struct JSVarRef {
         JSValue value; /* used when is_detached = true */
         struct {
             uint16_t var_ref_idx; /* index in JSStackFrame.var_refs[] */
-            /* PocketJS (backport of quickjs-ng 7955cfd49e): set when this
+            /* QJS_LEAN (backport of quickjs-ng 7955cfd49e): set when this
              * open var_ref captures a local of a coroutine frame. Such a
              * var_ref is a GC object holding a counted reference to the
              * coroutine (js_coro_owner(stack_frame)), so the cycle collector
@@ -677,13 +677,13 @@ typedef struct JSVarRef {
 
 // ---------------------------------------------------------------------------
 // VM_PROBE (docs/vm/quickjs-freertos-vm-spec.md sec.5, L0). JSStackFrame and
-// JSVarRef are private to this translation unit -- main/pocket/vmprobe.c has
+// JSVarRef are private to this translation unit -- main/lean/vmprobe.c has
 // no other way to learn their size -- so this accessor pair is the entire
 // reason to touch quickjs.c for that measurement. Compiles to nothing with
-// CONFIG_POCKET_VM_PROBE off: no symbol, no field, no behavior change. Keep
+// QJS_LEAN_PROBE off: no symbol, no field, no behavior change. Keep
 // every VM_PROBE addition in this file behind the same guard and comment
 // marker so a future upstream re-vendor only has to find and reapply these.
-#ifdef CONFIG_POCKET_VM_PROBE
+#ifdef QJS_LEAN_PROBE
 size_t qjs_vmprobe_sizeof_stack_frame(void) { return sizeof(JSStackFrame); }
 size_t qjs_vmprobe_sizeof_var_ref(void) { return sizeof(JSVarRef); }
 #endif
@@ -727,7 +727,7 @@ typedef enum {
     JS_AUTOINIT_ID_PROTOTYPE,
     JS_AUTOINIT_ID_MODULE_NS,
     JS_AUTOINIT_ID_PROP,
-    /* Pocket: JS_AUTOINIT_ID_PROP registered while native functions were
+    /* Lean: JS_AUTOINIT_ID_PROP registered while native functions were
        being marked "join" (JS_MarkCFunctions); instantiated under the mark,
        so the function made on first read is marked too. */
     JS_AUTOINIT_ID_PROP_JOIN,
@@ -752,13 +752,13 @@ struct JSContext {
        - the prototype of Object.prototype is null (always true as it is immutable)
     */
     uint8_t std_array_prototype : 1;
-    /* JS_PocketHarden ran (docs/vm/harden.md): no code from strings, no
+    /* JS_LeanHarden ran (docs/vm/harden.md): no code from strings, no
        [[Prototype]] changes, intrinsics locked, no species, failed writes
        throw. Never cleared. */
     uint8_t harden : 1;
-    /* JS_PocketSetStripDebug (docs/vm/strip-debug.md): what this context
+    /* JS_LeanSetStripDebug (docs/vm/strip-debug.md): what this context
        compiles while it is set keeps no line table, as under
-       CONFIG_POCKET_VM_STRIP_DEBUG, but for one app's chunks. */
+       QJS_LEAN_STRIP_DEBUG, but for one app's chunks. */
     uint8_t strip_debug : 1;
     /* Harden: a shared shape and its locked twin, so the intrinsics that
        shared a shape (most C functions do: length, name) share the locked
@@ -1131,7 +1131,7 @@ static inline JSValue *fa_cpool(const JSFunctionBytecode *b)
 { return b->cpool_count ? (JSValue *)(b + 1) : NULL; }
 static inline JSVarDef *fa_vardefs(const JSFunctionBytecode *b)
 { return fa_get_has_vardefs(b) ? (JSVarDef *)((JSValue *)(b + 1) + b->cpool_count) : NULL; }
-/* Pocket (docs/vm/compact-vars.md): a function compiled in a hardened
+/* Lean (docs/vm/compact-vars.md): a function compiled in a hardened
    context, where no code is made from strings (no eval), keeps per
    argument and local only what running code reads: the JSVarRef slot of a
    captured variable, or JS_COMPACT_NO_REF. 2 B instead of a JSVarDef (20 B
@@ -1473,7 +1473,7 @@ struct JSObject {
             JSCFunctionType c_function;
             uint8_t length;
             uint8_t cproto : 7;
-            uint8_t join : 1; /* Pocket: call rt->cfunc_join first */
+            uint8_t join : 1; /* Lean: call rt->cfunc_join first */
             int16_t magic;
         } cfunc;
         /* array part for fast arrays and typed arrays */
@@ -1506,7 +1506,7 @@ struct JSObject {
     /* byte sizes: 40/48/72 */
 };
 
-#if POCKET_VM_LAZY_BUILTINS
+#if QJS_LEAN_LAZY_BUILTINS
 /* F2 (docs/vm/builtin-floor-plan.md sec.5.2): an object whose function
    lists are not (all) in its shape yet. The entries stay in the flash lists
    and a lookup that misses the shape searches them (js_lazy_touch), so the
@@ -1532,7 +1532,7 @@ typedef struct JSLazyList {
     JSContext *realm;                /* the context that registered it */
     const JSCFunctionListEntry *tab; /* in flash */
     uint16_t len : 15;               /* at most 64 (lazy_eligible) */
-    /* Pocket: registered while native functions were being marked "join";
+    /* Lean: registered while native functions were being marked "join";
        its entries are materialized under the mark (lazy_define_list). */
     uint16_t join : 1;
     /* How many of the object's own, non-list properties preceded this list
@@ -1862,7 +1862,7 @@ static void js_free_desc(JSContext *ctx, JSPropertyDescriptor *desc);
 static void async_func_mark(JSRuntime *rt, JSAsyncFunctionState *s,
                             JS_MarkFunc *mark_func);
 static int JS_AddIntrinsicBasicObjects(JSContext *ctx);
-#ifdef POCKET_VM_ROM_INTRINSICS
+#ifdef QJS_LEAN_ROM_INTRINSICS
 static int js_rom_context_init(JSContext *ctx);
 #endif
 static void js_free_shape(JSRuntime *rt, JSShape *sh);
@@ -2054,7 +2054,7 @@ JSValue JS_DupValueRT(JSRuntime *rt, JSValueConst v)
     return js_dup(v);
 }
 
-/* PocketJS change (docs/vm/backlog.md #5): under a malloc_limit, the cycle
+/* QJS_LEAN change (docs/vm/backlog.md #5): under a malloc_limit, the cycle
  * collector is due no later than 1/32 of the limit below it (5 KiB of the
  * guest's 160 KiB). Upstream compares against malloc_gc_threshold alone, which
  * is a growth policy for an unbounded heap: it starts at 256 KiB and is reset
@@ -2652,7 +2652,7 @@ JSRuntime *JS_NewRuntime2(const JSMallocFunctions *mf, void *opaque)
     if (!rt) {
         return NULL;
     }
-#if POCKET_VM_LAZY_BUILTINS
+#if QJS_LEAN_LAZY_BUILTINS
     {
         /* The lazy flag borrows a header bit that no field names in the
            JSObject view. Bitfield layout is the compiler's choice, so prove
@@ -2867,8 +2867,8 @@ void JS_SetSharedArrayBufferFunctions(JSRuntime *rt,
 // length" is one of the L0 measurements, so this pair of counters is the
 // probe. One JSRuntime runs at a time in this firmware (sec.3 rule 1), so a
 // file-scope counter -- not a per-runtime field -- is enough and adds no
-// struct layout risk. Compiles to nothing with CONFIG_POCKET_VM_PROBE off.
-#ifdef CONFIG_POCKET_VM_PROBE
+// struct layout risk. Compiles to nothing with QJS_LEAN_PROBE off.
+#ifdef QJS_LEAN_PROBE
 static size_t qjs_vmprobe_job_queue_len;
 static size_t qjs_vmprobe_job_queue_peak;
 static uint64_t qjs_vmprobe_jobs_executed;
@@ -2907,7 +2907,7 @@ int JS_EnqueueJob(JSContext *ctx, JSJobFunc *job_func,
         e->argv[i] = js_dup(argv[i]);
     }
     list_add_tail(&e->link, &rt->job_list);
-#ifdef CONFIG_POCKET_VM_PROBE
+#ifdef QJS_LEAN_PROBE
     if (++qjs_vmprobe_job_queue_len > qjs_vmprobe_job_queue_peak)
         qjs_vmprobe_job_queue_peak = qjs_vmprobe_job_queue_len;
 #endif
@@ -2951,7 +2951,7 @@ int JS_ExecutePendingJob(JSRuntime *rt, JSContext **pctx)
     /* get the first pending job and execute it */
     e = list_entry(rt->job_list.next, JSJobEntry, link);
     list_del(&e->link);
-#ifdef CONFIG_POCKET_VM_PROBE
+#ifdef QJS_LEAN_PROBE
     // VM_PROBE: see the counter pair above JS_EnqueueJob. Counted here,
     // before job_func can enqueue more work and re-enter this function.
     --qjs_vmprobe_job_queue_len;
@@ -3090,7 +3090,7 @@ void JS_FreeRuntime(JSRuntime *rt)
             JS_FreeValueRT(rt, e->argv[i]);
         }
         js_free_rt(rt, e);
-#ifdef CONFIG_POCKET_VM_PROBE
+#ifdef QJS_LEAN_PROBE
         // VM_PROBE: jobs discarded unrun (an app stopped with its queue
         // non-empty, e.g. USB diagnostic '6') leave the queue here, not via
         // JS_ExecutePendingJob; without this the depth counter keeps them
@@ -3160,7 +3160,7 @@ void JS_FreeRuntime(JSRuntime *rt)
     }
     js_free_rt(rt, rt->class_array);
 
-#ifdef POCKET_VM_ROM_ATOMS
+#ifdef QJS_LEAN_ROM_ATOMS
     /* Before the atoms: a cached string may have become a symbol's own
        struct (JS_NewSymbolInternal reuses atom_type 0 strings), and dropping
        the cache's reference is what frees it through the atom path. */
@@ -3231,7 +3231,7 @@ void JS_FreeRuntime(JSRuntime *rt)
     }
 #endif
 
-#if POCKET_VM_LAZY_BUILTINS
+#if QJS_LEAN_LAZY_BUILTINS
     /* Every object is gone by now, and free_object took its lists along. */
     assert(rt->lazy_count == 0);
     js_free_rt(rt, rt->lazy);
@@ -3317,7 +3317,7 @@ void JS_FreeRuntime(JSRuntime *rt)
     }
 }
 
-/* PocketJS: context setup ignores most of its own failures. The intrinsic
+/* QJS_LEAN: context setup ignores most of its own failures. The intrinsic
  * adders define hundreds of properties through JS_SetPropertyFunctionList,
  * JS_DefinePropertyValue*, JS_NewGlobalCConstructor2 and friends, and most
  * of those results are dropped (JS_AddIntrinsicBasicObjects' error
@@ -3344,13 +3344,13 @@ static uint32_t js_context_setup_mark(void)
     return g_oom_canary.count;
 }
 
-/* PocketJS: true if an allocation was rejected since `mark`. */
+/* QJS_LEAN: true if an allocation was rejected since `mark`. */
 static bool js_context_setup_failed(uint32_t mark)
 {
     return g_oom_canary.count != mark;
 }
 
-/* PocketJS: tears down a context whose setup failed, checked or not. The
+/* QJS_LEAN: tears down a context whose setup failed, checked or not. The
  * exception the failing call threw (an InternalError created from this very
  * context's prototypes) is dropped first rather than handed to the caller:
  * left pending it would keep the dead realm alive past JS_FreeContext, and
@@ -3368,7 +3368,7 @@ JSContext *JS_NewContextRaw(JSRuntime *rt)
 {
     JSContext *ctx;
     int i;
-    /* PocketJS: see js_context_setup_mark */
+    /* QJS_LEAN: see js_context_setup_mark */
     uint32_t setup_mark = js_context_setup_mark();
     bool had_exception = !JS_IsUninitialized(rt->current_exception);
 
@@ -3382,7 +3382,7 @@ JSContext *JS_NewContextRaw(JSRuntime *rt)
     ctx->class_proto = js_malloc_rt(rt, sizeof(ctx->class_proto[0]) *
                                     rt->class_count);
     if (!ctx->class_proto) {
-        /* PocketJS: upstream freed ctx while its header was still linked
+        /* QJS_LEAN: upstream freed ctx while its header was still linked
          * into rt->gc_obj_list, leaving a dangling node for the next GC or
          * JS_FreeRuntime to walk. Unreached before only because nothing
          * then freed the runtime after a failed JS_NewContext. */
@@ -3413,7 +3413,7 @@ JSContext *JS_NewContextRaw(JSRuntime *rt)
     }
     ctx->hash_seed = xorshift64star(&ctx->random_state);
 
-#ifdef POCKET_VM_ROM_INTRINSICS
+#ifdef QJS_LEAN_ROM_INTRINSICS
     if (js_rom_context_init(ctx) ||
         js_context_setup_failed(setup_mark)) {
 #else
@@ -3429,7 +3429,7 @@ JSContext *JS_NewContextRaw(JSRuntime *rt)
 JSContext *JS_NewContext(JSRuntime *rt)
 {
     JSContext *ctx;
-    /* PocketJS: see js_context_setup_mark */
+    /* QJS_LEAN: see js_context_setup_mark */
     uint32_t setup_mark = js_context_setup_mark();
     bool had_exception = !JS_IsUninitialized(rt->current_exception);
 
@@ -3438,7 +3438,7 @@ JSContext *JS_NewContext(JSRuntime *rt)
         return NULL;
     }
 
-#ifdef POCKET_VM_ROM_INTRINSICS
+#ifdef QJS_LEAN_ROM_INTRINSICS
     /* R2: the objects came from ROM in JS_NewContextRaw; what the
        JS_AddIntrinsic* below do besides making objects is done there too. */
     (void)setup_mark;
@@ -3781,7 +3781,7 @@ static inline bool js_write_fail_throws(JSContext *ctx)
 /* return the max count from the hash size */
 #define JS_ATOM_COUNT_RESIZE(n) ((n) * 2)
 
-#ifdef POCKET_VM_ROM_ATOMS
+#ifdef QJS_LEAN_ROM_ATOMS
 /* F1: builtin names live in flash as these records rather than as heap
    JSStrings (docs/vm/builtin-floor-plan.md sec.5.1). No ref_count, hash_next
    or weak-ref field: nothing ever writes to one, which is the whole point --
@@ -3808,7 +3808,7 @@ typedef struct JSRomAtom {
 _Static_assert(JS_ROM_PREDEF_END == JS_ATOM_END,
                "quickjs-rom-atoms.h is stale: run tools/vmtest/floor/gen_rom_atoms.sh");
 #define JS_ATOM_CONST_END JS_ROM_ATOM_END
-#ifdef POCKET_VM_ROM_INTRINSICS
+#ifdef QJS_LEAN_ROM_INTRINSICS
 /* R2: the well-known symbols the ROM intrinsics hold as values (the
    constructor's Symbol.iterator...). JS_InitAtoms puts these const structs
    at their fixed atom numbers instead of heap copies, so a ROM property and
@@ -3829,7 +3829,7 @@ static inline bool __JS_AtomIsConst(JSAtom v)
     return (int32_t)v < (int32_t)JS_ATOM_CONST_END;
 }
 
-#ifdef POCKET_VM_ROM_ATOMS
+#ifdef QJS_LEAN_ROM_ATOMS
 /* The flash record for a non-tagged atom, or NULL if it is a heap atom. */
 static inline const JSRomAtom *js_rom_atom(JSAtom a)
 {
@@ -4107,7 +4107,7 @@ static int JS_ResizeAtomHash(JSRuntime *rt, int new_hash_size)
     return 0;
 }
 
-#ifdef POCKET_VM_ROM_ATOMS
+#ifdef QJS_LEAN_ROM_ATOMS
 /* F1: size atom_array to cover the flash range before anything is placed.
    [1, JS_ROM_ATOM_END) are fixed numbers -- a flash atom keeps a NULL slot,
    which every walk of the array skips -- and the free list starts past them,
@@ -4147,7 +4147,7 @@ static int js_rom_atoms_reserve(JSRuntime *rt)
 static int js_rom_atom_place(JSRuntime *rt, uint32_t i, const char *s, int len,
                              int atom_type)
 {
-#ifdef POCKET_VM_ROM_INTRINSICS
+#ifdef QJS_LEAN_ROM_INTRINSICS
     /* a symbol the ROM intrinsics hold: its const struct (immortal, not on
        the hash chain, as a symbol never is) */
     for (uint32_t k = 0; k < JS_ROM_SYMBOL_COUNT; k++)
@@ -4201,7 +4201,7 @@ static int JS_InitAtoms(JSRuntime *rt)
         return -1;
     }
 
-#ifdef POCKET_VM_ROM_ATOMS
+#ifdef QJS_LEAN_ROM_ATOMS
     if (js_rom_atoms_reserve(rt)) {
         return -1;
     }
@@ -4216,7 +4216,7 @@ static int JS_InitAtoms(JSRuntime *rt)
             atom_type = JS_ATOM_TYPE_STRING;
         }
         len = strlen(p);
-#ifdef POCKET_VM_ROM_ATOMS
+#ifdef QJS_LEAN_ROM_ATOMS
         /* A flash atom needs nothing on the heap; the others are placed at
            their predefined number (the free list starts past the table). */
         if (!js_rom_atom(i) && js_rom_atom_place(rt, i, p, len, atom_type)) {
@@ -4265,7 +4265,7 @@ static JSAtomKindEnum JS_AtomGetKind(JSContext *ctx, JSAtom v)
     if (__JS_AtomIsTaggedInt(v)) {
         return JS_ATOM_KIND_STRING;
     }
-#ifdef POCKET_VM_ROM_ATOMS
+#ifdef QJS_LEAN_ROM_ATOMS
     if (js_rom_atom(v)) {
         return JS_ATOM_KIND_STRING;   /* flash holds plain strings only */
     }
@@ -4333,7 +4333,7 @@ static JSAtom __JS_NewAtom(JSRuntime *rt, JSString *str, int atom_type)
         len = str->len;
         h = hash_string(str, atom_type);
         h &= JS_ATOM_HASH_MASK;
-#ifdef POCKET_VM_ROM_ATOMS
+#ifdef QJS_LEAN_ROM_ATOMS
         /* Flash first: a builtin name must resolve to its flash number, or
            the same name would get a second, heap atom and property lookups
            keyed on the two would never meet. Only plain strings live there;
@@ -4513,7 +4513,7 @@ static JSAtom __JS_FindAtom(JSRuntime *rt, const char *str, size_t len,
 
     h = hash_string8((const uint8_t *)str, len, JS_ATOM_TYPE_STRING);
     h &= JS_ATOM_HASH_MASK;
-#ifdef POCKET_VM_ROM_ATOMS
+#ifdef QJS_LEAN_ROM_ATOMS
     i = js_rom_find((const uint8_t *)str, NULL, len, h);
     if (i)
         return i;   /* immortal: no reference to take */
@@ -4682,7 +4682,7 @@ static JSValue JS_NewSymbolFromAtom(JSContext *ctx, JSAtom descr,
 
     assert(!__JS_AtomIsTaggedInt(descr));
     assert(descr < rt->atom_size);
-#ifdef POCKET_VM_ROM_ATOMS
+#ifdef QJS_LEAN_ROM_ATOMS
     {
         /* A fresh string, never the cached one: JS_NewSymbolInternal turns
            an atom_type 0 string into the symbol itself. */
@@ -4751,7 +4751,7 @@ static const char *JS_AtomGetStrRT(JSRuntime *rt, char *buf, int buf_size,
     } else if (atom >= rt->atom_size) {
         assert(atom < rt->atom_size);
         snprintf(buf, buf_size, "<invalid %x>", atom);
-#ifdef POCKET_VM_ROM_ATOMS
+#ifdef QJS_LEAN_ROM_ATOMS
     } else if (js_rom_atom(atom)) {
         const JSRomAtom *r = js_rom_atom(atom);
         utf8_encode_buf8(buf, buf_size, (const uint8_t *)js_rom_text(r), r->len);
@@ -4790,7 +4790,7 @@ static JSValue __JS_AtomToValue(JSContext *ctx, JSAtom atom, bool force_string)
         JSRuntime *rt = ctx->rt;
         JSAtomStruct *p;
         assert(atom < rt->atom_size);
-#ifdef POCKET_VM_ROM_ATOMS
+#ifdef QJS_LEAN_ROM_ATOMS
         {
             const JSRomAtom *r = js_rom_atom(atom);
             if (r) {
@@ -4837,7 +4837,7 @@ static bool JS_AtomIsArrayIndex(JSContext *ctx, uint32_t *pval, JSAtom atom)
         uint32_t val;
 
         assert(atom < rt->atom_size);
-#ifdef POCKET_VM_ROM_ATOMS
+#ifdef QJS_LEAN_ROM_ATOMS
         /* The generator refuses a flash name that is an index: those are
            tagged ints and never become atoms at all. */
         if (js_rom_atom(atom)) {
@@ -4872,7 +4872,7 @@ static JSValue JS_AtomIsNumericIndex1(JSContext *ctx, JSAtom atom)
         return js_int32(__JS_AtomToUInt32(atom));
     }
     assert(atom < rt->atom_size);
-#ifdef POCKET_VM_ROM_ATOMS
+#ifdef QJS_LEAN_ROM_ATOMS
     {
         /* Every typed-array property access by name asks this, so the
            answer is baked (JS_ROM_NUMERIC); only "Infinity" builds a string
@@ -5024,7 +5024,7 @@ static bool JS_AtomSymbolHasDescription(JSContext *ctx, JSAtom v)
     if (__JS_AtomIsTaggedInt(v)) {
         return false;
     }
-#ifdef POCKET_VM_ROM_ATOMS
+#ifdef QJS_LEAN_ROM_ATOMS
     if (js_rom_atom(v)) {
         return false;   /* a string, not a symbol */
     }
@@ -6738,7 +6738,7 @@ static int init_shape_hash(JSRuntime *rt)
 
 static uintptr_t hash_atom(JSAtom atom, uintptr_t mask)
 {
-    /* PocketJS: v0.14's bucket, one AND. Upstream (cad311e) multiplies
+    /* QJS_LEAN: v0.14's bucket, one AND. Upstream (cad311e) multiplies
        and shifts here, against power-of-two collisions of integer keys;
        a shape's keys are atoms, dense small indices, which an AND already
        spreads. Measured in r5sim (QEMU icount, non-debug firmware): the
@@ -7296,7 +7296,7 @@ static JSValue JS_NewObjectFromShape(JSContext *ctx, JSShape *sh, JSClassID clas
     p->tmp_mark = 0;
     p->is_HTMLDDA = 0;
     p->is_prototype = 0;
-#if POCKET_VM_LAZY_BUILTINS
+#if QJS_LEAN_LAZY_BUILTINS
     /* Upstream never initializes the spare header bits (nothing read
        them); the lazy flag is one, and a recycled block would otherwise
        hand a new object a dead one's flag -- seen under ASan, whose fresh
@@ -7342,7 +7342,7 @@ fail:
                 /* only used for the first array */
                 pr = add_property(ctx, p, JS_ATOM_length,
                                   JS_PROP_WRITABLE | JS_PROP_LENGTH);
-                /* PocketJS: upstream (quickjs-ng and bellard/quickjs, both
+                /* QJS_LEAN: upstream (quickjs-ng and bellard/quickjs, both
                    master 2026-09-23) says "cannot fail" here, and it can:
                    add_property allocates -- a realloc of p->prop, a shape
                    clone, a property-table resize -- and returns NULL when
@@ -7774,7 +7774,7 @@ typedef struct JSCFunctionDataRecord {
     JSCFunctionData *func;
     uint8_t length;
     uint8_t data_len : 7;
-    uint8_t join : 1; /* Pocket: as cfunc.join */
+    uint8_t join : 1; /* Lean: as cfunc.join */
     uint16_t magic;
     JSValue data[];
 } JSCFunctionDataRecord;
@@ -7857,7 +7857,7 @@ JSVMStack *js_vm_stack_get(JSRuntime *rt)
     return &rt->vm_stack;
 }
 
-void JS_PocketSetStripDebug(JSContext *ctx, int on)
+void JS_LeanSetStripDebug(JSContext *ctx, int on)
 {
     ctx->strip_debug = on != 0;
 }
@@ -7867,7 +7867,7 @@ void JS_VMStackTrim(JSRuntime *rt)
     js_vm_stack_trim(rt, &rt->vm_stack);
 }
 
-#ifdef CONFIG_POCKET_VM_RELOC
+#ifdef QJS_LEAN_RELOC
 // L3a stage 4 (docs/vm/vm-L3-design.md sec.4.1): the typed fix-up. Walks the
 // same chain js_vm_mark_suspended walks and touches the fields it does not --
 // the two are exhaustive and disjoint over a parked frame, which is why the
@@ -8253,7 +8253,7 @@ JSValue JS_NewCFunctionData(JSContext *ctx, JSCFunctionData *func,
     return JS_NewCFunctionData2(ctx, func, NULL, length, magic, data_len, data);
 }
 
-/* Pocket: native functions marked "join" (docs/perf/two-core-pipeline.md,
+/* Lean: native functions marked "join" (docs/perf/two-core-pipeline.md,
    P2a). */
 void JS_SetCFunctionJoinHook(JSRuntime *rt, void (*hook)(JSContext *ctx))
 {
@@ -8328,7 +8328,7 @@ static JSAutoInitIDEnum js_autoinit_get_id(JSProperty *pr)
     return pr->u.init.realm_and_id & 3;
 }
 
-/* Pocket: the id a function-list entry is deferred under */
+/* Lean: the id a function-list entry is deferred under */
 static JSAutoInitIDEnum js_autoinit_prop_id(JSRuntime *rt)
 {
     return js_cfunc_marking(rt) ? JS_AUTOINIT_ID_PROP_JOIN : JS_AUTOINIT_ID_PROP;
@@ -8485,7 +8485,7 @@ static inline JSShapeProperty *find_own_property1(JSObject *p, JSAtom atom)
     return NULL;
 }
 
-#if POCKET_VM_LAZY_BUILTINS
+#if QJS_LEAN_LAZY_BUILTINS
 static int js_lazy_touch(JSContext *ctx, JSObject *p, JSAtom atom);
 static int js_lazy_all(JSContext *ctx, JSObject *p, bool enum_only);
 static int js_lazy_delete(JSContext *ctx, JSObject *p, JSAtom atom);
@@ -9011,7 +9011,7 @@ static void free_object(JSRuntime *rt, JSObject *p)
 
     p->free_mark = 1; /* used to tell the object is invalid when
                          freeing cycles */
-#if POCKET_VM_LAZY_BUILTINS
+#if QJS_LEAN_LAZY_BUILTINS
     /* Its lists go with it: rt->lazy is keyed by the object's address,
        which the allocator will hand out again. */
     if (unlikely(js_obj_lazy(p)))
@@ -9471,38 +9471,38 @@ static void gc_free_cycles(JSRuntime *rt)
     init_list_head(&rt->gc_zero_ref_count_list);
 }
 
-#ifdef POCKET_GC_STATS
+#ifdef QJS_LEAN_GC_STATS
 /* Measurement only (tools/r5sim, docs/vm/qjs-observe.md): collections run
-   and the bytes they freed, read with JS_PocketGCStats. */
-static uint32_t pocket_gc_runs;
-static uint64_t pocket_gc_freed;
-static size_t pocket_gc_last_before, pocket_gc_last_after;
+   and the bytes they freed, read with JS_LeanGCStats. */
+static uint32_t lean_gc_runs;
+static uint64_t lean_gc_freed;
+static size_t lean_gc_last_before, lean_gc_last_after;
 /* Time per collection, in the clock the embedder supplies (the device: CPU
    cycles). Total and the longest single run since the last read. */
-uint32_t pocket_gc_clock(void);
-static uint64_t pocket_gc_ticks;
-static uint32_t pocket_gc_ticks_max;
-void JS_PocketGCTime(uint64_t *total, uint32_t *max_run)
+uint32_t lean_gc_clock(void);
+static uint64_t lean_gc_ticks;
+static uint32_t lean_gc_ticks_max;
+void JS_LeanGCTime(uint64_t *total, uint32_t *max_run)
 {
-    *total = pocket_gc_ticks;
-    *max_run = pocket_gc_ticks_max;
-    pocket_gc_ticks_max = 0;
+    *total = lean_gc_ticks;
+    *max_run = lean_gc_ticks_max;
+    lean_gc_ticks_max = 0;
 }
-void JS_PocketGCStats(uint32_t *runs, uint64_t *freed, size_t *last_before,
+void JS_LeanGCStats(uint32_t *runs, uint64_t *freed, size_t *last_before,
                       size_t *last_after)
 {
-    *runs = pocket_gc_runs;
-    *freed = pocket_gc_freed;
-    *last_before = pocket_gc_last_before;
-    *last_after = pocket_gc_last_after;
+    *runs = lean_gc_runs;
+    *freed = lean_gc_freed;
+    *last_before = lean_gc_last_before;
+    *last_after = lean_gc_last_after;
 }
 #endif
 
 void JS_RunGC(JSRuntime *rt)
 {
-#ifdef POCKET_GC_STATS
+#ifdef QJS_LEAN_GC_STATS
     size_t before = rt->malloc_state.malloc_size;
-    uint32_t t0 = pocket_gc_clock();
+    uint32_t t0 = lean_gc_clock();
 #endif
     /* decrement the reference of the children of each object. mark =
        1 after this pass. */
@@ -9513,16 +9513,16 @@ void JS_RunGC(JSRuntime *rt)
 
     /* free the GC objects in a cycle */
     gc_free_cycles(rt);
-#ifdef POCKET_GC_STATS
-    uint32_t dt = pocket_gc_clock() - t0;
-    pocket_gc_ticks += dt;
-    if (dt > pocket_gc_ticks_max)
-        pocket_gc_ticks_max = dt;
-    pocket_gc_runs++;
-    pocket_gc_last_before = before;
-    pocket_gc_last_after = rt->malloc_state.malloc_size;
-    if (before > pocket_gc_last_after)
-        pocket_gc_freed += before - pocket_gc_last_after;
+#ifdef QJS_LEAN_GC_STATS
+    uint32_t dt = lean_gc_clock() - t0;
+    lean_gc_ticks += dt;
+    if (dt > lean_gc_ticks_max)
+        lean_gc_ticks_max = dt;
+    lean_gc_runs++;
+    lean_gc_last_before = before;
+    lean_gc_last_after = rt->malloc_state.malloc_size;
+    if (before > lean_gc_last_after)
+        lean_gc_freed += before - lean_gc_last_after;
 #endif
 }
 
@@ -10287,7 +10287,7 @@ static void build_backtrace(JSContext *ctx, JSValueConst error_val,
         return;
     }
     rt->in_build_stack_trace = true;
-    /* PocketJS: backport of quickjs-ng e1c1e416 ("heap-use-after-free in
+    /* QJS_LEAN: backport of quickjs-ng e1c1e416 ("heap-use-after-free in
      * build_backtrace when dbuf OOM frees current_exception", upstream
      * #1469; docs/vm/backlog.md #6). Callers pass rt->current_exception as a
      * BORROWED error_val. Any allocation that fails below goes through
@@ -10439,7 +10439,7 @@ done:
                 if (JS_IsException(v)) {
                     break;
                 }
-                /* PocketJS: backport of quickjs-ng c846cb1364. The define
+                /* QJS_LEAN: backport of quickjs-ng c846cb1364. The define
                  * call frees v on failure too (JS_DefinePropertyValue always
                  * consumes val); freeing it again here was a double free. */
                 if (JS_DefinePropertyValueUint32(ctx, stack, j, v, JS_PROP_C_W_E) < 0)
@@ -10557,7 +10557,7 @@ JS_ThrowError2(JSContext *ctx, JSErrorEnum error_num, bool add_backtrace,
 
     obj = JS_MakeError(ctx, error_num, add_backtrace, fmt, ap);
     if (unlikely(JS_IsException(obj))) {
-        /* PocketJS: the allocation(s) needed to build *this* Error object
+        /* QJS_LEAN: the allocation(s) needed to build *this* Error object
          * failed too (docs/vm/oom-parse-safety.md sec.6). Upstream
          * (quickjs-ng master, unchanged as of 2026-09-23) throws a bare
          * JS_NULL here, which reaches guest code indistinguishable from a
@@ -11208,14 +11208,14 @@ static int JS_AutoInitProperty(JSContext *ctx, JSObject *p, JSAtom prop,
 
     realm = js_autoinit_get_realm(pr);
     func = js_autoinit_func_table[js_autoinit_get_id(pr)];
-    /* Pocket: under the mark the entry was registered with, whoever reads
+    /* Lean: under the mark the entry was registered with, whoever reads
        it first: a builtin first used inside a marked call stays unmarked. */
     JSCFunctionMark mark = js_mark_set(ctx->rt,
                                        js_autoinit_get_id(pr) == JS_AUTOINIT_ID_PROP_JOIN);
     /* 'func' shall not modify the object properties 'pr' */
     val = func(realm, p, prop, pr->u.init.opaque);
     js_mark_restore(ctx->rt, mark);
-    /* PocketJS: upstream turned the property into a plain `undefined` before
+    /* QJS_LEAN: upstream turned the property into a plain `undefined` before
      * looking at the result, so one failed instantiation (an OOM in
      * JS_NewCFunction2 on first use) removed the builtin for the rest of the
      * run: generators.js under --fail-alloc 2877 fails to instantiate
@@ -11233,7 +11233,7 @@ static int JS_AutoInitProperty(JSContext *ctx, JSObject *p, JSAtom prop,
     prs->flags &= ~JS_PROP_TMASK;
     pr->u.value = val;
     /* Harden: a locked intrinsic hands out locked objects. The global is
-       not locked; its intrinsic bindings are the ones JS_PocketHarden made
+       not locked; its intrinsic bindings are the ones JS_LeanHarden made
        read-only, which the firmware's later ones are not. */
     if (unlikely(ctx->harden) && JS_VALUE_GET_TAG(val) == JS_TAG_OBJECT &&
             (js_obj_locked(p) ||
@@ -11334,7 +11334,7 @@ static JSValue JS_GetPropertyInternal(JSContext *ctx, JSValueConst obj,
                 return js_dup(pr->u.value);
             }
         }
-#if POCKET_VM_LAZY_BUILTINS
+#if QJS_LEAN_LAZY_BUILTINS
         if (unlikely(js_obj_lazy(p))) {
             int r = js_lazy_touch(ctx, p, prop);
             if (r < 0)
@@ -11693,7 +11693,7 @@ static int __exception JS_GetOwnPropertyNamesInternal(JSContext *ctx,
     *ptab = NULL;
     *plen = 0;
 
-#if POCKET_VM_LAZY_BUILTINS
+#if QJS_LEAN_LAZY_BUILTINS
     /* Listing the keys observes the whole set and its order: pending
        entries go into the shape, in definition order, first -- unless only
        enumerable keys are wanted and no pending entry is enumerable, the
@@ -11948,7 +11948,7 @@ retry:
         }
         return true;
     }
-#if POCKET_VM_LAZY_BUILTINS
+#if QJS_LEAN_LAZY_BUILTINS
     if (unlikely(js_obj_lazy(p))) {
         int r = js_lazy_touch(ctx, p, prop);
         if (r < 0)
@@ -12501,7 +12501,7 @@ static int delete_property0(JSContext *ctx, JSObject *p, JSAtom atom);
 
 static int delete_property(JSContext *ctx, JSObject *p, JSAtom atom)
 {
-#if POCKET_VM_LAZY_BUILTINS
+#if QJS_LEAN_LAZY_BUILTINS
     if (unlikely(js_obj_lazy(p))) {
         /* A pending entry is deleted by never materializing it. A plain
            property ahead of a list moves the list's slot back by one when
@@ -12909,7 +12909,7 @@ retry:
             goto read_only_prop;
         }
     }
-#if POCKET_VM_LAZY_BUILTINS
+#if QJS_LEAN_LAZY_BUILTINS
     if (unlikely(js_obj_lazy(p1))) {
         int r = js_lazy_touch(ctx, p1, prop);
         if (r < 0)
@@ -13030,7 +13030,7 @@ prototype_lookup:
 
 retry2:
         prs = find_own_property(&pr, p1, prop);
-#if POCKET_VM_LAZY_BUILTINS
+#if QJS_LEAN_LAZY_BUILTINS
         /* A setter or a read-only property up the chain may still be in a
            list; it decides this assignment exactly as if it were here. */
         if (!prs && unlikely(js_obj_lazy(p1))) {
@@ -13049,7 +13049,7 @@ retry2:
                    property up the chain does not stop the receiver from
                    getting its own. Locked intrinsics are read-only, so
                    without this `o.toString = f` on a plain object would
-                   fail (pocket_api.c's PocketError sets `name` this way).
+                   fail (lean_api.c's LeanError sets `name` this way).
                    No instantiation needed: the value is not read. */
                 break;
             } else if ((prs->flags & JS_PROP_TMASK) == JS_PROP_AUTOINIT) {
@@ -13624,7 +13624,7 @@ int JS_DefineProperty(JSContext *ctx, JSValueConst this_obj,
 
 redo_prop_update:
     prs = find_own_property(&pr, p, prop);
-#if POCKET_VM_LAZY_BUILTINS
+#if QJS_LEAN_LAZY_BUILTINS
     /* Redefining a pending entry redefines what it would have been, so it
        is put in the shape first; a new name falls through to be added. */
     if (!prs && unlikely(js_obj_lazy(p))) {
@@ -19655,7 +19655,7 @@ static JSValue JS_IteratorNext2(JSContext *ctx, JSValueConst enum_obj,
        intermediate result object) */
     if (JS_IsObject(method)) {
         JSObject *p = JS_VALUE_GET_OBJ(method);
-        /* Pocket: a marked function takes the full call, which joins */
+        /* Lean: a marked function takes the full call, which joins */
         if (p->class_id == JS_CLASS_C_FUNCTION &&
                 p->u.cfunc.cproto == JS_CFUNC_iterator_next &&
                 !p->u.cfunc.join) {
@@ -20582,7 +20582,7 @@ static JSValue js_call_c_function(JSContext *ctx, JSValueConst func_obj,
     if (js_check_stack_overflow(rt, sizeof(arg_buf[0]) * arg_count)) {
         return JS_ThrowStackOverflow(ctx);
     }
-    /* Pocket: after the only early return. The hook runs no JS and cannot
+    /* Lean: after the only early return. The hook runs no JS and cannot
        fail. The mark is set once this call's frame is current: what the
        body creates is marked, what JS it calls creates is not. */
     join = p->u.cfunc.join;
@@ -20747,7 +20747,7 @@ static no_inline bool js_call_math_fast(JSContext *ctx, JSValueConst func_obj,
     if (JS_VALUE_GET_TAG(func_obj) != JS_TAG_OBJECT)
         return false;
     p = JS_VALUE_GET_OBJ(func_obj);
-    /* Pocket: a marked function takes the full call, which joins */
+    /* Lean: a marked function takes the full call, which joins */
     if (p->class_id != JS_CLASS_C_FUNCTION || argc < p->u.cfunc.length ||
             p->u.cfunc.join)
         return false;
@@ -21850,7 +21850,7 @@ not_a_function:
     // different resources:
     //  - The C stack. This is the FLOOR of a C activation -- entered from
     //    C, never from a flat call (that path has its own push below, at
-    //    flat_call:) -- so with CONFIG_POCKET_VM_FLATCALLS the JS depth
+    //    flat_call:) -- so with QJS_LEAN_FLATCALLS the JS depth
     //    above this frame costs no C stack and this test measures only the
     //    native re-entry depth (design H9: builtin -> JS_Call -> here).
     //    Without it, JS_CallInternal recurses in C for every JS call and
@@ -23519,7 +23519,7 @@ mul_fp_res:
                     int v1, v2;
                     v1 = JS_VALUE_GET_INT(op1);
                     v2 = JS_VALUE_GET_INT(op2);
-                    /* POCKET: an exact quotient is the int js_number() would
+                    /* QJS_LEAN: an exact quotient is the int js_number() would
                        give, from the hardware divider (~16 cycles) instead of
                        soft-float __divdf3 (~350 instructions on the ESP32-S3,
                        docs/vm/qjs-observe.md sec.13). Not for a zero dividend
@@ -25283,7 +25283,7 @@ typedef enum JSGeneratorStateEnum {
 
 typedef struct JSGeneratorData {
     JSGeneratorStateEnum state;
-    /* PocketJS (7955cfd49e backport): the generator object, set once it
+    /* QJS_LEAN (7955cfd49e backport): the generator object, set once it
      * exists (js_call_generator_function), so js_coro_owner can reach it from
      * the frame. JSAsyncGeneratorData already has the same back pointer. */
     JSObject *generator;
@@ -25759,7 +25759,7 @@ typedef struct JSAsyncGeneratorData {
     struct list_head queue; /* list of JSAsyncGeneratorRequest.link */
 } JSAsyncGeneratorData;
 
-/* PocketJS (backport of quickjs-ng 7955cfd49e): the GC object owning a
+/* QJS_LEAN (backport of quickjs-ng 7955cfd49e): the GC object owning a
  * coroutine frame -- upstream's JSStackFrame.cur_gc_obj, derived from
  * coro_kind instead of stored (see JSStackFrame). */
 static JSGCObjectHeader *js_coro_owner(JSStackFrame *sf)
@@ -26611,7 +26611,7 @@ typedef struct JSParseState {
     const uint8_t *line_start; /* first character of the current line */
     const uint8_t *eol;  // most recently seen end-of-line character
     const uint8_t *mark; // first token character, invariant: eol < mark
-    uint32_t oom_count; /* PocketJS: rt->oom_count when the parse began */
+    uint32_t oom_count; /* QJS_LEAN: rt->oom_count when the parse began */
 
     /* current function code */
     JSFunctionDef *cur_func;
@@ -26757,7 +26757,7 @@ int JS_PRINTF_FORMAT_ATTR(2, 3) js_parse_error(JSParseState *s, JS_PRINTF_FORMAT
     va_list ap;
     int backtrace_flags;
 
-    /* PocketJS: once an allocation has failed during this parse, a syntax
+    /* QJS_LEAN: once an allocation has failed during this parse, a syntax
        error is almost always the parser misreading its own damaged state,
        not the source, and reporting it would send the app author hunting for
        a mistake that is not there. Two ways in, both measured with
@@ -28452,7 +28452,7 @@ static int cpool_add(JSParseState *s, JSValue val)
 
     if (js_resize_array(s->ctx, (void *)&fd->cpool, sizeof(fd->cpool[0]),
                         &fd->cpool_size, fd->cpool_count + 1)) {
-        /* PocketJS: the pool takes ownership of `val` ("not duplicated"
+        /* QJS_LEAN: the pool takes ownership of `val` ("not duplicated"
            above), so a failed growth has to consume it too. emit_push_const
            hands over a fresh js_dup() and its only caller with a GC object,
            js_parse_template, has already released its own reference by the
@@ -30393,7 +30393,7 @@ private_field_already_defined:
         }
     }
     /* patch the constant pool index for the constructor */
-    /* PocketJS: ctor_cpool_offset was recorded as byte_code.size just
+    /* QJS_LEAN: ctor_cpool_offset was recorded as byte_code.size just
        BEFORE emit_u32 wrote its placeholder. If that write (or any before
        it) failed, size stopped there, so the offset names the first byte
        past the valid data -- the patch then writes 4 bytes beyond the
@@ -30444,7 +30444,7 @@ private_field_already_defined:
             }
             /* patch the start of the function to enable the
                OP_add_brand_instance code */
-            /* PocketJS: a recorded offset into ANOTHER function's byte code;
+            /* QJS_LEAN: a recorded offset into ANOTHER function's byte code;
                see the constructor patch in js_parse_class. */
             if (!dbuf_error(&cf->fields_init_fd->byte_code))
                 cf->fields_init_fd->byte_code.buf[cf->brand_push_pos] = OP_push_true;
@@ -33939,7 +33939,7 @@ initializer_error:
             return -1;
         }
         dbuf_put(bc, bc->buf + pos_next, chunk_size);
-        /* PocketJS: chunk_size is 0 when the byte code buffer failed before
+        /* QJS_LEAN: chunk_size is 0 when the byte code buffer failed before
            the `next` part was emitted -- both positions were read off a size
            that had stopped moving -- and dbuf_claim(bc, 0) succeeds without
            allocating, so bc->buf can still be NULL here. memset(NULL, x, 0)
@@ -34715,7 +34715,7 @@ for_init_done:
         }
         if (default_label_pos >= 0) {
             /* Ugly patch for the `default` label, shameful and risky */
-            /* PocketJS: and unsafe once the buffer has failed -- the
+            /* QJS_LEAN: and unsafe once the buffer has failed -- the
                recorded position may lie past the valid data (see the
                constructor patch in js_parse_class). */
             if (!dbuf_error(&s->cur_func->byte_code))
@@ -38845,7 +38845,7 @@ static int add_var_this(JSContext *ctx, JSFunctionDef *fd)
     return idx;
 }
 
-/* PocketJS: resolve_pseudo_var's third answer, next to "index" and "-1: no
+/* QJS_LEAN: resolve_pseudo_var's third answer, next to "index" and "-1: no
    binding here" -- add_var failed (see the comment at its alloc_fail). */
 #define RESOLVE_PSEUDO_VAR_ALLOC_FAIL (-2)
 
@@ -38863,7 +38863,7 @@ static int resolve_pseudo_var(JSContext *ctx, JSFunctionDef *s,
         if (s->home_object_var_idx < 0) {
             s->home_object_var_idx = add_var(ctx, s, var_name);
             if (s->home_object_var_idx < 0)
-                goto alloc_fail;   /* PocketJS: see below */
+                goto alloc_fail;   /* QJS_LEAN: see below */
         }
         var_idx = s->home_object_var_idx;
         break;
@@ -38900,7 +38900,7 @@ static int resolve_pseudo_var(JSContext *ctx, JSFunctionDef *s,
     }
     return var_idx;
 alloc_fail:
-    /* PocketJS: this function has two "no" answers that upstream (quickjs-ng
+    /* QJS_LEAN: this function has two "no" answers that upstream (quickjs-ng
        master as of 2026-09-23) folds into one -1: "this function has no
        such binding, look in the parent" and "add_var could not grow the
        vars array" (out of memory, or JS_MAX_LOCAL_VARS, which has already
@@ -38997,14 +38997,14 @@ static int resolve_scope_var(JSContext *ctx, JSFunctionDef *s,
         if (var_idx < 0 && is_pseudo_var) {
             var_idx = resolve_pseudo_var(ctx, s, var_name);
             if (var_idx == RESOLVE_PSEUDO_VAR_ALLOC_FAIL)
-                goto closure_fail;   /* PocketJS: see resolve_pseudo_var */
+                goto closure_fail;   /* QJS_LEAN: see resolve_pseudo_var */
         }
 
         if (var_idx < 0 && var_name == JS_ATOM_arguments &&
                 s->has_arguments_binding) {
             /* 'arguments' pseudo variable */
             var_idx = add_arguments_var(ctx, s);
-            /* PocketJS: an allocation failure, not "absent" -- left alone
+            /* QJS_LEAN: an allocation failure, not "absent" -- left alone
                it falls through to the parent scopes and then the global
                fallback (closure_fail; reproduced: closures.js under
                vmrun --fail-alloc 1903 runs to mapped() and throws
@@ -39016,7 +39016,7 @@ static int resolve_scope_var(JSContext *ctx, JSFunctionDef *s,
             /* add a new variable with the function name */
             var_idx = add_func_var(ctx, s, var_name);
             if (var_idx < 0)
-                goto closure_fail;   /* PocketJS: as above */
+                goto closure_fail;   /* QJS_LEAN: as above */
         }
     }
     if (var_idx >= 0) {
@@ -39160,7 +39160,7 @@ local_scope_var:
                 capture_var(fd, vd);
                 idx = get_closure_var(ctx, s, fd, JS_CLOSURE_LOCAL, idx, vd->var_name, false, false, JS_VAR_NORMAL);
                 if (idx < 0)
-                    goto closure_fail;   /* PocketJS: see closure_fail */
+                    goto closure_fail;   /* QJS_LEAN: see closure_fail */
                 dbuf_putc(bc, OP_get_var_ref);
                 dbuf_put_u16(bc, idx);
                 var_object_test(ctx, s, var_name, op, bc, &label_done, 1);
@@ -39181,14 +39181,14 @@ local_scope_var:
         if (is_pseudo_var) {
             var_idx = resolve_pseudo_var(ctx, fd, var_name);
             if (var_idx == RESOLVE_PSEUDO_VAR_ALLOC_FAIL)
-                goto closure_fail;   /* PocketJS: see resolve_pseudo_var */
+                goto closure_fail;   /* QJS_LEAN: see resolve_pseudo_var */
             if (var_idx >= 0) {
                 break;
             }
         }
         if (var_name == JS_ATOM_arguments && fd->has_arguments_binding) {
             var_idx = add_arguments_var(ctx, fd);
-            /* PocketJS: -1 here is an allocation failure, not "absent";
+            /* QJS_LEAN: -1 here is an allocation failure, not "absent";
                left alone it reaches the global fallback (closure_fail). */
             if (var_idx < 0)
                 goto closure_fail;
@@ -39198,7 +39198,7 @@ local_scope_var:
             /* add a new variable with the function name */
             var_idx = add_func_var(ctx, fd, var_name);
             if (var_idx < 0)
-                goto closure_fail;   /* PocketJS: as above */
+                goto closure_fail;   /* QJS_LEAN: as above */
             break;
         }
 
@@ -39210,7 +39210,7 @@ local_scope_var:
                                   fd->var_object_idx, vd->var_name,
                                   false, false, JS_VAR_NORMAL);
             if (idx < 0)
-                goto closure_fail;   /* PocketJS: see closure_fail */
+                goto closure_fail;   /* QJS_LEAN: see closure_fail */
             dbuf_putc(bc, OP_get_var_ref);
             dbuf_put_u16(bc, idx);
             var_object_test(ctx, s, var_name, op, bc, &label_done, 0);
@@ -39224,7 +39224,7 @@ local_scope_var:
                                   fd->arg_var_object_idx, vd->var_name,
                                   false, false, JS_VAR_NORMAL);
             if (idx < 0)
-                goto closure_fail;   /* PocketJS: see closure_fail */
+                goto closure_fail;   /* QJS_LEAN: see closure_fail */
             dbuf_putc(bc, OP_get_var_ref);
             dbuf_put_u16(bc, idx);
             var_object_test(ctx, s, var_name, op, bc, &label_done, 0);
@@ -39252,7 +39252,7 @@ local_scope_var:
                                           cv->var_name, cv->is_const,
                                           cv->is_lexical, cv->var_kind);
                     if (idx < 0)
-                        goto closure_fail;   /* PocketJS: has_idx reads closure_var[idx] */
+                        goto closure_fail;   /* QJS_LEAN: has_idx reads closure_var[idx] */
                 } else {
                     idx = idx1;
                 }
@@ -39268,7 +39268,7 @@ local_scope_var:
                                           cv->var_name, false, false,
                                           JS_VAR_NORMAL);
                     if (idx < 0)
-                        goto closure_fail;   /* PocketJS: see closure_fail */
+                        goto closure_fail;   /* QJS_LEAN: see closure_fail */
                 } else {
                     idx = idx1;
                 }
@@ -39295,7 +39295,7 @@ local_scope_var:
                                   fd->vars[var_idx].is_lexical,
                                   fd->vars[var_idx].var_kind);
         }
-        /* PocketJS: the silent-global case in closure_fail's comment --
+        /* QJS_LEAN: the silent-global case in closure_fail's comment --
            without this, a failed capture fell out of this `if` and was
            compiled by the global-variable code below. */
         if (idx < 0)
@@ -39431,7 +39431,7 @@ done:
     }
     return pos_next;
 closure_fail:
-    /* PocketJS: get_closure_var() creates the closure variable when it does
+    /* QJS_LEAN: get_closure_var() creates the closure variable when it does
        not exist yet, so it never returns -1 for "not found" -- only when
        add_closure_var could not grow the array (out of memory) or hit the
        16-bit limit. Upstream's call sites here treated that -1 three
@@ -39682,7 +39682,7 @@ static void add_eval_variables(JSContext *ctx, JSFunctionDef *s)
 
     /* in non strict mode, variables are created in the caller's
        environment object */
-    /* PocketJS: every add_var / add_*_var below returns -1 only when the
+    /* QJS_LEAN: every add_var / add_*_var below returns -1 only when the
        vars array could not grow (or JS_MAX_LOCAL_VARS, already thrown);
        upstream drops all of these results, so the variable the eval was
        promised is simply absent and the eval's code resolves the name one
@@ -39771,7 +39771,7 @@ static void add_eval_variables(JSContext *ctx, JSFunctionDef *s)
             if (fd->this_var_idx < 0) {
                 fd->this_var_idx = add_var_this(ctx, fd);
                 if (fd->this_var_idx < 0)
-                    goto fail;   /* PocketJS: see above */
+                    goto fail;   /* QJS_LEAN: see above */
             }
             if (fd->new_target_var_idx < 0) {
                 fd->new_target_var_idx = add_var(ctx, fd, JS_ATOM_new_target);
@@ -39809,7 +39809,7 @@ static void add_eval_variables(JSContext *ctx, JSFunctionDef *s)
             capture_var(fd, vd);
             if (get_closure_var(ctx, s, fd, JS_CLOSURE_LOCAL, scope_idx,
                             vd->var_name, vd->is_const, vd->is_lexical, vd->var_kind) < 0)
-                goto fail;   /* PocketJS: see below */
+                goto fail;   /* QJS_LEAN: see below */
             scope_idx = vd->scope_next;
         }
         is_arg_scope = (scope_idx == ARG_SCOPE_END);
@@ -39823,7 +39823,7 @@ static void add_eval_variables(JSContext *ctx, JSFunctionDef *s)
                     if (get_closure_var(ctx, s, fd,
                                     JS_CLOSURE_ARG, i, vd->var_name, false,
                                     vd->is_lexical, JS_VAR_NORMAL) < 0)
-                        goto fail;   /* PocketJS: see below */
+                        goto fail;   /* QJS_LEAN: see below */
                 }
             }
             for (i = 0; i < fd->var_count; i++) {
@@ -39836,7 +39836,7 @@ static void add_eval_variables(JSContext *ctx, JSFunctionDef *s)
                     if (get_closure_var(ctx, s, fd,
                                     JS_CLOSURE_LOCAL, i, vd->var_name, false,
                                     vd->is_lexical, JS_VAR_NORMAL) < 0)
-                        goto fail;   /* PocketJS: see below */
+                        goto fail;   /* QJS_LEAN: see below */
                 }
             }
         } else {
@@ -39848,7 +39848,7 @@ static void add_eval_variables(JSContext *ctx, JSFunctionDef *s)
                     if (get_closure_var(ctx, s, fd,
                                     JS_CLOSURE_LOCAL, i, vd->var_name, false,
                                     vd->is_lexical, JS_VAR_NORMAL) < 0)
-                        goto fail;   /* PocketJS: see below */
+                        goto fail;   /* QJS_LEAN: see below */
                 }
             }
         }
@@ -39862,13 +39862,13 @@ static void add_eval_variables(JSContext *ctx, JSFunctionDef *s)
                                 JS_CLOSURE_REF,
                                 idx, cv->var_name, cv->is_const,
                                 cv->is_lexical, cv->var_kind) < 0)
-                    goto fail;   /* PocketJS: see below */
+                    goto fail;   /* QJS_LEAN: see below */
             }
         }
     }
     return;
 fail:
-    /* PocketJS: add_eval_variables creates, in advance, a closure variable
+    /* QJS_LEAN: add_eval_variables creates, in advance, a closure variable
        for everything a direct eval inside this function could name. It
        ignored get_closure_var's result, and -1 means add_closure_var could
        not allocate: that variable then never reached the eval, whose code
@@ -40327,7 +40327,7 @@ static __exception int resolve_variables(JSContext *ctx, JSFunctionDef *s)
     CodeContext cc;
     int scope;
 
-    /* PocketJS: the input may end in half an instruction. When an emit runs
+    /* QJS_LEAN: the input may end in half an instruction. When an emit runs
        out of memory part-way (emit_source_loc's dbuf_putc lands, the
        dbuf_put_u32 after it does not), dbuf_put writes nothing, sets the
        error flag and leaves size where it was -- so the buffer ends on an
@@ -41003,7 +41003,7 @@ static void put_short_code(DynBuf *bc_out, int op, int idx)
     dbuf_put_u16(bc_out, idx);
 }
 
-/* PocketJS: compile-time TDZ elision (docs/vm/tdz-elision.md).
+/* QJS_LEAN: compile-time TDZ elision (docs/vm/tdz-elision.md).
 
    Every read or assignment of a block-scoped local (let/const/class) is
    emitted as get_loc_check / put_loc_check, and every entry into its block
@@ -41227,7 +41227,7 @@ static __exception int resolve_labels(JSContext *ctx, JSFunctionDef *s)
     uint32_t tdz_drop;
 
     label_slots = s->label_slots;
-    /* PocketJS: before anything below reads the input or the labels */
+    /* QJS_LEAN: before anything below reads the input or the labels */
     tdz_drop = tdz_elide_checks(s);
 
     line_num = s->line_num;
@@ -41334,7 +41334,7 @@ static __exception int resolve_labels(JSContext *ctx, JSFunctionDef *s)
             break;
 
         case OP_set_loc_uninitialized: {
-            /* PocketJS: a TDZ marker nothing can observe (tdz_elide_checks) */
+            /* QJS_LEAN: a TDZ marker nothing can observe (tdz_elide_checks) */
             int idx = get_u16(bc_buf + pos + 1);
             if (idx < 32 && (tdz_drop >> idx) & 1)
                 break;
@@ -41351,7 +41351,7 @@ static __exception int resolve_labels(JSContext *ctx, JSFunctionDef *s)
             for (re = ls->first_reloc; re != NULL; re = re_next) {
                 int diff = ls->addr - re->addr;
                 re_next = re->next;
-                /* PocketJS: a reloc's address was recorded as
+                /* QJS_LEAN: a reloc's address was recorded as
                    `bc_out.size - n` right AFTER writing an n-byte
                    placeholder, i.e. on the assumption that the write
                    landed. Once bc_out has failed that is false -- nothing
@@ -42209,7 +42209,7 @@ no_change:
         }
     }
 
-    /* PocketJS: the jump optimisation below rewrites bc_out in place -- it
+    /* QJS_LEAN: the jump optimisation below rewrites bc_out in place -- it
        indexes bc_out.buf at every jump slot's recorded pos and memmove()s
        the tail by bc_out.size - pos - size - delta. Those positions were
        recorded while pass 1 was emitting; if an emit in pass 1 ran out of
@@ -42311,7 +42311,7 @@ shrink:
     }
 
 finish:
-    /* PocketJS: relocations still pending here belong to labels the walk
+    /* QJS_LEAN: relocations still pending here belong to labels the walk
        never reached, which only happens when it stopped early (the `fail:`
        path below). Nothing else frees them -- js_free_function_def frees
        the label_slots array but not the chains hanging off it. On the
@@ -42344,7 +42344,7 @@ finish:
     }
     return 0;
 fail:
-    /* PocketJS: upstream's "XXX: not safe", made safe. Reached when
+    /* QJS_LEAN: upstream's "XXX: not safe", made safe. Reached when
        add_reloc cannot allocate a relocation entry, part-way through the
        walk. Upstream freed bc_out and returned, leaving s->byte_code as the
        INPUT -- but the walk had already freed some of that input's atoms
@@ -42733,7 +42733,7 @@ static JSValue js_create_function(JSContext *ctx, JSFunctionDef *fd)
 
         fd1 = list_entry(el, JSFunctionDef, link);
         cpool_idx = fd1->parent_cpool_idx;
-        /* PocketJS: -1 here means the parser's cpool_add() for this child
+        /* QJS_LEAN: -1 here means the parser's cpool_add() for this child
            ran out of memory. All three sites that set parent_cpool_idx
            (class field initialisers, the function-expression path and the
            child-function path) store cpool_add's result without testing it,
@@ -42882,7 +42882,7 @@ static JSValue js_create_function(JSContext *ctx, JSFunctionDef *fd)
     b->pc2line_len = 0;
 #else
     if (ctx->strip_debug) {
-        /* The same, for JS_PocketSetStripDebug: compute_pc2line_info()
+        /* The same, for JS_LeanSetStripDebug: compute_pc2line_info()
            wrote nothing and fd->pc2line holds no block. */
         b->pc2line_buf = NULL;
         b->pc2line_len = 0;
@@ -43977,7 +43977,7 @@ static JSValue JS_EvalFunctionInternal(JSContext *ctx, JSValue fun_obj,
     tag = JS_VALUE_GET_TAG(fun_obj);
     if (tag == JS_TAG_FUNCTION_BYTECODE) {
         fun_obj = js_closure(ctx, fun_obj, var_refs, sf);
-        /* PocketJS: js_closure returns JS_EXCEPTION when the function
+        /* QJS_LEAN: js_closure returns JS_EXCEPTION when the function
            object or its var_refs cannot be allocated (bfunc is freed by
            then), with "out of memory" already pending. Upstream (quickjs-ng
            master, same lines as of 2026-09-23) hands that JS_EXCEPTION
@@ -44109,7 +44109,7 @@ static JSValue __JS_EvalInternal(JSContext *ctx, JSValueConst this_obj,
     fd->body_scope = fd->scope_level;
 
     err = js_parse_program(s);
-    /* PocketJS: some parser allocations fail without failing the parse, and
+    /* QJS_LEAN: some parser allocations fail without failing the parse, and
        the program then compiled and ran with the OOM left pending. Measured
        (--fail-alloc, closures.js + generators.js, 69 points): the lookahead
        in js_parse_skip_parens_token swallows its lexer's error and returns a
@@ -44936,7 +44936,7 @@ static int JS_WriteObjectTag(BCWriterState *s, JSValueConst obj)
 
     bc_put_u8(s, BC_TAG_OBJECT);
     prop_count = 0;
-#if POCKET_VM_LAZY_BUILTINS
+#if QJS_LEAN_LAZY_BUILTINS
     /* Only enumerable properties are written, like a for-in. */
     if (unlikely(js_obj_lazy(p)) && js_lazy_all(s->ctx, p, true)) {
         goto fail;
@@ -46903,7 +46903,7 @@ static int JS_InstantiateFunctionListItem(JSContext *ctx, JSValueConst obj,
     return 0;
 }
 
-#if POCKET_VM_LAZY_BUILTINS
+#if QJS_LEAN_LAZY_BUILTINS
 static inline bool lazy_done(const JSLazyList *l, int k)
 {
     return (l->done[k >> 5] >> (k & 31)) & 1;
@@ -46932,7 +46932,7 @@ static JSLazyList *lazy_list_of(JSRuntime *rt, JSObject *p,
 /* An entry is marked done before it is materialized; when that fails (out of
    memory) the mark must come off again, or the name is in neither the shape
    nor the list and reads as undefined for the rest of the run -- how
-   pocket.fs.open vanished after one refused first read (docs/vm/turn-cpi.md
+   kobako.fs.open vanished after one refused first read (docs/vm/turn-cpi.md
    sec.4). Same rule as JS_AutoInitProperty: a failure may fail the
    operation, never leave a hole. */
 static void lazy_undo_done(JSRuntime *rt, JSObject *p,
@@ -46969,7 +46969,7 @@ static bool lazy_key(JSRuntime *rt, JSAtom atom, LazyKey *key)
     if (__JS_AtomIsTaggedInt(atom))
         return false;   /* no list entry is an index */
     key->open = atom >= JS_ATOM_Symbol_toPrimitive && atom < JS_ATOM_END ? '[' : 0;
-#ifdef POCKET_VM_ROM_ATOMS
+#ifdef QJS_LEAN_ROM_ATOMS
     const JSRomAtom *r = key->open ? NULL : js_rom_atom(atom);
     if (r) {
         key->s8 = (const uint8_t *)js_rom_text(r), key->s16 = NULL, key->len = r->len;
@@ -47095,7 +47095,7 @@ static int lazy_define(JSContext *ctx, JSObject *p, JSAtom atom,
     return 0;
 }
 
-/* Pocket: lazy_define for an entry of list `l`, under the mark the list was
+/* Lean: lazy_define for an entry of list `l`, under the mark the list was
    registered with (not the reader's). `l` is read before the call only:
    rt->lazy may move under it. */
 static int lazy_define_list(JSLazyList *l, JSObject *p, JSAtom atom,
@@ -47506,7 +47506,7 @@ static int js_harden_share_shape(JSContext *ctx, JSObject *p)
 
 /* Lock p and, recursively, what it already holds: values made so far,
    accessor functions, its prototype. The global object is not locked (the
-   firmware and the app add to it); JS_PocketHarden handles its bindings. */
+   firmware and the app add to it); JS_LeanHarden handles its bindings. */
 static int js_harden_lock(JSContext *ctx, JSObject *p)
 {
     JSShapeProperty *prs;
@@ -47563,7 +47563,7 @@ static int js_harden_lock_value(JSContext *ctx, JSValueConst v)
     return js_harden_lock(ctx, JS_VALUE_GET_OBJ(v));
 }
 
-int JS_PocketHarden(JSContext *ctx)
+int JS_LeanHarden(JSContext *ctx)
 {
     JSObject *g;
     JSShapeProperty *prs;
@@ -47571,7 +47571,7 @@ int JS_PocketHarden(JSContext *ctx)
 
     if (ctx->harden)
         return 0;
-#if POCKET_VM_LAZY_BUILTINS
+#if QJS_LEAN_LAZY_BUILTINS
     if (!ctx->rt->lock_ok)
 #endif
     {
@@ -47648,7 +47648,7 @@ int JS_SetPropertyFunctionList(JSContext *ctx, JSValueConst obj,
 {
     int i, ret;
 
-#if POCKET_VM_LAZY_BUILTINS
+#if QJS_LEAN_LAZY_BUILTINS
     if (lazy_eligible(ctx, obj, len))
         return lazy_register(ctx, obj, tab, len);
 #endif
@@ -48507,7 +48507,7 @@ static JSValue JS_GetOwnPropertyNames2(JSContext *ctx, JSValueConst obj1,
     p = JS_VALUE_GET_OBJ(obj);
     if (!p->is_exotic && kind == JS_ITERATOR_KIND_KEY &&
             flags == (JS_GPN_ENUM_ONLY | JS_GPN_STRING_MASK)
-#if POCKET_VM_LAZY_BUILTINS
+#if QJS_LEAN_LAZY_BUILTINS
             && !js_obj_lazy(p)
 #endif
     ) {
@@ -48573,7 +48573,7 @@ static JSValue JS_GetOwnPropertyNames2(JSContext *ctx, JSValueConst obj1,
     } else if (!p->is_exotic &&
                (kind == JS_ITERATOR_KIND_VALUE || kind == JS_ITERATOR_KIND_KEY_AND_VALUE) &&
                flags == (JS_GPN_ENUM_ONLY | JS_GPN_STRING_MASK)
-#if POCKET_VM_LAZY_BUILTINS
+#if QJS_LEAN_LAZY_BUILTINS
                && !js_obj_lazy(p)
 #endif
     ) {
@@ -49892,8 +49892,8 @@ static JSValue js_function_toString(JSContext *ctx, JSValueConst this_val,
     }
 
     p = JS_VALUE_GET_OBJ(this_val);
-    /* Pocket VM (unless JS_UPSTREAM_COMPAT; the name
-       CONFIG_POCKET_VM_STRIP_FN_SOURCE used here before never existed,
+    /* Lean VM (unless JS_UPSTREAM_COMPAT; the name
+       QJS_LEAN_STRIP_FN_SOURCE used here before never existed,
        docs/vm/strip-debug.md): the parser keeps no copy of any function's source text, so b->source
        is NULL for every function compiled from JS and control falls through
        to upstream's own no-source path below -- the one it already takes
@@ -52001,7 +52001,7 @@ static JSValue js_array_push(JSContext *ctx, JSValueConst this_val,
                        (p->shape->prop->flags & JS_PROP_WRITABLE))) {
                 array_len = JS_VALUE_GET_INT(p->prop[0].u.value);
                 new_len = array_len + argc;
-                /* PocketJS: backport of quickjs-ng d98ff101c6. Growing
+                /* QJS_LEAN: backport of quickjs-ng d98ff101c6. Growing
                  * `.length` leaves a fast array with count < length; writing
                  * at `.length` here skipped the slots in between and then
                  * claimed them through `count`, uninitialised. */
@@ -58221,7 +58221,7 @@ static double js_math_cos(double d)
 #ifdef JS_UPSTREAM_COMPAT
     return cos(d);
 #else
-    return pocket_cos(d);   /* POCKET: pocket_trig.h */
+    return lean_cos(d);   /* QJS_LEAN: lean_trig.h */
 #endif
 }
 static double js_math_exp(double d)
@@ -58237,7 +58237,7 @@ static double js_math_sin(double d)
 #ifdef JS_UPSTREAM_COMPAT
     return sin(d);
 #else
-    return pocket_sin(d);   /* POCKET: pocket_trig.h */
+    return lean_sin(d);   /* QJS_LEAN: lean_trig.h */
 #endif
 }
 static double js_math_tan(double d)
@@ -58245,7 +58245,7 @@ static double js_math_tan(double d)
 #ifdef JS_UPSTREAM_COMPAT
     return tan(d);
 #else
-    return pocket_tan(d);   /* POCKET: pocket_trig.h */
+    return lean_tan(d);   /* QJS_LEAN: lean_trig.h */
 #endif
 }
 static double js_math_trunc(double d)
@@ -58494,7 +58494,7 @@ bad_flags:
                                   sizeof(error_msg), str, len, re_flags, ctx);
     JS_FreeCString(ctx, str);
     if (!re_bytecode_buf) {
-        /* PocketJS: lre_compile() signals an allocation failure by setting
+        /* QJS_LEAN: lre_compile() signals an allocation failure by setting
            *plen to -1 instead of the ordinary 0 (see its 'error:' label).
            Before this, every regexp compile failure -- a real syntax error
            or running out of memory mid-parse -- surfaced identically as
@@ -61326,7 +61326,7 @@ static int js_json_to_str(JSContext *ctx, JSONStringifyContext *jsc,
             if (JS_IsUndefined(jsc->property_list) &&
                     JS_IsUndefined(jsc->replacer_func) &&
                     !p->is_exotic
-#if POCKET_VM_LAZY_BUILTINS
+#if QJS_LEAN_LAZY_BUILTINS
                     && !js_obj_lazy(p)
 #endif
             ) {
@@ -66337,7 +66337,7 @@ static JSValue js_promise_resolve(JSContext *ctx, JSValueConst this_val,
 static JSValue js_promise_withResolvers(JSContext *ctx, JSValueConst this_val,
                                         int argc, JSValueConst *argv)
 {
-    /* PocketJS: backport of quickjs-ng 49131a6315. JS_DefinePropertyValue
+    /* QJS_LEAN: backport of quickjs-ng 49131a6315. JS_DefinePropertyValue
      * consumes the value even when it fails; the old code cleared its local
      * only after a successful define, so an OOM in a define freed that value
      * a second time on the exception path. */
@@ -67065,7 +67065,7 @@ static JSValue JS_CreateAsyncFromSyncIterator(JSContext *ctx,
 /* AsyncFromSyncIteratorContinuation's closeOnRejection (ES2025): when the
    value of a next() or throw() step is a promise that rejects, close the
    sync iterator before passing the rejection on. data[0] is the iterator.
-   PocketJS: upstream quickjs-ng lacks it. Only the wrapper Array.fromAsync
+   QJS_LEAN: upstream quickjs-ng lacks it. Only the wrapper Array.fromAsync
    makes has it on (test262 sync-iterable-with-rejecting-thenable-closes):
    for await already closes from the loop. */
 static JSValue js_async_from_sync_iterator_close(JSContext *ctx,
@@ -70123,7 +70123,7 @@ static JSValue js_array_buffer_transfer(JSContext *ctx, JSValueConst this_val,
     if (abuf->detached) {
         return JS_ThrowTypeErrorDetachedArrayBuffer(ctx);
     }
-    // Pocket (docs/kasane/shiki-spec.md sec.9.3): an ArrayBuffer over memory
+    // Lean (docs/kasane/shiki-spec.md sec.9.3): an ArrayBuffer over memory
     // someone else owns (a Shiki data region's window) is never transferred,
     // at any length. The same length would hand the window to a new
     // ArrayBuffer behind the owner's back, and length 0 would detach it
@@ -74397,7 +74397,7 @@ static JSValue js_new_callsite(JSContext *ctx, JSCallSiteData *csd)
     }
 
     /* The new object takes ownership of the values in |csd|; clear them so
-       the caller doesn't free them a second time. (PocketJS: backport of
+       the caller doesn't free them a second time. (QJS_LEAN: backport of
        quickjs-ng c846cb1364 -- build_backtrace's cleanup loop frees csd[j]
        from the entry whose CallSite failed to be inserted.) */
     memcpy(csd1, csd, sizeof(*csd));
@@ -75795,7 +75795,7 @@ static const JSCFunctionListEntry js_uint8array_funcs[] = {
     JS_CFUNC_DEF("fromHex", 1, js_uint8array_from_hex),
 };
 
-/* PocketJS: split out of js_uint8array_funcs_init so the lazy path
+/* QJS_LEAN: split out of js_uint8array_funcs_init so the lazy path
    (js_lazy_class_make, F3b) installs the same methods on the Uint8Array it
    makes on first use; there is no global binding to read at that point. */
 static int js_uint8array_install(JSContext *ctx, JSValueConst ctor)
@@ -75941,7 +75941,7 @@ uintptr_t js_std_cmd(int cmd, ...)
 // moved every later line, and the __LINE__ each assert() embeds changed the
 // code around it (+8 B text, then +4 B with the body #ifdef'd out; measured
 // 2026-09-25) although the function itself was never linked.
-#ifdef CONFIG_POCKET_VM_OOMPROBE
+#ifdef QJS_LEAN_OOMPROBE
 uint32_t JS_VMStackBlocks(JSRuntime *rt, const void **out, uint32_t cap)
 {
     uint32_t n = 0;
@@ -75959,7 +75959,7 @@ uint32_t JS_VMStackBlocks(JSRuntime *rt, const void **out, uint32_t cap)
 }
 #endif
 
-#ifdef POCKET_VM_LAZY_INTRINSICS
+#ifdef QJS_LEAN_LAZY_INTRINSICS
 /* F3b (docs/vm/builtin-floor-plan.md sec.17): SharedArrayBuffer, the typed
    arrays and DataView are made the first time they are needed rather than at
    context creation -- ~5 KB of every guest heap for classes the shipped apps
@@ -75974,7 +75974,7 @@ uint32_t JS_VMStackBlocks(JSRuntime *rt, const void **out, uint32_t cap)
 
    Two ways in. A read of the global resolves its autoinit slot
    (js_lazy_class_ctor). A native path that needs the prototype first --
-   JS_NewUint8ArrayCopy for pocket.fs, JS_ReadObject, a subclass's
+   JS_NewUint8ArrayCopy for kobako.fs, JS_ReadObject, a subclass's
    new.target without a prototype -- reaches one of the class_proto reads
    guarded by LAZY_CLASS_MISSING, and js_lazy_class_ensure resolves the
    global slot itself if it is still pending, so the binding and
@@ -75994,7 +75994,7 @@ uint32_t JS_VMStackBlocks(JSRuntime *rt, const void **out, uint32_t cap)
    their classes with the runtime at registration, as before; only the
    constructor/prototype pairs wait. */
 static const JSCFunctionListEntry js_lazy_entries[] = {
-#define LAZY_E(name, cid, group) { name, JS_PROP_WRITABLE | JS_PROP_CONFIGURABLE, JS_DEF_POCKET_LAZY_CLASS, cid, { .i32 = group } }
+#define LAZY_E(name, cid, group) { name, JS_PROP_WRITABLE | JS_PROP_CONFIGURABLE, JS_DEF_LEAN_LAZY_CLASS, cid, { .i32 = group } }
     LAZY_E("SharedArrayBuffer", JS_CLASS_SHARED_ARRAY_BUFFER, LAZY_G_TA),
     LAZY_E("Uint8ClampedArray", JS_CLASS_UINT8C_ARRAY, LAZY_G_TA),
     LAZY_E("Int8Array", JS_CLASS_INT8_ARRAY, LAZY_G_TA),
@@ -76270,7 +76270,7 @@ static JSValue js_lazy_make(JSContext *ctx, int class_id)
     } else if (unlikely(ctx->harden) &&
                (js_harden_lock_value(ctx, ctor) ||
                 js_harden_lock_value(ctx, ctx->class_proto[class_id]))) {
-        /* Made after the lock, so locked now (JS_PocketHarden saw JS_NULL). */
+        /* Made after the lock, so locked now (JS_LeanHarden saw JS_NULL). */
         JS_FreeValue(ctx, ctor);
         return JS_EXCEPTION;
     }
@@ -76287,7 +76287,7 @@ static JSValue js_lazy_class_ctor(JSContext *ctx, int class_id)
     if (!JS_IsNull(ctx->class_proto[class_id]))
         return JS_GetProperty(ctx, ctx->class_proto[class_id], JS_ATOM_constructor);
     {
-        /* Pocket: an intrinsic is the engine's, whoever touches it first */
+        /* Lean: an intrinsic is the engine's, whoever touches it first */
         JSCFunctionMark mark = js_mark_set(ctx->rt, false);
         JSValue v = js_lazy_make(ctx, class_id);
         js_mark_restore(ctx->rt, mark);
@@ -76336,7 +76336,7 @@ static int js_lazy_class_ensure(JSContext *ctx, int class_id)
 }
 #endif
 
-#ifdef POCKET_VM_IMMORTAL_TEST
+#ifdef QJS_LEAN_IMMORTAL_TEST
 /* Host-only R1 check (docs/vm/rom-intrinsics.md sec.9 R1): turn the context's
    intrinsics into the immortal objects a ROM snapshot would hold, in RAM, so
    the corpus can run against them before any snapshot exists. full=1 first
@@ -76407,7 +76407,7 @@ static int js_immortal_resolve(JSContext *ctx)
     return 0;
 }
 
-int JS_PocketImmortalizeIntrinsics(JSContext *ctx, int full)
+int JS_LeanImmortalizeIntrinsics(JSContext *ctx, int full)
 {
     JSRuntime *rt = ctx->rt;
     JSObject *keep1 = JS_VALUE_GET_OBJ(ctx->global_obj);
@@ -76443,7 +76443,7 @@ int JS_PocketImmortalizeIntrinsics(JSContext *ctx, int full)
 }
 #endif
 
-#ifdef POCKET_VM_ROM_INTRINSICS
+#ifdef QJS_LEAN_ROM_INTRINSICS
 /* R2 (docs/vm/rom-intrinsics.md): the hardened intrinsics as const data.
 
    The generator writes every field by name; what differs per target is the

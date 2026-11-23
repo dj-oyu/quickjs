@@ -17,10 +17,10 @@ const quickjs_h = loadFile("quickjs.h")
 const quickjs_libc_c = loadFile("quickjs-libc.c")
 const quickjs_libc_h = loadFile("quickjs-libc.h")
 const quickjs_opcode_h = loadFile("quickjs-opcode.h")
-// PocketJS: the fork's own headers and its second VM file (quickjs-vm.c).
+// QJS_LEAN: the fork's own headers and its second VM file (quickjs-vm.c).
 const quickjs_vm_c = loadFile("quickjs-vm.c")
-const pocket_once_h = ["pocket_trig.h", "quickjs-vmprobe.h", "quickjs-vm.h", "quickjs-vmstack.h"]
-const pocket_data_h = ["quickjs-rom-atoms-defs.h", "quickjs-rom-atoms.h",
+const lean_once_h = ["quickjs-lean-config.h", "lean_trig.h", "quickjs-vmprobe.h", "quickjs-vm.h", "quickjs-vmstack.h"]
+const lean_data_h = ["quickjs-rom-atoms-defs.h", "quickjs-rom-atoms.h",
                        "quickjs-rom-intrinsics-defs.h", "quickjs-rom-intrinsics.h",
                        "dtoa_schubfach_table.h"]
 
@@ -49,11 +49,11 @@ source = source.replace(/#include "quickjs-opcode.h"/g, quickjs_opcode_h)
 source = source.replace(/#include "libregexp-opcode.h"/g, libregexp_opcode_h)
 // #pragma once means nothing inside one file: a guarded header goes in at
 // its first include only, and the later includes are dropped below.
-for (const name of pocket_once_h)
+for (const name of lean_once_h)
     source = source.replace(`#include "${name}"`,
                             () => loadFile(name).replace(/^#pragma once$/m, ""))
 // The ROM tables are data included once each, at a fixed point.
-for (const name of pocket_data_h)
+for (const name of lean_data_h)
     source = source.replace(`#include "${name}"`, () => loadFile(name))
 source = source.replace(/#include "[^"]+"/g, "")
 writeFile(execArgv[2] ?? "quickjs-amalgam.c", source)

@@ -141,7 +141,7 @@ int vmtest_vmstack_set_budget(JSRuntime *rt, size_t bytes);
 //
 // The gate (docs/vm/vm-L2-design.md sec.11.3/13): a fixed set of C callers that
 // can receive a "yielded" result from the VM and must know how to resume it.
-// With CONFIG_POCKET_VM_YIELD disabled these entry points remain plain
+// With QJS_LEAN_YIELD disabled these entry points remain plain
 // pass-throughs and JS_VMSuspended is always false.
 //
 // Where a suspended chain's resume ended up starting from. The four rows of
@@ -157,7 +157,7 @@ typedef enum {
     JS_VM_ORIGIN_JOB_ASYNC,      // async function/generator floor
 } JSVMOrigin;
 
-// True while a chain is parked in rt->vm_susp. With POCKET_VM_YIELD off this
+// True while a chain is parked in rt->vm_susp. With QJS_LEAN_YIELD off this
 // is the stage-1 pass-through and always returns 0.
 int JS_VMSuspended(JSRuntime *rt);
 

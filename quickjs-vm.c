@@ -65,14 +65,14 @@ void vmtest_vmstack_report(JSRuntime *rt, void *out)
     // --fail-alloc failures, not JS_SetMemoryLimit refusals, which never
     // reach it.
     // flat=: whether this binary keeps JS-to-JS calls in one C activation
-    // (CONFIG_POCKET_VM_FLATCALLS). budget_probe.sh reads it to know which
+    // (QJS_LEAN_FLATCALLS). budget_probe.sh reads it to know which
     // guard is expected to answer under the shipped limits: with C recursion
     // the C-stack guard fires first (budget_hits=0), flat only the budget can.
     const int flat = 1;
     // The (unsigned) casts are not decoration: depth_max and seg_live_max are
     // uint32_t, which is unsigned int on the x86-64 host but long unsigned int
     // on xtensa, so a bare %u passed every host build and failed -Werror=format
-    // the first time a CONFIG_POCKET_VM_PROBE firmware compiled this file.
+    // the first time a QJS_LEAN_PROBE firmware compiled this file.
     fprintf(f, "#info vmstack flat=%d seg_size=%zu seg_first=%zu seg_max=%zu align=%d frame_hdr=%zu "
                "pushes=%llu depth_max=%u "
                "live_max=%zu frame_max=%zu seg_live_max=%u seg_mallocs=%llu seg_frees=%llu "

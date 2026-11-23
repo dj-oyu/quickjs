@@ -4,7 +4,7 @@ gen/** -diff
 builtin-*.h -diff
 
 # Keep C sources LF on every checkout (Git for Windows defaults to CRLF).
-# The pocketjs firmware embeds this repository as a submodule, and its host
+# The kobako firmware embeds this repository as a submodule, and its host
 # tools read these files; before the move its own .gitattributes kept them LF.
 *.c text eol=lf
 *.h text eol=lf
