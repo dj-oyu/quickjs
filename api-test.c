@@ -1086,7 +1086,7 @@ static void large_allocation_accounting(void)
     JS_SetMemoryLimit(rt, (size_t)before.malloc_size + 4 * block_size);
     ret = eval(ctx, "globalThis.a = [];\n"
                     "for (let i = 0; i < 64; i++) {\n"
-                    "    // PocketJS: OOM is catchable unless built with\n"
+                    "    // QJS_LEAN: OOM is catchable unless built with\n"
                     "    // JS_UNCATCHABLE_INTERNAL_ERRORS; rethrow so both\n"
                     "    // builds end with the same exception\n"
                     "    try {\n"

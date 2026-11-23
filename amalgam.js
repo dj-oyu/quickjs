@@ -17,7 +17,7 @@ const quickjs_h = loadFile("quickjs.h")
 const quickjs_libc_c = loadFile("quickjs-libc.c")
 const quickjs_libc_h = loadFile("quickjs-libc.h")
 const quickjs_opcode_h = loadFile("quickjs-opcode.h")
-// PocketJS: the fork's own headers and its second VM file (quickjs-vm.c).
+// QJS_LEAN: the fork's own headers and its second VM file (quickjs-vm.c).
 const quickjs_vm_c = loadFile("quickjs-vm.c")
 const lean_once_h = ["quickjs-lean-config.h", "lean_trig.h", "quickjs-vmprobe.h", "quickjs-vm.h", "quickjs-vmstack.h"]
 const lean_data_h = ["quickjs-rom-atoms-defs.h", "quickjs-rom-atoms.h",

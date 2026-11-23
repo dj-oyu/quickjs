@@ -5098,7 +5098,7 @@ void js_std_init_handlers(JSRuntime *rt)
 
     ts = js_mallocz_rt(rt, sizeof(*ts));
     if (!ts) {
-        /* PocketJS: upstream called exit(1) here, which on the device is an
+        /* QJS_LEAN: upstream called exit(1) here, which on the device is an
          * abort and a reboot for what is only a failed app start. The
          * rejection is on the OOM canary (quickjs.h JS_TakeOOMCanary), and
          * kobako_guest_create / tools/vmtest/vmrun.c check it after setup
@@ -5114,7 +5114,7 @@ void js_std_init_handlers(JSRuntime *rt)
 
     ts->next_timer_id = 1;
 
-    /* PocketJS: upstream ignored this result, and the finalizer is the only
+    /* QJS_LEAN: upstream ignored this result, and the finalizer is the only
      * thing that frees ts, so a failed registration leaked it (160 B, seen by
      * LSan at vmrun --fail-alloc 237 once a failed setup frees the runtime).
      * Same outcome as a failed ts allocation above: no thread state. */
@@ -5150,7 +5150,7 @@ void js_std_free_handlers(JSRuntime *rt)
     JSThreadState *ts = js_get_thread_state(rt);
     struct list_head *el, *el1;
 
-    /* PocketJS: js_std_init_handlers failed (out of memory); nothing to free */
+    /* QJS_LEAN: js_std_init_handlers failed (out of memory); nothing to free */
     if (!ts)
         return;
 

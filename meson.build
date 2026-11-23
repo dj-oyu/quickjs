@@ -17,8 +17,8 @@ host_system = host_machine.system()
 cc = meson.get_compiler('c')
 
 add_project_arguments('-DQUICKJS_NG_BUILD', language: 'c')
-# Upstream quickjs-ng's behaviour where PocketJS departs from it on purpose
-# (quickjs.c, JS_UPSTREAM_COMPAT). PocketJS builds quickjs.c without this file.
+# Upstream quickjs-ng's behaviour where QJS_LEAN departs from it on purpose
+# (quickjs.c, JS_UPSTREAM_COMPAT). QJS_LEAN builds quickjs.c without this file.
 add_project_arguments('-DJS_UPSTREAM_COMPAT', language: 'c')
 
 qjs_gcc_warning_args = [
@@ -143,7 +143,7 @@ qjs_srcs = files(
   'libregexp.c',
   'libunicode.c',
   'quickjs.c',
-  # PocketJS: the VM's second file (yield and stack segments).
+  # QJS_LEAN: the VM's second file (yield and stack segments).
   'quickjs-vm.c',
 )
 qjs_hdrs = files(

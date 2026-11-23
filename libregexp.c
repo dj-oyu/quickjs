@@ -92,7 +92,7 @@ typedef struct {
     bool ignore_case;
     bool multi_line;
     bool dotall;
-    /* PocketJS: set by re_parse_out_of_memory(), read by lre_compile() to
+    /* QJS_LEAN: set by re_parse_out_of_memory(), read by lre_compile() to
        tell an allocation failure apart from a genuine parse error -- see
        js_compile_regexp() in quickjs.c, which used to throw SyntaxError
        for both (docs/vm/oom-parse-safety.md sec.6's "誤診断" class, here
@@ -497,7 +497,7 @@ static int cr_init_char_range(REParseState *s, REStringList *cr, uint32_t c)
     }
     return 0;
 fail:
-    /* PocketJS: cr_add_point / cr_invert fail only on allocation, and this
+    /* QJS_LEAN: cr_add_point / cr_invert fail only on allocation, and this
        `return -1` (upstream, as of v0.18.0) set no message, so
        lre_compile()'s error: label copied out whatever s->u.tmp_buf held
        -- the last group name parsed. /(?<y>\d{4})-(?<m>\d{2})/ under
@@ -2163,7 +2163,7 @@ lookahead:
                     return re_parse_error(s, "duplicate group name");
                 }
                 /* group name with a trailing zero */
-                /* PocketJS: upstream ignores these results (and the
+                /* QJS_LEAN: upstream ignores these results (and the
                    dbuf_putc pair below). The name table is a second DynBuf,
                    independent of s->byte_code, so a failed growth here is
                    not seen by lre_compile()'s dbuf_error(&s->byte_code)
@@ -2189,7 +2189,7 @@ lookahead:
             /* capture without group name */
             if (dbuf_putc(&s->group_names, 0) ||
                     dbuf_putc(&s->group_names, 0)) {
-                return re_parse_out_of_memory(s);   /* PocketJS: as above */
+                return re_parse_out_of_memory(s);   /* QJS_LEAN: as above */
             }
 parse_capture:
             if (s->capture_count >= CAPTURE_COUNT_MAX) {
@@ -2790,7 +2790,7 @@ error:
         dbuf_free(&s->byte_code);
         dbuf_free(&s->group_names);
         js__pstrcpy(error_msg, error_msg_size, s->u.error_msg);
-        /* PocketJS: *plen is otherwise unused on the error path (every
+        /* QJS_LEAN: *plen is otherwise unused on the error path (every
            caller only checks the returned pointer), so an allocation
            failure is signalled here as -1 instead of the ordinary 0. The
            only caller that reads the return value with the pattern still
@@ -2828,7 +2828,7 @@ error:
     put_u32(s->byte_code.buf + RE_HEADER_BYTECODE_LEN,
             s->byte_code.size - RE_HEADER_LEN);
 
-    /* PocketJS: the choke point for the group-name table, as the
+    /* QJS_LEAN: the choke point for the group-name table, as the
        dbuf_error(&s->byte_code) above is for the bytecode: both writers in
        re_parse_term() check their own result, this catches any that a
        later edit forgets, so a short table can never pass as "no names". */

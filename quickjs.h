@@ -649,10 +649,10 @@ JS_EXTERN void JS_RunGC(JSRuntime *rt);
 JS_EXTERN bool JS_IsLiveObject(JSRuntime *rt, JSValueConst obj);
 
 JS_EXTERN JSContext *JS_NewContext(JSRuntime *rt);
-/* PocketJS (docs/vm/harden.md): lock the intrinsics of a fresh context and
+/* QJS_LEAN (docs/vm/harden.md): lock the intrinsics of a fresh context and
    switch it to the harden rules. Call before adding host globals. 0 or -1. */
 JS_EXTERN int JS_LeanHarden(JSContext *ctx);
-/* PocketJS (docs/vm/strip-debug.md): while on, the functions this context
+/* QJS_LEAN (docs/vm/strip-debug.md): while on, the functions this context
    compiles keep no line table (a runtime error names each function's first
    line); parse errors keep their position. lean_app_load.c sets it around
    the compile of an app's chunks when its chunks.txt has `option

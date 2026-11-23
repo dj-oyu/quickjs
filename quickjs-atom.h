@@ -187,7 +187,7 @@ DEF(toJSON, "toJSON")
 DEF(maxByteLength, "maxByteLength")
 DEF(zip, "zip")
 DEF(zipKeyed, "zipKeyed")
-/* PocketJS: Iterator.zip's options, read from C (docs/vm/c-builtins-zip-fromasync.md) */
+/* QJS_LEAN: Iterator.zip's options, read from C (docs/vm/c-builtins-zip-fromasync.md) */
 DEF(mode, "mode")
 DEF(padding, "padding")
 DEF(shortest, "shortest")

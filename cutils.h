@@ -599,7 +599,7 @@ static inline bool dbuf_error(DynBuf *s)
 static inline void dbuf_set_error(DynBuf *s)
 {
     s->error = true;
-    /* PocketJS: see dbuf_claim -- an errored buffer must take no more
+    /* QJS_LEAN: see dbuf_claim -- an errored buffer must take no more
        writes, including ones that would fit in the slack. */
     s->allocated_size = s->size;
 }
@@ -895,7 +895,7 @@ static inline int dbuf_claim(DynBuf *s, size_t len)
         new_buf = s->realloc_func(s->opaque, s->buf, new_allocated_size);
         if (!new_buf) {
             s->error = true;
-            /* PocketJS: make the error stick for EVERY later write. The
+            /* QJS_LEAN: make the error stick for EVERY later write. The
                fast paths in dbuf_putc / dbuf_put_u16/u32/u64, dbuf_put and
                dbuf_printf only reach this function when the write does not
                fit in the slack, and the `if (s->error)` test above lives
